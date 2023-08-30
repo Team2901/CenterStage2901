@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.ImprovedGamepad;
+import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
+@TeleOp(name = "Mecanum Base", group = "TeleOp")
 public class MecanumTeleOp extends OpMode {
+
+
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
@@ -22,6 +26,7 @@ public class MecanumTeleOp extends OpMode {
     @Override
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
+        robot.init(this.hardwareMap);
     }
 
     @Override

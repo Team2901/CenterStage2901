@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Hardware;
+package org.firstinspires.ftc.teamcode.Utilities;
 
 
 
-public class FloatButton extends org.firstinspires.ftc.teamcode.Hardware.Button<Float> {
+public class FloatButton extends Button<Float> {
 
     private final static float DEFAULT_DEAD_ZONE_VALUE = 0.0f;
     private final static float DEFAULT_RAW_VALUE = 0.0f;

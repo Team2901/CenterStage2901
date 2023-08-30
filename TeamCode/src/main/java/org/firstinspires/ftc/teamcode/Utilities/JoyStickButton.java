@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.Hardware;
-
-import org.firstinspires.ftc.teamcode.Hardware.AngleUtilities;
-import org.firstinspires.ftc.teamcode.Hardware.FloatButton;
+package org.firstinspires.ftc.teamcode.Utilities;
 
 public class JoyStickButton extends FloatButton {
 

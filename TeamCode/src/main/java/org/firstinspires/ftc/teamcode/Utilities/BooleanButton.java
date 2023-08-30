@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.Hardware;
+package org.firstinspires.ftc.teamcode.Utilities;
 
-
-import org.firstinspires.ftc.teamcode.Hardware.Button;
 
 public class BooleanButton extends Button<Boolean> {
 
