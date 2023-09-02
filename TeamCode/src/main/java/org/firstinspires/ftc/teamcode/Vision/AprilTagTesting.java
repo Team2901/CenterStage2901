@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.checker.units.qual.Angle;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -38,6 +44,25 @@ public class AprilTagTesting extends LinearOpMode {
 
                 // Share the CPU.
                 sleep(20);
+            }
+        }
+
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.rawPose != null) {
+                detection.ftcPose = new AprilTagPoseFtc();
+
+                detection.ftcPose.x = detection.rawPose.x;
+                detection.ftcPose.y = detection.rawPose.z;
+                detection.ftcPose.z = -detection.rawPose.y;
+
+                Orientation rot = Orientation.getOrientation(detection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+                detection.ftcPose.yaw = -rot.firstAngle;
+                detection.ftcPose.roll = rot.thirdAngle;
+                detection.ftcPose.pitch = rot.secondAngle;
+
+                detection.ftcPose.range = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
+                detection.ftcPose.bearing = AngleUnit.DEGREES.fromUnit(AngleUnit.RADIANS, Math.atan2(-detection.ftcPose.x, detection.ftcPose.y));
+                detection.ftcPose.elevation = AngleUnit.DEGREES.fromUnit(AngleUnit.RADIANS, Math.atan2(detection.ftcPose.z, detection.ftcPose.y));
             }
         }
 

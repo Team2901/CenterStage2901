@@ -21,7 +21,8 @@ public class MecanumTeleOp extends OpMode {
     public double leftStickXVal;
     public double rotate;
     public double speedMod = 0.5;
-    public double turnMod = 0.5;
+    public double turnMod = 0.6;
+    public double liftMod = 0.4;
 
     @Override
     public void init() {
@@ -44,5 +45,16 @@ public class MecanumTeleOp extends OpMode {
         robot.frontLeft.setPower(leftStickYVal+leftStickXVal+rotate);
         robot.backRight.setPower(leftStickYVal+leftStickXVal-rotate);
         robot.frontRight.setPower(leftStickYVal-leftStickXVal-rotate);
+
+        if(impGamepad1.right_trigger.getValue() > 0){
+            robot.lift.setPower(impGamepad1.right_trigger.getValue() * liftMod);
+        } else if(impGamepad1.left_trigger.getValue() > 0){
+            robot.lift.setPower(-impGamepad1.left_trigger.getValue() * liftMod);
+        } else {
+            robot.lift.setPower(0);
+        }
+
+        telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());
+        telemetry.update();
     }
 }
