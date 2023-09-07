@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
@@ -46,6 +47,22 @@ public class MecanumTeleOp extends OpMode {
         robot.backRight.setPower(leftStickYVal+leftStickXVal-rotate);
         robot.frontRight.setPower(leftStickYVal-leftStickXVal-rotate);
 
+        // preset positions for lift
+        if(impGamepad1.y.isInitialPress()){
+            robot.lift.setTargetPosition(-7400);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lift.setPower(1 * liftMod);
+            while(robot.lift.isBusy()){}
+            robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else if(impGamepad1.a.isInitialPress()){
+            robot.lift.setTargetPosition(-100);
+            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.lift.setPower(1 * liftMod);
+            while(robot.lift.isBusy()){}
+            robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        // setting max and min for the lift so the robot doesn't break
         if(robot.lift.getCurrentPosition() > -7500 && impGamepad1.right_trigger.getValue() != 0) {
             if (impGamepad1.right_trigger.getValue() > 0) {
                 robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMod);
