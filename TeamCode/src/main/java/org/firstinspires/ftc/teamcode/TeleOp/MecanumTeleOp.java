@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 @TeleOp(name = "Mecanum Base", group = "TeleOp")
 public class MecanumTeleOp extends OpMode {
 
-
-
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
 
