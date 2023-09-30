@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Vision.ShapeDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+
 public class MecanumDriveHardware {
 
     public static final double TICKS_PER_MOTOR_REV = 751.8;
@@ -20,6 +23,9 @@ public class MecanumDriveHardware {
     public DcMotor frontRight;
     public DcMotor lift;
     public BNO055IMU imu;
+
+    public OpenCvCamera camera;
+    public ShapeDetection pipeLine;
 
     public void init(HardwareMap hardwareMap){
         // initialize motors
