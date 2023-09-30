@@ -17,10 +17,10 @@ public class MecanumAutoBlue extends LinearOpMode {
         waitForStart();
 
         //(-5)
-        strafe(5);
+        //strafe(5);
 
         //94
-        moveInches(94);
+        moveInches(65);
     }
 
     private void moveInches(double inches){
