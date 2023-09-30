@@ -25,7 +25,7 @@ public class MecanumDriveHardware {
     public BNO055IMU imu;
 
     public OpenCvCamera camera;
-    public ShapeDetection pipeLine;
+//    public ShapeDetection pipeline;
 
     public void init(HardwareMap hardwareMap){
         // initialize motors
