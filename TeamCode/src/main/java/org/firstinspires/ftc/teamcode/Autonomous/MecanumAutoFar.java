@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
-@Autonomous(name = "Mecanum Auto", group = "Autonomous")
-public class MecanumAuto extends LinearOpMode {
+@Autonomous(name = "Mecanum Auto Far", group = "Autonomous")
+public class MecanumAutoFar extends LinearOpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
 
@@ -16,7 +16,7 @@ public class MecanumAuto extends LinearOpMode {
         robot.init(this.hardwareMap);
         waitForStart();
 
-//        strafe(-5);
+        strafe(5);
 
         moveInches(65);
     }

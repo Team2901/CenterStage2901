@@ -13,6 +13,7 @@ public class MecanumTeleOp extends OpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
+    ImprovedGamepad impGamepad2;
 
     public double rightStickYVal;
     public double rightStickXVal;
@@ -22,16 +23,21 @@ public class MecanumTeleOp extends OpMode {
     public double speedMod = 0.5;
     public double turnMod = 0.6;
     public double liftMod = 1;
+    public boolean launcherOn;
 
     @Override
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
+        impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
         robot.init(this.hardwareMap);
+
+//        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
     public void loop() {
         impGamepad1.update();
+        impGamepad2.update(); // Rachel -- this was missing, so controller 2 wasn't doing anything
 
         leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
         leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
@@ -60,21 +66,74 @@ public class MecanumTeleOp extends OpMode {
             robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        // setting max and min for the lift so the robot doesn't break
-        if(robot.lift.getCurrentPosition() > -7500 && impGamepad1.right_trigger.getValue() != 0) {
-            if (impGamepad1.right_trigger.getValue() > 0) {
-                robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMod);
-            } else {
-                robot.lift.setPower(0);
-            }
-        } else if(robot.lift.getCurrentPosition() <= -100) {
-            if (impGamepad1.left_trigger.getValue() > 0) {
-                robot.lift.setPower(impGamepad1.left_trigger.getValue() * liftMod);
-            } else {
-                robot.lift.setPower(0);
-            }
+        if (impGamepad1.right_trigger.getValue() > 0.05) {
+            robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMod);
+        } else if(impGamepad1.left_trigger.getValue() > 0.05){
+            robot.lift.setPower(impGamepad1.left_trigger.getValue() * liftMod);
         } else {
             robot.lift.setPower(0);
+        }
+        telemetry.addData("Controller 1 R Trigger", impGamepad1.right_trigger.getValue());
+        telemetry.addData("Controller 1 L Trigger", impGamepad1.left_trigger.getValue());
+        telemetry.addData("Lift Power", robot.lift.getPower());
+
+        // setting max and min for the lift so the robot doesn't break, manual
+//        if(robot.lift.getCurrentPosition() > -7500 && impGamepad1.right_trigger.getValue() != 0) {
+//            if (impGamepad1.right_trigger.getValue() > 0) {
+//                robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMod);
+//            } else {
+//                robot.lift.setPower(0);
+//            }
+//        } else if(robot.lift.getCurrentPosition() <= -100) {
+//            if (impGamepad1.left_trigger.getValue() > 0) {
+//                robot.lift.setPower(impGamepad1.left_trigger.getValue() * liftMod);
+//            } else {
+//                robot.lift.setPower(0);
+//            }
+//        } else {
+//            robot.lift.setPower(0);
+//        }
+
+        // Intake is controlled by driver2 from the trigger
+        if(impGamepad2.right_trigger.getValue() > 0){
+            robot.intake.setPower(-impGamepad2.right_trigger.getValue());
+        } else if(impGamepad2.left_trigger.getValue() > 0){
+            robot.intake.setPower(impGamepad2.left_trigger.getValue());
+        } else {
+            robot.intake.setPower(0);
+        }
+        telemetry.addData("Controller 2 R Trigger", impGamepad2.right_trigger.getValue());
+        telemetry.addData("Controller 2 L Trigger", impGamepad2.left_trigger.getValue());
+        // Let the driver control the intake too -- but with the bumper
+//        if(impGamepad1.right_bumper.isPressed()){
+//            robot.intake.setPower(0.3);
+//        } else if(impGamepad1.left_bumper.isPressed()){
+//            robot.intake.setPower(-0.3);
+//        }
+
+        launcherOn = false;
+        if(impGamepad2.a.isInitialPress()){
+            if(launcherOn == false){
+                robot.launcher.setPower(0.9);
+                launcherOn = true;
+            } else if(launcherOn){
+                robot.launcher.setPower(0);
+                launcherOn = false;
+            }
+        }
+
+        if(impGamepad2.x.isPressed()){
+            robot.crServo.setPower(1);
+        } else if(impGamepad2.y.isPressed()){
+            robot.crServo.setPower(-1);
+        } else {
+            robot.crServo.setPower(0);
+        }
+
+        if(impGamepad1.dpad_down.isInitialPress()){
+            robot.outtake.setPosition(0);
+        } else if(impGamepad1.dpad_up.isInitialPress()){
+            robot.outtake.setPosition(0.5);
         }
 
         telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());
