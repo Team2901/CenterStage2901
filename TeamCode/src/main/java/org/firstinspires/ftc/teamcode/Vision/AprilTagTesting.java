@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Vision;
 
+import android.util.Size;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.checkerframework.checker.units.qual.Angle;
@@ -12,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
+import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
@@ -21,6 +26,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 // from org.firstinspires.ftc.robotcontroller.external.samples.ConceptAprilTag
+
+@Autonomous(name = "April Tag Testing", group = "Vision")
 public class AprilTagTesting extends LinearOpMode {
 
     public MecanumDriveHardware robot = new MecanumDriveHardware();
@@ -37,6 +44,7 @@ public class AprilTagTesting extends LinearOpMode {
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
     final double DESIRED_DISTANCE = 12.0;
+    ImprovedGamepad impGamepad1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -44,6 +52,9 @@ public class AprilTagTesting extends LinearOpMode {
         double drive = 0;
         double strafe = 0;
         double turn = 0;
+
+        impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
+        robot.init(this.hardwareMap);
 
         initAprilTag();
 
@@ -56,8 +67,6 @@ public class AprilTagTesting extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
-
-                telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
@@ -175,7 +184,7 @@ public class AprilTagTesting extends LinearOpMode {
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(800, 600));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);
@@ -284,12 +293,12 @@ public class AprilTagTesting extends LinearOpMode {
         // Make sure camera is streaming before we try to set the exposure controls
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addData("Camera", "Waiting");
-            telemetry.update();
+//            telemetry.update();
             while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                 sleep(20);
             }
             telemetry.addData("Camera", "Ready");
-            telemetry.update();
+//            telemetry.update();
         }
 
         // Set camera controls unless we are stopping.
