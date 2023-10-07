@@ -5,20 +5,33 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
+import org.firstinspires.ftc.teamcode.Vision.ShapeDetection;
 
-@Autonomous(name = "Mecanum Auto", group = "Autonomous")
-public class MecanumAuto extends LinearOpMode {
+@Autonomous(name = "Mecanum Auto Shape Detection", group = "Autonomous")
+public class MecanumAutoShapes extends LinearOpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
+    ShapeDetection pipeline = new ShapeDetection(this.telemetry);
+
+    public int spikeMark = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(this.hardwareMap);
+
+        if(pipeline.xCoord() < 107){
+            spikeMark = 1;
+        } else if(pipeline.xCoord() < 214){
+            spikeMark = 2;
+        } else if(pipeline.xCoord() < 320){
+            spikeMark = 3;
+        }
+
         waitForStart();
 
-//        strafe(-5);
+        strafe(-5);
 
-        moveInches(65);
+        moveInches(94);
     }
 
     private void moveInches(double inches){

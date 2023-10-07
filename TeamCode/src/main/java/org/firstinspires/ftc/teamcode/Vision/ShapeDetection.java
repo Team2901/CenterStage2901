@@ -21,6 +21,7 @@ public class ShapeDetection extends OpenCvPipeline {
     }
 
     Mat lastImage = null;
+    Rect rect;
 
     @Override
     public Mat processFrame(Mat input) {
@@ -51,7 +52,7 @@ public class ShapeDetection extends OpenCvPipeline {
 
         Imgproc.drawContours(lastImage, contours, -1, new Scalar(0, 255, 255));
 
-        Rect rect = Imgproc.boundingRect(bwImage);
+        rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
         Imgproc.line(lastImage, new Point(107,0), new Point(107,240), new Scalar(0, 0, 0));
@@ -61,5 +62,9 @@ public class ShapeDetection extends OpenCvPipeline {
         telemetry.update();
 
         return lastImage;
+    }
+
+    public double xCoord(){
+        return rect.x;
     }
 }
