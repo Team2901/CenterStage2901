@@ -25,6 +25,19 @@ public class Vector2 {
     public Vector2 multiplyScalar(double scale){
         return new Vector2(x*scale, y*scale);
     }
+
+    public double magnitude(){
+        return Math.sqrt(x*x+y*y);
+    }
+
+    public Vector2 unit(){
+        return multiplyScalar(1/magnitude());
+    }
+
+    public double dot(Vector2 vector){
+        return x * vector.x + y * vector.y;
+    }
+
     public Vector2 clone(){
         return new Vector2(this);
     }

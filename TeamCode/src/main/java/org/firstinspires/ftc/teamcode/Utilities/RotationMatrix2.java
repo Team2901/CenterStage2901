@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Utilities;
 
-import android.opengl.Matrix;
-
 public class RotationMatrix2 {
 
     public double [][] rawMatrix;
@@ -27,6 +25,18 @@ public class RotationMatrix2 {
     public Vector2 multiply(Vector2 vector){
         double[][] m1 = rawMatrix;
         return new Vector2(m1[0][0]*vector.x+m1[0][1]*vector.y,m1[1][0]*vector.x+m1[1][1]*vector.y);
+    }
+
+    /**
+     * Returns vector after this matrix is applied to it
+     *
+     * @param x the x value of the vector that will be translated
+     * @param y the y value of the vector that will be translated
+     * @return vector
+     */
+    public Vector2 multiply(int x, int y){
+        double[][] m1 = rawMatrix;
+        return new Vector2(m1[0][0]*x+m1[0][1]*y,m1[1][0]*x+m1[1][1]*y);
     }
 
     /**
@@ -74,10 +84,27 @@ public class RotationMatrix2 {
      * @param angle the angle this matrix will be set from
      * @return this
      */
-    public void setFromAngle(double angle){
+    public RotationMatrix2 setFromAngle(double angle){
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
         rawMatrix = new double[][]{{cos,-1 * sin},{sin,cos}};
+        return this;
+    }
+    /**
+     * Makes this matrix lookAt the vector, upvector is left
+     * first row of matrix is set to vector,
+     * second row of matrix is set to (-y,x) of vector, the same as the angle + pi/2 radians
+     *
+     * @param vector vector to look at
+     * @return sets this matrix to look at the vector
+     */
+    public RotationMatrix2 lookAt(Vector2 vector){
+        Vector2 unit = vector.unit();
+        rawMatrix[0][0] = unit.x;
+        rawMatrix[0][1] = unit.y;
+        rawMatrix[1][0] = -unit.y;
+        rawMatrix[1][1] = unit.x;
+        return this;
     }
 
     /**

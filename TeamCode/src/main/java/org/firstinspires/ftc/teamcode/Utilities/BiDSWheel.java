@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Utilities;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class TriDSWheel {
+public class BiDSWheel {
 
     private int TICKS_PER_REV;
     private int GEAR_RATIO;
@@ -11,16 +11,13 @@ public class TriDSWheel {
 
     DSWheel wheelB;
 
-    DSWheel wheelC;
-
     RotationMatrix2 rotationMatrix;
 
     Vector2 position;
 
-    public TriDSWheel(DcMotor motorA1,DcMotor motorA2, DcMotor motorB1, DcMotor motorB2, DcMotor motorC1, DcMotor motorC2){
+    public BiDSWheel(DcMotor motorA1, DcMotor motorA2, DcMotor motorB1, DcMotor motorB2, DcMotor motorC1, DcMotor motorC2){
         wheelA = new DSWheel(motorA1,motorA2);
         wheelB = new DSWheel(motorB1,motorB2);
-        wheelC = new DSWheel(motorC1,motorC2);
         rotationMatrix = new RotationMatrix2();
         position = new Vector2();
     }
@@ -37,7 +34,6 @@ public class TriDSWheel {
     public void setWheelDirections(Vector2 direction){
         wheelA.setTargetVector(direction);
         wheelB.setTargetVector(direction);
-        wheelC.setTargetVector(direction);
     }
 
     public void moveGlobalDirection(double x, double y){
@@ -47,12 +43,10 @@ public class TriDSWheel {
         TICKS_PER_REV = ticksPerRevolution;
         this.wheelA.setTicksPerRevolution(TICKS_PER_REV);
         this.wheelB.setTicksPerRevolution(TICKS_PER_REV);
-        this.wheelC.setTicksPerRevolution(TICKS_PER_REV);
     }
     public void setGearRatio(int gearRatio){
         GEAR_RATIO = gearRatio;
         this.wheelA.setGearRatio(gearRatio);
         this.wheelB.setGearRatio(gearRatio);
-        this.wheelC.setGearRatio(gearRatio);
     }
 }
