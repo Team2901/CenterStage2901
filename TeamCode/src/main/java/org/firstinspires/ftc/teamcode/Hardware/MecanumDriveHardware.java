@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import android.graphics.drawable.shapes.Shape;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -9,12 +11,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Vision.ShapeDetection;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import kotlin.UIntArrayKt;
 
-public class MecanumDriveHardware {
+public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListener{
 
     public static final double TICKS_PER_MOTOR_REV = 751.8;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
@@ -30,14 +36,14 @@ public class MecanumDriveHardware {
     public DcMotor intake;
     public DcMotor launcher;
     public Servo outtake;
-    public CRServo crServo;
+    public Servo planeServo;
 
     public BNO055IMU imu;
 
     public OpenCvCamera camera;
-//    public ShapeDetection pipeline;
+    public ShapeDetection pipeLine;
 
-    public void init(HardwareMap hardwareMap){
+    public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
@@ -47,7 +53,14 @@ public class MecanumDriveHardware {
         intake = hardwareMap.dcMotor.get("intake");
         launcher = hardwareMap.dcMotor.get("launcher");
         outtake = hardwareMap.servo.get("outtake");
-        crServo = hardwareMap.crservo.get("crServo");
+        planeServo = hardwareMap.servo.get("planeServo");
+
+        WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        pipeLine = new ShapeDetection(telemetry);
+        int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
+        camera.setPipeline(pipeLine);
+        camera.openCameraDeviceAsync(this);
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -105,5 +118,15 @@ public class MecanumDriveHardware {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+    }
+
+    @Override
+    public void onOpened() {
+        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+    }
+
+    @Override
+    public void onError(int errorCode) {
+
     }
 }

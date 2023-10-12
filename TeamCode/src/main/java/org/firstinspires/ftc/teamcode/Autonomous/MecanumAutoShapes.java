@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 import org.firstinspires.ftc.teamcode.Vision.ShapeDetection;
@@ -13,11 +14,13 @@ public class MecanumAutoShapes extends LinearOpMode {
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
+    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+
     public int spikeMark = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
 
         if(pipeline.xCoord() < 107){
             spikeMark = 1;
@@ -29,9 +32,33 @@ public class MecanumAutoShapes extends LinearOpMode {
 
         waitForStart();
 
-        strafe(-5);
-
-        moveInches(94);
+        //move forward, strafe (if 1 or 2), deposit purple, move back, strafe left to park, deposit yellow
+        timer.reset();
+        if(spikeMark == 1){
+            moveInches(12);
+            strafe(-12);
+            while(timer.seconds() < 2) {
+                robot.intake.setPower(-0.8);
+            }
+            moveInches(-12);
+            strafe(-24);
+        } else if(spikeMark == 2){
+            moveInches(24);
+            while(timer.seconds() < 2) {
+                robot.intake.setPower(-0.8);
+            }
+            moveInches(-24);
+            strafe(-36);
+        } else if(spikeMark == 3){
+            moveInches(12);
+            strafe(12);
+            while(timer.seconds() < 2) {
+                robot.intake.setPower(-0.8);
+            }
+            moveInches(-12);
+            strafe(-48);
+        }
+        robot.intake.setPower(-0.8);
     }
 
     private void moveInches(double inches){
