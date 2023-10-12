@@ -22,43 +22,50 @@ public class MecanumAutoShapes extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot.init(this.hardwareMap, telemetry);
 
-        if(pipeline.xCoord() < 107){
-            spikeMark = 1;
-        } else if(pipeline.xCoord() < 214){
-            spikeMark = 2;
-        } else if(pipeline.xCoord() < 320){
-            spikeMark = 3;
+        while(!opModeIsActive()) {
+            if(pipeline.xCoord() > 0) {
+                if (pipeline.xCoord() < 107) {
+                    spikeMark = 1;
+                } else if (pipeline.xCoord() < 214) {
+                    spikeMark = 2;
+                } else if (pipeline.xCoord() < 320) {
+                    spikeMark = 3;
+                }
+            }
+
+            telemetry.addData("Spike Mark", spikeMark);
+            telemetry.update();
         }
 
         waitForStart();
 
         //move forward, strafe (if 1 or 2), deposit purple, move back, strafe left to park, deposit yellow
-        timer.reset();
-        if(spikeMark == 1){
-            moveInches(12);
-            strafe(-12);
-            while(timer.seconds() < 2) {
-                robot.intake.setPower(-0.8);
-            }
-            moveInches(-12);
-            strafe(-24);
-        } else if(spikeMark == 2){
-            moveInches(24);
-            while(timer.seconds() < 2) {
-                robot.intake.setPower(-0.8);
-            }
-            moveInches(-24);
-            strafe(-36);
-        } else if(spikeMark == 3){
-            moveInches(12);
-            strafe(12);
-            while(timer.seconds() < 2) {
-                robot.intake.setPower(-0.8);
-            }
-            moveInches(-12);
-            strafe(-48);
-        }
-        robot.intake.setPower(-0.8);
+//        timer.reset();
+//        if(spikeMark == 1){
+//            moveInches(12);
+//            strafe(-12);
+//            while(timer.seconds() < 2) {
+//                robot.intake.setPower(-0.8);
+//            }
+//            moveInches(-12);
+//            strafe(-24);
+//        } else if(spikeMark == 2){
+//            moveInches(24);
+//            while(timer.seconds() < 2) {
+//                robot.intake.setPower(-0.8);
+//            }
+//            moveInches(-24);
+//            strafe(-36);
+//        } else if(spikeMark == 3){
+//            moveInches(12);
+//            strafe(12);
+//            while(timer.seconds() < 2) {
+//                robot.intake.setPower(-0.8);
+//            }
+//            moveInches(-12);
+//            strafe(-48);
+//        }
+//        robot.intake.setPower(-0.8);
     }
 
     private void moveInches(double inches){
