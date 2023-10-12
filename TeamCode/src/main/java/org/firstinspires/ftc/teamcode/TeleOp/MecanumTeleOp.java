@@ -29,7 +29,7 @@ public class MecanumTeleOp extends OpMode {
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
 
 //        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -123,11 +123,9 @@ public class MecanumTeleOp extends OpMode {
         }
 
         if(impGamepad2.x.isPressed()){
-            robot.crServo.setPower(1);
+            robot.planeServo.setPosition(0.75);
         } else if(impGamepad2.y.isPressed()){
-            robot.crServo.setPower(-1);
-        } else {
-            robot.crServo.setPower(0);
+            robot.planeServo.setPosition(0.25);
         }
 
         if(impGamepad1.dpad_down.isInitialPress()){

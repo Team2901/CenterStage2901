@@ -54,7 +54,7 @@ public class AprilTagTesting extends LinearOpMode {
         double turn = 0;
 
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
 
         initAprilTag();
 
