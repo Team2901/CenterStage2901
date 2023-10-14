@@ -153,7 +153,6 @@ public class AprilTagTesting extends LinearOpMode {
                 detection.ftcPose.elevation = AngleUnit.DEGREES.fromUnit(AngleUnit.RADIANS, Math.atan2(detection.ftcPose.z, detection.ftcPose.y));
             }
         }
-
         visionPortal.close();
     }
 
@@ -184,7 +183,7 @@ public class AprilTagTesting extends LinearOpMode {
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(800, 600));
+        builder.setCameraResolution(new Size(320, 240));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableCameraMonitoring(true);

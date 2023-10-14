@@ -57,14 +57,19 @@ public class ShapeDetection extends OpenCvPipeline {
 
         Imgproc.line(lastImage, new Point(107,0), new Point(107,240), new Scalar(0, 0, 0));
         Imgproc.line(lastImage, new Point(214,0), new Point(214,240), new Scalar(0, 0, 0));
-        telemetry.addData("x", rect.x);
-        telemetry.addData("y", rect.y);
+        if(rect != null) {
+            telemetry.addData("x", rect.x);
+            telemetry.addData("y", rect.y);
+        }
         telemetry.update();
 
         return lastImage;
     }
 
     public double xCoord(){
-        return rect.x;
+        if(rect != null) {
+            return rect.x;
+        }
+        return -100;
     }
 }
