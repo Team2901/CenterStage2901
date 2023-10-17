@@ -137,6 +137,7 @@ public class AprilTagTesting extends LinearOpMode {
 
         for (AprilTagDetection detection : aprilTag.getDetections()) {
             if (detection.rawPose != null) {
+                /*
                 detection.ftcPose = new AprilTagPoseFtc();
 
                 detection.ftcPose.x = detection.rawPose.x;
@@ -151,6 +152,7 @@ public class AprilTagTesting extends LinearOpMode {
                 detection.ftcPose.range = Math.hypot(detection.ftcPose.x, detection.ftcPose.y);
                 detection.ftcPose.bearing = AngleUnit.DEGREES.fromUnit(AngleUnit.RADIANS, Math.atan2(-detection.ftcPose.x, detection.ftcPose.y));
                 detection.ftcPose.elevation = AngleUnit.DEGREES.fromUnit(AngleUnit.RADIANS, Math.atan2(detection.ftcPose.z, detection.ftcPose.y));
+                */
             }
         }
         visionPortal.close();

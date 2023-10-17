@@ -18,8 +18,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import kotlin.UIntArrayKt;
-
 public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListener{
 
     public static final double TICKS_PER_MOTOR_REV = 751.8;
