@@ -13,7 +13,7 @@ public class MecanumAutoBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(this.hardwareMap);
+        robot.init(this.hardwareMap, telemetry);
         waitForStart();
 
         //(-5)
