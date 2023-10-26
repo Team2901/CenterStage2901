@@ -35,6 +35,7 @@ public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListene
     public DcMotor launcher;
     public Servo outtake;
     public Servo planeServo;
+    public Servo preload;
 
     public BNO055IMU imu;
 
@@ -52,6 +53,7 @@ public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListene
         launcher = hardwareMap.dcMotor.get("launcher");
         outtake = hardwareMap.servo.get("outtake");
         planeServo = hardwareMap.servo.get("planeServo");
+        preload = hardwareMap.servo.get("preload");
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         pipeLine = new ShapeDetection(telemetry);
