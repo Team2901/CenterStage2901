@@ -158,8 +158,10 @@ public class MecanumTeleOp extends OpMode {
 
         if(impGamepad1.dpad_right.isInitialPress()){
             robot.launcher.setPower(-0.9);
+            launcherOn = true;
         } else if (!impGamepad1.dpad_right.isInitialPress() && !launcherOn) {
             robot.launcher.setPower(0);
+            launcherOn = false;
         }
 
         if(impGamepad1.left_bumper.isPressed()) {

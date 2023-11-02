@@ -14,7 +14,7 @@ public class MecanumAutoShapes extends LinearOpMode {
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
-    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+//    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public int spikeMark = 0;
 
@@ -33,38 +33,35 @@ public class MecanumAutoShapes extends LinearOpMode {
                 }
             }
 
+            telemetry.addData("X", pipeline.xCoord());
             telemetry.addData("Spike Mark", spikeMark);
             telemetry.update();
         }
 
         waitForStart();
 
-        //move forward, strafe (if 1 or 2), deposit purple, move back, strafe left to park, deposit yellow
+        //move forward, strafe (if 1 or 2), deposit purple, move back, strafe left to park, deposit yellow (for BLUE side)
 //        timer.reset();
-//        if(spikeMark == 1){
-//            moveInches(12);
-//            strafe(-12);
-//            while(timer.seconds() < 2) {
-//                robot.intake.setPower(-0.8);
-//            }
-//            moveInches(-12);
-//            strafe(-24);
-//        } else if(spikeMark == 2){
-//            moveInches(24);
-//            while(timer.seconds() < 2) {
-//                robot.intake.setPower(-0.8);
-//            }
-//            moveInches(-24);
-//            strafe(-36);
-//        } else if(spikeMark == 3){
-//            moveInches(12);
-//            strafe(12);
-//            while(timer.seconds() < 2) {
-//                robot.intake.setPower(-0.8);
-//            }
-//            moveInches(-12);
-//            strafe(-48);
-//        }
+        if(spikeMark == 1){
+            moveInches(12);
+            strafe(-12);
+            robot.preload.setPosition(0);
+            moveInches(-12);
+            strafe(-24);
+        } else if(spikeMark == 2){
+            moveInches(24);
+            robot.preload.setPosition(0);
+            moveInches(-24);
+            strafe(-36);
+            moveInches(24);
+        } else if(spikeMark == 3){
+            moveInches(12);
+            strafe(12);
+            robot.preload.setPosition(0);
+            moveInches(-12);
+            strafe(-48);
+            moveInches(48);
+        }
 //        robot.intake.setPower(-0.8);
     }
 
