@@ -28,6 +28,8 @@ public class MecanumTeleOp extends OpMode {
 
     public double minLiftDistance = -7500;
 
+    public double startFrontLeft;
+
     public double intakeTogglePower = 0;
     public boolean launcherOn = false;
 
@@ -37,6 +39,8 @@ public class MecanumTeleOp extends OpMode {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
         robot.init(this.hardwareMap, telemetry);
+
+        startFrontLeft = robot.frontLeft.getCurrentPosition();
 
 //        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -57,6 +61,10 @@ public class MecanumTeleOp extends OpMode {
         robot.frontLeft.setPower(leftStickYVal+leftStickXVal+rotate);
         robot.backRight.setPower(leftStickYVal+leftStickXVal-rotate);
         robot.frontRight.setPower(leftStickYVal-leftStickXVal-rotate);
+
+        telemetry.addData("The ROTATION:", startFrontLeft - robot.frontLeft.getCurrentPosition());
+
+
 /*
         // preset positions for lift(not wanted currently)
         if(impGamepad1.y.isInitialPress()){
