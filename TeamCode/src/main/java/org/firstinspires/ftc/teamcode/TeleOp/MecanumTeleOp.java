@@ -156,21 +156,22 @@ public class MecanumTeleOp extends OpMode {
 
  */
 
-        if(impGamepad1.right_bumper.isInitialPress() && !launcherOn){
+        if(impGamepad1.right_bumper.isPressed()){
             launcherOn = true;
             robot.launcher.setPower(0.9);
-        } else if (impGamepad1.right_bumper.isInitialPress() && launcherOn) {
-            launcherOn = false;
+        } else if(impGamepad1.dpad_right.isPressed()) {
+            robot.launcher.setPower(-0.9);
+        } else {
             robot.launcher.setPower(0);
         }
 
-        if(impGamepad1.dpad_right.isInitialPress()){
-            robot.launcher.setPower(-0.9);
-            launcherOn = true;
-        } else if (!impGamepad1.dpad_right.isInitialPress() && !launcherOn) {
-            robot.launcher.setPower(0);
-            launcherOn = false;
-        }
+//        if(impGamepad1.dpad_right.isPressed()){
+//            robot.launcher.setPower(-0.6);
+//            launcherOn = true;
+//        } else {
+//            robot.launcher.setPower(0);
+////            launcherOn = false;
+//        }
 
         if(impGamepad1.left_bumper.isPressed()) {
             robot.planeServo.setPosition(0.75);

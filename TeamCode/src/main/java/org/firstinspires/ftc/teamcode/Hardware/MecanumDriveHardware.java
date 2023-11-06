@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListener{
+public class MecanumDriveHardware{
 
     public static final double TICKS_PER_MOTOR_REV = 751.8;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
@@ -39,8 +39,8 @@ public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListene
 
     public BNO055IMU imu;
 
-    public OpenCvCamera camera;
-    public ShapeDetection pipeLine;
+//    public OpenCvCamera camera;
+//    public ShapeDetection pipeLine;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
@@ -55,12 +55,12 @@ public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListene
         planeServo = hardwareMap.servo.get("planeServo");
         preload = hardwareMap.servo.get("preload");
 
-        WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
-        pipeLine = new ShapeDetection(telemetry);
-        int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
-        camera.setPipeline(pipeLine);
-        camera.openCameraDeviceAsync(this);
+//        WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+//        pipeLine = new ShapeDetection(telemetry);
+//        int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
+//        camera.setPipeline(pipeLine);
+//        camera.openCameraDeviceAsync(this);
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -120,13 +120,13 @@ public class MecanumDriveHardware implements OpenCvCamera.AsyncCameraOpenListene
         imu.initialize(parameters);
     }
 
-    @Override
-    public void onOpened() {
-        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-    }
-
-    @Override
-    public void onError(int errorCode) {
-
-    }
+//    @Override
+//    public void onOpened() {
+//        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+//    }
+//
+//    @Override
+//    public void onError(int errorCode) {
+//
+//    }
 }
