@@ -23,7 +23,6 @@ public class ShapeDetection extends OpenCvPipeline {
     Mat lastImage = null;
     Rect rect;
 
-    @Override
     public Mat processFrame(Mat input) {
         List<MatOfPoint> contours = new ArrayList<>();
 
@@ -39,17 +38,17 @@ public class ShapeDetection extends OpenCvPipeline {
         input.copyTo(lastImage);
 
         //convert to gray
-        Mat grayImage = new Mat();
-        Imgproc.cvtColor(lastImage, grayImage, Imgproc.COLOR_RGB2HSV);
+        Mat HSVImage = new Mat();
+        Imgproc.cvtColor(lastImage, HSVImage, Imgproc.COLOR_RGB2HSV);
 
         Rect cropRect = new Rect(0,0,800,600);
-        Imgproc.rectangle(grayImage, cropRect, new Scalar(64, 64, 64), 10);
+        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(grayImage, new Scalar(160, 50, 50), new Scalar(180, 255, 255), bwImage);
+        Core.inRange(HSVImage, new Scalar(160, 50, 50), new Scalar(180, 255, 255), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 17);
+        Imgproc.medianBlur(bwImage, blurImg, 19);
 
         Imgproc.findContours(blurImg, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 

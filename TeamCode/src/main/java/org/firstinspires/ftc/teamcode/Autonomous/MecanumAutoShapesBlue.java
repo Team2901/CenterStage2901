@@ -198,7 +198,7 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
 
     @Override
     public void onOpened() {
-        camera.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
     }
 
     @Override
