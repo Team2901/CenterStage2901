@@ -68,9 +68,9 @@ public class ShapeDetection extends OpenCvPipeline {
         return lastImage;
     }
 
-    public double xCoord(){
+    public double xMid(){
         if(rect != null) {
-            return rect.x;
+            return rect.x + (rect.width/2);
         }
         return -100;
     }

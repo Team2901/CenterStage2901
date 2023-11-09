@@ -41,17 +41,19 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
 
     @Override
     public void loop() {
-        if(pipeline.xCoord() > 0) {
-            if (pipeline.xCoord() < 107) {
+        if(pipeline.xMid() > 0) {
+            if (pipeline.xMid() < 107) {
                 spikeMark = 1;
-            } else if (pipeline.xCoord() < 214) {
+            } else if (pipeline.xMid() < 214) {
                 spikeMark = 2;
-            } else if (pipeline.xCoord() < 320) {
+            } else if (pipeline.xMid() < 320) {
                 spikeMark = 3;
             }
         }
 
-        telemetry.addData("X", pipeline.xCoord());
+        //probably should make it 1 default since camera is on the right side of the bot as of now
+
+        telemetry.addData("X", pipeline.xMid());
         telemetry.addData("Spike Mark", spikeMark);
         telemetry.update();
 
@@ -86,17 +88,17 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
 //
 //
 //        while(!opModeIsActive()) {
-//            if(pipeline.xCoord() > 0) {
-//                if (pipeline.xCoord() < 107) {
+//            if(pipeline.xMid() > 0) {
+//                if (pipeline.xMid() < 107) {
 //                    spikeMark = 1;
-//                } else if (pipeline.xCoord() < 214) {
+//                } else if (pipeline.xMid() < 214) {
 //                    spikeMark = 2;
-//                } else if (pipeline.xCoord() < 320) {
+//                } else if (pipeline.xMid() < 320) {
 //                    spikeMark = 3;
 //                }
 //            }
 //
-//            telemetry.addData("X", pipeline.xCoord());
+//            telemetry.addData("X", pipeline.xMid());
 //            telemetry.addData("Spike Mark", spikeMark);
 //            telemetry.update();
 //        }

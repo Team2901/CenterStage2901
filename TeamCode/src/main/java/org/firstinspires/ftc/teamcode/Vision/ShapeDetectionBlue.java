@@ -45,10 +45,10 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(HSVImage, new Scalar(100, 55, 55), new Scalar(140, 255, 255), bwImage);
+        Core.inRange(HSVImage, new Scalar(90, 55, 55), new Scalar(140, 255, 255), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 21);
+        Imgproc.medianBlur(bwImage, blurImg, 19);
 
         Imgproc.findContours(blurImg, blueContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -68,9 +68,9 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         return lastImage;
     }
 
-    public double xCoord(){
+    public double xMid(){
         if(rect != null) {
-            return rect.x;
+            return rect.x + (rect.width/2);
         }
         return -100;
     }

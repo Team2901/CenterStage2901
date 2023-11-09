@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.qualcomm.ftccommon.configuration.EditPortListActivity;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -27,6 +28,17 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
     public int count = 0;
     public OpenCvCamera camera;
 
+    public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+
+    public enum AutoState {
+        CAMERA_WAIT,
+        CAMERA_DETECTION,
+        MOVE_1,
+        MOVE_2,
+        MOVE_3
+    }
+    AutoState autoState;
+
     @Override
     public void init() {
         robot.init(this.hardwareMap, telemetry);
@@ -37,23 +49,22 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
         camera.setPipeline(pipeLine);
         camera.openCameraDeviceAsync(this);
+
+        autoState = AutoState.CAMERA_DETECTION;
+
+        cameraTimer.startTime();
     }
 
     @Override
     public void loop() {
-        if(pipeline.xCoord() > 0) {
-            if (pipeline.xCoord() < 107) {
-                spikeMark = 1;
-            } else if (pipeline.xCoord() < 214) {
-                spikeMark = 2;
-            } else if (pipeline.xCoord() < 320) {
-                spikeMark = 3;
-            }
-        }
 
-        telemetry.addData("X", pipeline.xCoord());
-        telemetry.addData("Spike Mark", spikeMark);
-        telemetry.update();
+        if(autoState == AutoState.CAMERA_WAIT && cameraTimer.seconds() < 5) {
+            telemetry.addData("X", pipeline.xMid());
+            telemetry.addData("Spike Mark", spikeMark);
+            telemetry.update();
+
+
+        }
 
         if(count == 0) {
             if (spikeMark == 1) {
@@ -86,17 +97,17 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 //
 //
 //        while(!opModeIsActive()) {
-//            if(pipeline.xCoord() > 0) {
-//                if (pipeline.xCoord() < 107) {
+//            if(pipeline.xMid() > 0) {
+//                if (pipeline.xMid() < 107) {
 //                    spikeMark = 1;
-//                } else if (pipeline.xCoord() < 214) {
+//                } else if (pipeline.xMid() < 214) {
 //                    spikeMark = 2;
-//                } else if (pipeline.xCoord() < 320) {
+//                } else if (pipeline.xMid() < 320) {
 //                    spikeMark = 3;
 //                }
 //            }
 //
-//            telemetry.addData("X", pipeline.xCoord());
+//            telemetry.addData("X", pipeline.xMid());
 //            telemetry.addData("Spike Mark", spikeMark);
 //            telemetry.update();
 //        }
