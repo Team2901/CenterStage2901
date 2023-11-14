@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import android.os.CountDownTimer;
+
 import com.qualcomm.ftccommon.configuration.EditPortListActivity;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,6 +18,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.concurrent.TimeUnit;
+
 @Autonomous(name = "Shape Detection", group = "Autonomous")
 public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
@@ -24,18 +28,20 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
 //    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    public int spikeMark = 0;
+    public int spikeMark = 1;
     public int count = 0;
     public OpenCvCamera camera;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    public ElapsedTime preloadTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public enum AutoState {
         CAMERA_WAIT,
         CAMERA_DETECTION,
         MOVE_1,
         MOVE_2,
-        MOVE_3
+        MOVE_3,
+        STOP
     }
     AutoState autoState;
 
@@ -50,46 +56,89 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         camera.setPipeline(pipeLine);
         camera.openCameraDeviceAsync(this);
 
-        autoState = AutoState.CAMERA_DETECTION;
+        autoState = AutoState.CAMERA_WAIT;
 
-        cameraTimer.startTime();
+        cameraTimer.reset();
     }
 
     @Override
     public void loop() {
 
-        if(autoState == AutoState.CAMERA_WAIT && cameraTimer.seconds() < 5) {
-            telemetry.addData("X", pipeline.xMid());
-            telemetry.addData("Spike Mark", spikeMark);
-            telemetry.update();
+//        if(pipeline.xMid() > 0) {
+//            if (pipeline.xMid() < 10) {
+//                spikeMark = 1;
+//            }
+//            if(pipeline.xMid() < 170) {
+//                spikeMark = 2;
+//            } else if (pipeline.xMid() < 320) {
+//                spikeMark = 3;
+//            }
+//        }
 
-
-        }
-
-        if(count == 0) {
-            if (spikeMark == 1) {
-                moveInches(12);
-                strafe(-12);
+        if(autoState == AutoState.CAMERA_WAIT) {
+            if(cameraTimer.time(TimeUnit.SECONDS) < 10) {
+                if (pipeline.xMid() < 170) {
+                    spikeMark = 2;
+                } else if (pipeline.xMid() < 320) {
+                    spikeMark = 3;
+                }
+                telemetry.addData("X", pipeline.xMid());
+                telemetry.addData("Spike Mark", spikeMark);
+                telemetry.update();
+            }
+            autoState = AutoState.CAMERA_DETECTION;
+        } else if(autoState == AutoState.CAMERA_DETECTION){
+            if(spikeMark == 1){
+                autoState = AutoState.MOVE_1;
+            } else if(spikeMark == 2){
+                autoState = AutoState.MOVE_2;
+            } else if(spikeMark == 3){
+                autoState = AutoState.MOVE_3;
+            }
+            preloadTimer.startTime();
+        } else if(autoState == AutoState.MOVE_1){
+            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
+                moveInches(20);
+                strafe(-3);
                 robot.preload.setPosition(0);
-                moveInches(-12);
-                strafe(-24);
-            } else if (spikeMark == 2) {
+                if(preloadTimer.seconds() > 3) {
+                    strafe(6);
+                    moveInches(-20);
+                    strafe(48);
+                    autoState = AutoState.STOP;
+                }
+            }
+        } else if(autoState == AutoState.MOVE_2){
+            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
+                moveInches(36);
+                strafe(6);
+                robot.preload.setPosition(0);
+                if(preloadTimer.seconds() > 3) {
+                    moveInches(-12);
+                    strafe(24);
+                    moveInches(24);
+                }
+                autoState = AutoState.STOP;
+            }
+        } else if(autoState == AutoState.MOVE_3){
+            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(24);
+                strafe(24);
                 robot.preload.setPosition(0);
-                moveInches(-24);
-                strafe(-36);
-                moveInches(24);
-            } else if (spikeMark == 3) {
-                moveInches(12);
-                strafe(12);
-                robot.preload.setPosition(0);
-                moveInches(-12);
-                strafe(-48);
-                moveInches(48);
+                if(preloadTimer.seconds() > 3) {
+                    strafe(24);
+                    moveInches(24);
+                }
+                autoState = AutoState.STOP;
+            }
+        } else if(autoState == AutoState.STOP){
+            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
             }
         }
-
-        count++;
     }
 
 //    @Override
@@ -158,8 +207,8 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backRight.setPower(0.5);
 
         while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
-            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
-            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
+//            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
+//            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }
 
         robot.frontLeft.setPower(0);
@@ -192,8 +241,8 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backRight.setPower(0.5);
 
         while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
-            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
-            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
+//            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
+//            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }
 
         robot.frontLeft.setPower(0);

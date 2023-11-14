@@ -20,8 +20,8 @@ public class MecanumTeleOp extends OpMode {
     public double leftStickYVal;
     public double leftStickXVal;
     public double rotate;
-    public double speedMod = 0.5;
-    public double turnMod = 0.6;
+    public double speedMod = 0.9;
+    public double turnMod = 0.9;
     public double liftMod = 1;
 
     public double maxLiftDistance = 7500;
