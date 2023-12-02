@@ -48,7 +48,7 @@ public class MecanumTeleOp extends OpMode {
     @Override
     public void loop() {
         impGamepad1.update();
-        impGamepad2.update(); // Rachel -- this was missing, so controller 2 wasn't doing anything
+        impGamepad2.update();
 
         leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
         leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
@@ -181,6 +181,14 @@ public class MecanumTeleOp extends OpMode {
             robot.outtake.setPosition(0);
         } else if(impGamepad1.a.isInitialPress()){
             robot.outtake.setPosition(0.5);
+        }
+
+        if(impGamepad1.b.isPressed()){
+            robot.transfer.setPower(0.9);
+        } else if (impGamepad1.y.isPressed()){
+            robot.transfer.setPower(-0.9);
+        }else {
+            robot.transfer.setPower(0);
         }
 
         telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());

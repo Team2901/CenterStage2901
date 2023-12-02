@@ -32,6 +32,7 @@ public class MecanumDriveHardware{
     public DcMotor frontRight;
     public DcMotor lift;
     public DcMotor intake;
+    public DcMotor transfer;
     public DcMotor launcher;
     public Servo outtake;
     public Servo planeServo;
@@ -50,6 +51,7 @@ public class MecanumDriveHardware{
         frontRight = hardwareMap.dcMotor.get("frontRight");
         lift = hardwareMap.dcMotor.get("lift");
         intake = hardwareMap.dcMotor.get("intake");
+        transfer = hardwareMap.dcMotor.get("transfer");
         launcher = hardwareMap.dcMotor.get("launcher");
         outtake = hardwareMap.servo.get("outtake");
         planeServo = hardwareMap.servo.get("planeServo");
@@ -69,6 +71,7 @@ public class MecanumDriveHardware{
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
         launcher.setDirection(DcMotor.Direction.FORWARD);
 
         // stop motors during initialization
@@ -78,6 +81,7 @@ public class MecanumDriveHardware{
         frontRight.setPower(0);
         lift.setPower(0);
         intake.setPower(0);
+        transfer.setPower(0);
         launcher.setPower(0);
 
         // reset encoder positions to 0
@@ -86,6 +90,7 @@ public class MecanumDriveHardware{
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set motors up to run with encoders
@@ -98,6 +103,7 @@ public class MecanumDriveHardware{
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // better braking
@@ -105,7 +111,6 @@ public class MecanumDriveHardware{
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // set up imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

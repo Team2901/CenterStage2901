@@ -26,8 +26,6 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
-//    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-
     public int spikeMark = 1;
     public int count = 0;
     public OpenCvCamera camera;
@@ -101,8 +99,9 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
                 moveInches(20);
                 strafe(-3);
                 robot.preload.setPosition(0);
+                preloadTimer.reset();
                 if(preloadTimer.seconds() > 3) {
-                    strafe(6);
+                    strafe(3);
                     moveInches(-20);
                     strafe(48);
                     autoState = AutoState.STOP;
@@ -113,10 +112,10 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
                 moveInches(36);
                 strafe(6);
                 robot.preload.setPosition(0);
+                preloadTimer.reset();
                 if(preloadTimer.seconds() > 3) {
-                    moveInches(-12);
-                    strafe(24);
-                    moveInches(24);
+                    moveInches(-36);
+                    strafe(60);
                 }
                 autoState = AutoState.STOP;
             }
@@ -125,9 +124,11 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
                 moveInches(24);
                 strafe(24);
                 robot.preload.setPosition(0);
+                preloadTimer.reset();
                 if(preloadTimer.seconds() > 3) {
-                    strafe(24);
+                    strafe(-24);
                     moveInches(24);
+                    strafe(60);
                 }
                 autoState = AutoState.STOP;
             }
