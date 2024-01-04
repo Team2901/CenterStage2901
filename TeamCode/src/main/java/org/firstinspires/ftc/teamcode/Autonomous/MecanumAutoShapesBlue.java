@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import android.os.CountDownTimer;
-
-import com.qualcomm.ftccommon.configuration.EditPortListActivity;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
-import org.firstinspires.ftc.teamcode.Vision.ShapeDetection;
+import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
@@ -56,11 +50,16 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
 
         autoState = AutoState.CAMERA_WAIT;
 
-        cameraTimer.reset();
+        preloadTimer.startTime();
+        cameraTimer.startTime();
     }
 
     @Override
     public void loop() {
+        if(count == 0){
+            cameraTimer.reset();
+            count++;
+        }
 
 //        if(pipeline.xMid() > 0) {
 //            if (pipeline.xMid() < 10) {
@@ -75,9 +74,11 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 10) {
-                if (pipeline.xMid() < 170) {
+                if (pipeline.xMid() < 40) {
+                    spikeMark = 1;
+                } else if (pipeline.xMid() < 180) {
                     spikeMark = 2;
-                } else if (pipeline.xMid() < 320) {
+                } else if (pipeline.xMid() < 320){
                     spikeMark = 3;
                 }
                 telemetry.addData("X", pipeline.xMid());
@@ -93,7 +94,6 @@ public class MecanumAutoShapesBlue extends OpMode implements OpenCvCamera.AsyncC
             } else if(spikeMark == 3){
                 autoState = AutoState.MOVE_3;
             }
-            preloadTimer.startTime();
         } else if(autoState == AutoState.MOVE_1){
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(20);

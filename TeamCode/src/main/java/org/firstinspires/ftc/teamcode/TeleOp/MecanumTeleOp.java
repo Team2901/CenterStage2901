@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
@@ -14,6 +15,7 @@ public class MecanumTeleOp extends OpMode {
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
+    CountDownTimer timer = new CountDownTimer(ElapsedTime.Resolution.SECONDS);
 
     public double rightStickYVal;
     public double rightStickXVal;
@@ -30,7 +32,6 @@ public class MecanumTeleOp extends OpMode {
 
     public double startFrontLeft;
 
-    public double intakeTogglePower = 0;
     public boolean launcherOn = false;
 
 
@@ -112,66 +113,30 @@ public class MecanumTeleOp extends OpMode {
 //            robot.lift.setPower(0);
 //        }
 
-   /*     // Intake is controlled by driver2 from the trigger
-        if(impGamepad2.right_trigger.getValue() > 0){
-            robot.intake.setPower(-impGamepad2.right_trigger.getValue());
-        } else if(impGamepad2.left_trigger.getValue() > 0){
-            robot.intake.setPower(impGamepad2.left_trigger.getValue());
-        } else {
-            robot.intake.setPower(0);
-        }
-        telemetry.addData("Controller 2 R Trigger", impGamepad2.right_trigger.getValue());
-        telemetry.addData("Controller 2 L Trigger", impGamepad2.left_trigger.getValue());
-
-
-    */
-
         //intake is controlled by driver1's dpad
         if(impGamepad1.dpad_up.isInitialPress()){
-            intakeTogglePower = 1;
+            robot.intake.setPower(1);
         }else if(impGamepad1.dpad_left.isInitialPress()){
-            intakeTogglePower = 0;
+            robot.intake.setPower(0);
         }else if(impGamepad1.dpad_down.isInitialPress()){
-            intakeTogglePower = -1;
-        }
-        robot.intake.setPower(intakeTogglePower);
-
-        // Let the driver control the intake too -- but with the bumper
-//        if(impGamepad1.right_bumper.isPressed()){
-//            robot.intake.setPower(0.3);
-//        } else if(impGamepad1.left_bumper.isPressed()){
-//            robot.intake.setPower(-0.3);
-//        }
-/*
-        launcherOn = false;
-        if(impGamepad2.right_bumper.isInitialPress()){
-            if(!launcherOn){
-                robot.launcher.setPower(0.9);
-                launcherOn = true;
-            } else if(launcherOn){
-                robot.launcher.setPower(0);
-                launcherOn = false;
-            }
+            robot.intake.setPower(-1);
         }
 
- */
-
-        if(impGamepad1.right_bumper.isPressed()){
-            launcherOn = true;
+        if(impGamepad1.right_bumper.isInitialPress() && !launcherOn){
             robot.launcher.setPower(0.9);
-        } else if(impGamepad1.dpad_right.isPressed()) {
-            robot.launcher.setPower(-0.9);
-        } else {
+            launcherOn = true;
+        } else if (impGamepad1.right_bumper.isInitialPress() && launcherOn) {
             robot.launcher.setPower(0);
+            launcherOn = false;
         }
 
-//        if(impGamepad1.dpad_right.isPressed()){
-//            robot.launcher.setPower(-0.6);
-//            launcherOn = true;
-//        } else {
-//            robot.launcher.setPower(0);
-////            launcherOn = false;
-//        }
+        if(impGamepad1.dpad_right.isInitialPress()){
+            robot.launcher.setPower(-0.9);
+            launcherOn = true;
+        } else if (!impGamepad1.dpad_right.isInitialPress() && !launcherOn) {
+            robot.launcher.setPower(0);
+            launcherOn = false;
+        }
 
         if(impGamepad1.left_bumper.isPressed()) {
             robot.planeServo.setPosition(0.75);
@@ -179,16 +144,17 @@ public class MecanumTeleOp extends OpMode {
 
         if(impGamepad1.x.isInitialPress()){
             robot.outtake.setPosition(0);
-        } else if(impGamepad1.a.isInitialPress()){
+            timer.setTargetTime(5);
+            while(timer.hasRemainingTime()){}
             robot.outtake.setPosition(0.5);
         }
 
-        if(impGamepad1.b.isPressed()){
+        if(impGamepad1.a.isInitialPress()){
             robot.transfer.setPower(0.9);
-        } else if (impGamepad1.y.isPressed()){
-            robot.transfer.setPower(-0.9);
-        }else {
+        } else if(impGamepad1.b.isInitialPress()){
             robot.transfer.setPower(0);
+        } else if (impGamepad1.y.isInitialPress()){
+            robot.transfer.setPower(-0.9);
         }
 
         telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());

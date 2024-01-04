@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Vision;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -133,10 +135,10 @@ public class AprilTagTesting extends LinearOpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        frontLeft  = hardwareMap.get(DcMotor.class, "leftfront_drive");
-        frontRight = hardwareMap.get(DcMotor.class, "rightfront_drive");
-        backLeft  = hardwareMap.get(DcMotor.class, "leftback_drive");
-        backRight = hardwareMap.get(DcMotor.class, "rightback_drive");
+        frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft  = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -154,6 +156,7 @@ public class AprilTagTesting extends LinearOpMode
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive())
@@ -263,34 +266,18 @@ public class AprilTagTesting extends LinearOpMode
      */
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawTagID(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagOutline(true)
+                .build();
 
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-//        aprilTag.setDecimation(2);
-
-        // Create the vision portal by using a builder.
-//        if (USE_WEBCAM) {
-//            visionPortal = new VisionPortal.Builder()
-//                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-//                    .addProcessor(aprilTag)
-//                    .build();
-//        } else {
-//            visionPortal = new VisionPortal.Builder()
-//                    .setCamera(BuiltinCameraDirection.BACK)
-//                    .addProcessor(aprilTag)
-//                    .build();
-//        }
-
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        builder.addProcessor(aprilTag);
-        visionPortal = builder.build();
+        VisionPortal builder = new VisionPortal.Builder()
+                .addProcessor(aprilTag)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(640,480))
+                .build();
     }
 
     /*
