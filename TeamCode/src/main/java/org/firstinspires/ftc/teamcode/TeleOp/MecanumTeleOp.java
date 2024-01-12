@@ -9,13 +9,16 @@ import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
+import java.util.concurrent.TimeUnit;
+
 @TeleOp(name = "Mecanum Base", group = "TeleOp")
 public class MecanumTeleOp extends OpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
-    CountDownTimer timer = new CountDownTimer(ElapsedTime.Resolution.SECONDS);
+//    CountDownTimer timer = new CountDownTimer(ElapsedTime.Resolution.SECONDS);
+    ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public double rightStickYVal;
     public double rightStickXVal;
@@ -27,13 +30,13 @@ public class MecanumTeleOp extends OpMode {
     public double liftMod = 1;
 
     public double maxLiftDistance = 7500;
-
     public double minLiftDistance = -7500;
 
     public double startFrontLeft;
 
-    public boolean launcherOn = false;
+    public boolean slowMode = false;
 
+//    public boolean launcherOn = false;
 
     @Override
     public void init() {
@@ -44,6 +47,10 @@ public class MecanumTeleOp extends OpMode {
         startFrontLeft = robot.frontLeft.getCurrentPosition();
 
 //        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        outtakeTimer.startTime();
+
+//        robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -58,10 +65,13 @@ public class MecanumTeleOp extends OpMode {
 
         rotate = rightStickXVal * turnMod;
 
-        robot.backLeft.setPower(leftStickYVal-leftStickXVal+rotate);
-        robot.frontLeft.setPower(leftStickYVal+leftStickXVal+rotate);
-        robot.backRight.setPower(leftStickYVal+leftStickXVal-rotate);
-        robot.frontRight.setPower(leftStickYVal-leftStickXVal-rotate);
+        robot.backLeft.setPower(leftStickYVal+leftStickXVal+rotate);
+        robot.frontLeft.setPower(leftStickYVal-leftStickXVal+rotate);
+        robot.backRight.setPower(leftStickYVal-leftStickXVal-rotate);
+        robot.frontRight.setPower(leftStickYVal+leftStickXVal-rotate);
+
+//        robot.frontLeft.setPower(leftStickYVal);
+//        robot.frontRight.setPower(leftStickYVal);
 
         telemetry.addData("The ROTATION:", startFrontLeft - robot.frontLeft.getCurrentPosition());
 
@@ -85,9 +95,9 @@ public class MecanumTeleOp extends OpMode {
 
  */
 //moves slide up and down with left and right triggers.
-        if (impGamepad1.left_trigger.getValue() > 0.05 && robot.lift.getCurrentPosition() > minLiftDistance) {
+        if (impGamepad1.left_trigger.getValue() > 0.02 && robot.lift.getCurrentPosition() > minLiftDistance) {
             robot.lift.setPower(-impGamepad1.left_trigger.getValue() * liftMod);
-        } else if(impGamepad1.right_trigger.getValue() > 0.05 && robot.lift.getCurrentPosition() < maxLiftDistance){
+        } else if(impGamepad1.right_trigger.getValue() > 0.02 && robot.lift.getCurrentPosition() < maxLiftDistance){
             robot.lift.setPower(impGamepad1.right_trigger.getValue() * liftMod);
         } else {
             robot.lift.setPower(0);
@@ -115,38 +125,24 @@ public class MecanumTeleOp extends OpMode {
 
         //intake is controlled by driver1's dpad
         if(impGamepad1.dpad_up.isInitialPress()){
-            robot.intake.setPower(1);
+            robot.intake.setPower(0.4);
         }else if(impGamepad1.dpad_left.isInitialPress()){
             robot.intake.setPower(0);
         }else if(impGamepad1.dpad_down.isInitialPress()){
-            robot.intake.setPower(-1);
+            robot.intake.setPower(-0.4);
         }
 
-        if(impGamepad1.right_bumper.isInitialPress() && !launcherOn){
-            robot.launcher.setPower(0.9);
-            launcherOn = true;
-        } else if (impGamepad1.right_bumper.isInitialPress() && launcherOn) {
-            robot.launcher.setPower(0);
-            launcherOn = false;
-        }
+        //changed speed ut not uploaded to robot
 
-        if(impGamepad1.dpad_right.isInitialPress()){
-            robot.launcher.setPower(-0.9);
-            launcherOn = true;
-        } else if (!impGamepad1.dpad_right.isInitialPress() && !launcherOn) {
-            robot.launcher.setPower(0);
-            launcherOn = false;
-        }
-
-        if(impGamepad1.left_bumper.isPressed()) {
-            robot.planeServo.setPosition(0.75);
+        if(impGamepad1.left_bumper.isInitialPress() || impGamepad1.right_bumper.isInitialPress()) {
+            robot.planeServo.setPosition(0);
         }
 
         if(impGamepad1.x.isInitialPress()){
             robot.outtake.setPosition(0);
-            timer.setTargetTime(5);
-            while(timer.hasRemainingTime()){}
-            robot.outtake.setPosition(0.5);
+            outtakeTimer.reset();
+            while(outtakeTimer.time(TimeUnit.SECONDS) < 2){}
+            robot.outtake.setPosition(0.2);
         }
 
         if(impGamepad1.a.isInitialPress()){
@@ -157,7 +153,18 @@ public class MecanumTeleOp extends OpMode {
             robot.transfer.setPower(-0.9);
         }
 
+        if(impGamepad1.dpad_right.isInitialPress()){
+            if(slowMode == false) {
+                speedMod = 0.5;
+                slowMode = true;
+            } else if(slowMode == true){
+                speedMod = 0.9;
+                slowMode = false;
+            }
+        }
+
         telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());
+        telemetry.addData("Outtake Position", robot.outtake.getPosition());
         telemetry.update();
     }
 }

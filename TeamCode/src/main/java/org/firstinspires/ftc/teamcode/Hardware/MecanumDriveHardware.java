@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumDriveHardware{
 
-    public static final double TICKS_PER_MOTOR_REV = 751.8;
+    public static final double TICKS_PER_MOTOR_REV = 537.7;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
     public static final double DRIVE_GEAR_RATIO = 1;
     public static final double TICKS_PER_DRIVE_REV = TICKS_PER_MOTOR_REV * DRIVE_GEAR_RATIO;
@@ -24,15 +24,11 @@ public class MecanumDriveHardware{
     public DcMotor lift;
     public DcMotor intake;
     public DcMotor transfer;
-    public DcMotor launcher;
     public Servo outtake;
     public Servo planeServo;
     public Servo preload;
 
     public BNO055IMU imu;
-
-//    public OpenCvCamera camera;
-//    public ShapeDetection pipeLine;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
@@ -43,17 +39,9 @@ public class MecanumDriveHardware{
         lift = hardwareMap.dcMotor.get("lift");
         intake = hardwareMap.dcMotor.get("intake");
         transfer = hardwareMap.dcMotor.get("transfer");
-        launcher = hardwareMap.dcMotor.get("launcher");
         outtake = hardwareMap.servo.get("outtake");
         planeServo = hardwareMap.servo.get("planeServo");
         preload = hardwareMap.servo.get("preload");
-
-//        WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
-//        pipeLine = new ShapeDetection(telemetry);
-//        int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
-//        camera.setPipeline(pipeLine);
-//        camera.openCameraDeviceAsync(this);
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -63,7 +51,6 @@ public class MecanumDriveHardware{
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
-        launcher.setDirection(DcMotor.Direction.FORWARD);
 
         // stop motors during initialization
         backLeft.setPower(0);
@@ -73,7 +60,6 @@ public class MecanumDriveHardware{
         lift.setPower(0);
         intake.setPower(0);
         transfer.setPower(0);
-        launcher.setPower(0);
 
         // reset encoder positions to 0
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,8 +79,8 @@ public class MecanumDriveHardware{
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // better braking
@@ -115,14 +101,4 @@ public class MecanumDriveHardware{
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
-
-//    @Override
-//    public void onOpened() {
-//        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-//    }
-//
-//    @Override
-//    public void onError(int errorCode) {
-//
-//    }
 }

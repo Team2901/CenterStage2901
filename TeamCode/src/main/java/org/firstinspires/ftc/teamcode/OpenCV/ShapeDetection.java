@@ -69,6 +69,9 @@ public class ShapeDetection extends OpenCvPipeline {
     }
 
     public double xMid(){
-        return rect.x + (rect.width/2);
+        if(rect != null){
+            return rect.x + (rect.width/2);
+        }
+        return 500;
     }
 }

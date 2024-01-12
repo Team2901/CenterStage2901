@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Shape Detection", group = "Autonomous")
+@Autonomous(name = "Auto Shape Detection", group = "Autonomous")
 public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
@@ -74,9 +74,9 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 10) {
-                if (pipeline.xMid() < 40) {
+                if (pipeline.xMid() < 200) {
                     spikeMark = 1;
-                } else if (pipeline.xMid() < 180) {
+                } else if (pipeline.xMid() < 280) {
                     spikeMark = 2;
                 } else if (pipeline.xMid() < 320){
                     spikeMark = 3;
@@ -84,8 +84,9 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
                 telemetry.addData("X Mid", pipeline.xMid());
                 telemetry.addData("Spike Mark", spikeMark);
                 telemetry.update();
+            } else {
+                autoState = AutoState.CAMERA_DETECTION;
             }
-            autoState = AutoState.CAMERA_DETECTION;
         } else if(autoState == AutoState.CAMERA_DETECTION){
             if(spikeMark == 1){
                 autoState = AutoState.MOVE_1;
@@ -203,14 +204,14 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft.setPower(0.5);
-        robot.frontRight.setPower(0.5);
-        robot.backLeft.setPower(0.5);
-        robot.backRight.setPower(0.5);
+        robot.frontLeft.setPower(0.35);
+        robot.frontRight.setPower(0.35);
+        robot.backLeft.setPower(0.35);
+        robot.backRight.setPower(0.35);
 
         while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
-//            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
-//            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
+            telemetry.addData("Current Left Position", robot.backLeft.getCurrentPosition());
+            telemetry.addData("Current Right Position", robot.backRight.getCurrentPosition());
         }
 
         robot.frontLeft.setPower(0);

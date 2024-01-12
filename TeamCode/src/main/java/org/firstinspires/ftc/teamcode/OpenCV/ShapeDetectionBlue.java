@@ -72,6 +72,6 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         if(rect != null) {
             return rect.x + (rect.width/2);
         }
-        return -100;
+        return 500;
     }
 }
