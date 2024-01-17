@@ -16,6 +16,7 @@ import java.util.List;
 public class ShapeDetection extends OpenCvPipeline {
 
     private Telemetry telemetry;
+    public double xMidVal = 999;
     public ShapeDetection (Telemetry telemetry){
         this.telemetry = telemetry;
     }
@@ -57,11 +58,13 @@ public class ShapeDetection extends OpenCvPipeline {
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
-        Imgproc.line(lastImage, new Point(107,0), new Point(107,240), new Scalar(0, 0, 0));
-        Imgproc.line(lastImage, new Point(214,0), new Point(214,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(160,0), new Point(160,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(280,0), new Point(280,240), new Scalar(0, 0, 0));
         if(rect != null) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
+            telemetry.addData("xMid", this.xMid());
+            xMidVal = this.xMid();
         }
         telemetry.update();
 

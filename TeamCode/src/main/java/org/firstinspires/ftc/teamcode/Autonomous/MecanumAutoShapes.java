@@ -12,17 +12,20 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Auto Shape Detection", group = "Autonomous")
+@Autonomous(name = "Camera Auto Red", group = "Autonomous")
 public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
-    public int spikeMark = 1;
+    public int spikeMark = 0;
     public int count = 0;
     public OpenCvCamera camera;
+
+    public double xMidInit = 888;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime preloadTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
@@ -39,14 +42,17 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
     @Override
     public void init() {
+        //why is there a pipeline with capital L? if there's an issue with the vision, this might be the source (i changed it to lowercase)
         robot.init(this.hardwareMap, telemetry);
-        ShapeDetection pipeLine;
+//        ShapeDetection pipeline;
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
-        pipeLine = new ShapeDetection(telemetry);
+//        pipeline = new ShapeDetection(telemetry);
         int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
-        camera.setPipeline(pipeLine);
+        camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(this);
+
+//        xMidInit = pipeline.xMidVal;
 
         autoState = AutoState.CAMERA_WAIT;
 
@@ -56,6 +62,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
     @Override
     public void loop() {
+
         if(count == 0){
             cameraTimer.reset();
             count++;
@@ -74,14 +81,19 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 10) {
-                if (pipeline.xMid() < 200) {
+                //just wait c:
+//                telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
+            } else if (cameraTimer.time(TimeUnit.SECONDS) < 20){
+                if (pipeline.xMidVal < 160) {
                     spikeMark = 1;
-                } else if (pipeline.xMid() < 280) {
+                } else if (pipeline.xMidVal < 280) {
                     spikeMark = 2;
-                } else if (pipeline.xMid() < 320){
+                } else {
                     spikeMark = 3;
                 }
-                telemetry.addData("X Mid", pipeline.xMid());
+                telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
+                telemetry.addData("X Mid", pipeline.xMidVal);
+//                telemetry.addData("X Init", xMidInit);
                 telemetry.addData("Spike Mark", spikeMark);
                 telemetry.update();
             } else {
