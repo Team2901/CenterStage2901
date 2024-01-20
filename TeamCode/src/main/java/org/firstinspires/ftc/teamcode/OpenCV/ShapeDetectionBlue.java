@@ -16,6 +16,7 @@ import java.util.List;
 public class ShapeDetectionBlue extends OpenCvPipeline {
 
     private Telemetry telemetry;
+    public double xMidVal;
     public ShapeDetectionBlue(Telemetry telemetry){
         this.telemetry = telemetry;
     }
@@ -48,7 +49,7 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         Core.inRange(HSVImage, new Scalar(90, 55, 55), new Scalar(140, 255, 255), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 19);
+        Imgproc.medianBlur(bwImage, blurImg, 25);
 
         Imgproc.findContours(blurImg, blueContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -57,15 +58,18 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
-        Imgproc.line(lastImage, new Point(107,0), new Point(107,240), new Scalar(0, 0, 0));
-        Imgproc.line(lastImage, new Point(214,0), new Point(214,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(130,0), new Point(130,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(280,0), new Point(280,240), new Scalar(0, 0, 0));
         if(rect != null) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
+            telemetry.addData("xMid", this.xMid());
+            xMidVal = this.xMid();
         }
         telemetry.update();
 
         return lastImage;
+//        return bwImage;
     }
 
     public double xMid(){

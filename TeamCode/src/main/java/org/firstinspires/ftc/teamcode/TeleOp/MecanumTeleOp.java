@@ -139,10 +139,10 @@ public class MecanumTeleOp extends OpMode {
         }
 
         if(impGamepad1.x.isInitialPress()){
-            robot.outtake.setPosition(0);
+            robot.outtake.setPosition(0.25);
             outtakeTimer.reset();
-            while(outtakeTimer.time(TimeUnit.SECONDS) < 2){}
-            robot.outtake.setPosition(0.2);
+            while(outtakeTimer.time(TimeUnit.SECONDS) < 1.25){}
+            robot.outtake.setPosition(0.01);
         }
 
         if(impGamepad1.a.isInitialPress()){

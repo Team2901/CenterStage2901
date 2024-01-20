@@ -49,7 +49,7 @@ public class ShapeDetection extends OpenCvPipeline {
         Core.inRange(HSVImage, new Scalar(160, 50, 50), new Scalar(180, 255, 255), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 23);
+        Imgproc.medianBlur(bwImage, blurImg, 25);
 
         Imgproc.findContours(blurImg, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -58,7 +58,7 @@ public class ShapeDetection extends OpenCvPipeline {
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
-        Imgproc.line(lastImage, new Point(160,0), new Point(160,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(150,0), new Point(150,240), new Scalar(0, 0, 0));
         Imgproc.line(lastImage, new Point(280,0), new Point(280,240), new Scalar(0, 0, 0));
         if(rect != null) {
             telemetry.addData("x", rect.x);
@@ -69,6 +69,7 @@ public class ShapeDetection extends OpenCvPipeline {
         telemetry.update();
 
         return lastImage;
+//        return bwImage;
     }
 
     public double xMid(){

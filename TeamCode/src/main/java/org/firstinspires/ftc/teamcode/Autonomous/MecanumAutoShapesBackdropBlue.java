@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,8 +16,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Camera Auto Red", group = "Autonomous")
-public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
+@Disabled
+@Autonomous(name = "Camera Auto Blue Backdrop", group = "Autonomous")
+public class MecanumAutoShapesBackdropBlue extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
+
+
+    // UPDATE NEEDED FROM MECANUMAUTOSHAPES
+
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
@@ -30,6 +36,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime preloadTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    public ElapsedTime slidesTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public enum AutoState {
         CAMERA_WAIT,
@@ -37,6 +44,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         MOVE_1,
         MOVE_2,
         MOVE_3,
+        SLIDES,
         STOP
     }
     AutoState autoState;
@@ -60,6 +68,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
         preloadTimer.startTime();
         cameraTimer.startTime();
+        slidesTimer.startTime();
     }
 
     @Override
@@ -83,9 +92,9 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 7) {
-                if (pipeline.xMidVal < 150 && pipeline.xMidVal > 5) {
+                if (pipeline.xMidVal < 150) {
                     spikeMark = 1;
-                } else if (pipeline.xMidVal < 280 && pipeline.xMidVal > 5) {
+                } else if (pipeline.xMidVal < 280) {
                     spikeMark = 2;
                 } else {
                     spikeMark = 3;
@@ -107,7 +116,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
             preloadTimer.reset();
         } else if(autoState == AutoState.MOVE_1){
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(28);
+                moveInches(22);
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
@@ -120,89 +129,101 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(6,0,0,0,0);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                turnByTicks(-645);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                moveInches(-38);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                strafe(12,0,0,0,0);
-                autoState = AutoState.STOP;
-            }
-        } else if(autoState == AutoState.MOVE_2){
-            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(35);
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                strafe(8,0,0,10,10);
-                robot.preload.setPosition(0);
                 strafe(2,0,0,0,0);
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                moveInches(-6.5);
+                moveInches(12);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                turnByTicks(620);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                moveInches(-44);
+                slidesTimer.reset();
+                autoState = AutoState.SLIDES;
+            }
+        } else if(autoState == AutoState.MOVE_2){
+            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
+                moveInches(36);
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                strafe(6,0,0,10,10);
+                robot.preload.setPosition(0);
 
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                turnByTicks(-630); //-90 degrees + a little bit to account for curving when backing up
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                moveInches(-38);
-                autoState = AutoState.STOP;
-            }
-        } else if(autoState == AutoState.MOVE_3){
-            if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(28);
+                moveInches(-8.5);
+
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(24,0,0,30,30);
+                turnByTicks(620);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                moveInches(-44);
+                slidesTimer.reset();
+                autoState = AutoState.SLIDES;
+            }
+        } else if(autoState == AutoState.MOVE_3) {
+            if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
+                moveInches(22);
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                strafe(24, 0, 0, 30, 30);
                 robot.preload.setPosition(0);
-                strafe(6,0,0,0,0);
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                strafe(2, 0, 0, 0, 0);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                turnByTicks(-645);
+                moveInches(-20);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                moveInches(-18);
+                turnByTicks(620);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(-12,0,0,0,0);
-                autoState = AutoState.STOP;
+                moveInches(-24);
+                slidesTimer.reset();
+                autoState = AutoState.SLIDES;
+            }
+        } else if(autoState == AutoState.SLIDES){
+            if (slidesTimer.time(TimeUnit.SECONDS) < 5){
+                robot.lift.setPower(0.4);
             }
         } else if(autoState == AutoState.STOP){
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
