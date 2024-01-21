@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,16 +9,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-@Disabled
-@Autonomous(name = "Camera Auto Red", group = "Autonomous")
-public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCameraOpenListener{
+@Autonomous(name = "Camera Auto Red Linear", group = "Autonomous")
+public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
@@ -44,7 +42,15 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
     AutoState autoState;
 
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException {
+        _init();
+        waitForStart();
+        while(opModeIsActive()){
+            _loop();
+        }
+    }
+
+    void _init() {
         //why is there a pipeline with capital L? if there's an issue with the vision, this might be the source (i changed it to lowercase)
         //the problem was that i made another ShapeDetection object and it was using that one as the reference
         robot.init(this.hardwareMap, telemetry);
@@ -64,8 +70,10 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         cameraTimer.startTime();
     }
 
-    @Override
-    public void loop() {
+
+     void _loop() {
+
+        ElapsedTime stall = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
         if(count == 0){
             cameraTimer.reset();
@@ -111,18 +119,18 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(28);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 strafe(-2,0,0,0,0);
-                robot.preload.setPosition(0);
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                robot.preload.setPosition(1);
+                stall.reset();
+                while(stall.time(TimeUnit.SECONDS) < 1.5 && opModeIsActive()){
+                    idle();
                 }
                 strafe(6,0,0,0,0);
+                robot.preload.setPosition(0);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -147,22 +155,23 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(35);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 strafe(8,0,0,10,10);
-                robot.preload.setPosition(0);
+                robot.preload.setPosition(1);
                 strafe(2,0,0,0,0);
+                robot.preload.setPosition(0);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 moveInches(-6.5);
 
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -179,11 +188,22 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(28);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 strafe(24,0,0,30,30);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                robot.preload.setPosition(1);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 robot.preload.setPosition(0);
                 strafe(6,0,0,0,0);
                 try {
@@ -285,7 +305,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backLeft.setPower(0.35);
         robot.backRight.setPower(0.35);
 
-        while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
+        while(opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
 //            telemetry.addData("Current Left Position", robot.backLeft.getCurrentPosition());
 //            telemetry.addData("Current Right Position", robot.backRight.getCurrentPosition());
         }
@@ -319,7 +339,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backLeft.setPower(0.35);
         robot.backRight.setPower(0.35);
 
-        while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
+        while(opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
 //            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
 //            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }
@@ -356,7 +376,7 @@ public class MecanumAutoShapes extends OpMode implements OpenCvCamera.AsyncCamer
         robot.backLeft.setPower(0.35);
         robot.backRight.setPower(0.35);
 
-        while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
+        while(opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
 //            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
 //            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }

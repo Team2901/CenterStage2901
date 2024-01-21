@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
+@Disabled
 @Autonomous(name = "Mecanum Auto Red Right V1", group = "Autonomous")
 public class MecanumAutoRedRightV1 extends LinearOpMode {
 

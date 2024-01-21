@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 
-
+@Disabled
 @Autonomous(name = "Mecanum Auto Red Left V1", group = "Autonomous")
 public class MecanumAutoRedLeftV1 extends LinearOpMode {
 

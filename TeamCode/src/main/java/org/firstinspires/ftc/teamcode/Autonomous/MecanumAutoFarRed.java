@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
-@Disabled
-@Autonomous(name = "Mecanum Auto Blue Left V1", group = "Autonomous")
-public class MecanumAutoBlueLeftV1 extends LinearOpMode {
+
+@Autonomous(name = "Mecanum Auto Far Red", group = "Autonomous")
+public class MecanumAutoFarRed extends LinearOpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
 
@@ -18,21 +17,13 @@ public class MecanumAutoBlueLeftV1 extends LinearOpMode {
         robot.init(this.hardwareMap, telemetry);
         waitForStart();
 
-        strafe(-24);
+        strafe(-5);
 
-        sleep(1000);
-
-        strafe(21);
-
-        moveInches(-24);
-
-        strafe(-24);
-
-        moveInches(-54);
+        moveInches(65);
     }
 
     private void moveInches(double inches){
-        int ticks = (int) (inches * MecanumDriveHardware.TICKS_PER_INCH);
+        int ticks = (int) (inches * robot.TICKS_PER_INCH);
 
         robot.frontLeft.setTargetPosition(robot.frontLeft.getCurrentPosition() + ticks);
         robot.frontRight.setTargetPosition(robot.frontRight.getCurrentPosition() + ticks);
@@ -66,7 +57,7 @@ public class MecanumAutoBlueLeftV1 extends LinearOpMode {
     }
 
     private void strafe(double inches){
-        int ticks = (int) (inches * MecanumDriveHardware.TICKS_PER_INCH);
+        int ticks = (int) (inches * robot.TICKS_PER_INCH);
 
         robot.frontLeft.setTargetPosition(robot.frontLeft.getCurrentPosition() + ticks);
         robot.frontRight.setTargetPosition(robot.frontRight.getCurrentPosition() - ticks);

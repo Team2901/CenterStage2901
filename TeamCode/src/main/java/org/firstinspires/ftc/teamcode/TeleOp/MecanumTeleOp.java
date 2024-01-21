@@ -36,6 +36,8 @@ public class MecanumTeleOp extends OpMode {
 
     public boolean slowMode = false;
 
+    public boolean outtakeOpen = false;
+
 //    public boolean launcherOn = false;
 
     @Override
@@ -139,18 +141,21 @@ public class MecanumTeleOp extends OpMode {
         }
 
         if(impGamepad1.x.isInitialPress()){
-            robot.outtake.setPosition(0.25);
-            outtakeTimer.reset();
-            while(outtakeTimer.time(TimeUnit.SECONDS) < 1.25){}
-            robot.outtake.setPosition(0.01);
+            if(!outtakeOpen){
+                robot.outtake.setPosition(0.35);
+                outtakeOpen = true;
+            } else {
+                robot.outtake.setPosition(0.01);
+                outtakeOpen = false;
+            }
         }
 
         if(impGamepad1.a.isInitialPress()){
-            robot.transfer.setPower(0.9);
+            robot.transfer.setPower(1);
         } else if(impGamepad1.b.isInitialPress()){
             robot.transfer.setPower(0);
         } else if (impGamepad1.y.isInitialPress()){
-            robot.transfer.setPower(-0.9);
+            robot.transfer.setPower(-1);
         }
 
         if(impGamepad1.dpad_right.isInitialPress()){

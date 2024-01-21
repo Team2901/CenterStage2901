@@ -42,14 +42,14 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         Mat HSVImage = new Mat();
         Imgproc.cvtColor(lastImage, HSVImage, Imgproc.COLOR_RGB2HSV);
 
-        Rect cropRect = new Rect(0,0,320,240);
+        Rect cropRect = new Rect(0,120,320,120);
         Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(HSVImage, new Scalar(90, 55, 55), new Scalar(140, 255, 255), bwImage);
+        Core.inRange(HSVImage, new Scalar(90, 55, 70), new Scalar(140, 255, 250), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 25);
+        Imgproc.medianBlur(bwImage, blurImg, 27);
 
         Imgproc.findContours(blurImg, blueContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
