@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
 
-@Autonomous(name = "Mecanum Auto Far Red", group = "Autonomous")
+@Autonomous(name = "Mecanum Auto Far Blue", group = "Autonomous")
 public class MecanumAutoFarBlue extends LinearOpMode {
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
