@@ -29,8 +29,8 @@ public class MecanumTeleOp extends OpMode {
     public double turnMod = 0.9;
     public double liftMod = 1;
 
-    public double maxLiftDistance = 7500;
-    public double minLiftDistance = -7500;
+//    public double maxLiftDistance = 7500;
+//    public double minLiftDistance = -7500;
 
     public double startFrontLeft;
 
@@ -97,9 +97,9 @@ public class MecanumTeleOp extends OpMode {
 
  */
 //moves slide up and down with left and right triggers.
-        if (impGamepad1.left_trigger.getValue() > 0.02 && robot.lift.getCurrentPosition() > minLiftDistance) {
+        if (impGamepad1.left_trigger.getValue() > 0.02) {
             robot.lift.setPower(-impGamepad1.left_trigger.getValue() * liftMod);
-        } else if(impGamepad1.right_trigger.getValue() > 0.02 && robot.lift.getCurrentPosition() < maxLiftDistance){
+        } else if(impGamepad1.right_trigger.getValue() > 0.02){
             robot.lift.setPower(impGamepad1.right_trigger.getValue() * liftMod);
         } else {
             robot.lift.setPower(0);

@@ -124,6 +124,11 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 moveInches(-6);
                 strafe(-3,0,0,0,0);
                 robot.preload.setPosition(1);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 strafe(3,0,0,0,0);
                 robot.preload.setPosition(0);
                 try {
@@ -161,6 +166,11 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                     throw new RuntimeException(e);
                 }
                 robot.preload.setPosition(1);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 strafe(4,0,0,0,0);
                 robot.preload.setPosition(0);
                 try {
@@ -190,6 +200,11 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 moveInches(-6);
                 strafe(-3,0,0,0,0);
                 robot.preload.setPosition(1);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 strafe(3,0,0,0,0);
                 robot.preload.setPosition(0);
                 try {
@@ -209,7 +224,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(-12,0,0,0,0);
+                strafe(-12,0,-10,0,0);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.STOP){
@@ -362,7 +377,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
         robot.backLeft.setPower(0.35);
         robot.backRight.setPower(0.35);
 
-        while(robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
+        while(opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
 //            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
 //            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }
