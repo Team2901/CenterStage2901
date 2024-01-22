@@ -16,7 +16,7 @@ import java.util.List;
 public class ShapeDetection extends OpenCvPipeline {
 
     private Telemetry telemetry;
-    public double xMidVal = 999;
+    public double xMidVal;
     public ShapeDetection (Telemetry telemetry){
         this.telemetry = telemetry;
     }

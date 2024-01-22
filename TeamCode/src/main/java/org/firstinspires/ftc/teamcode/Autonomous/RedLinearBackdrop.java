@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,8 +14,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Camera Auto Red Linear", group = "Autonomous")
-public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
+@Autonomous(name = "Camera Auto Red Linear Backdrop", group = "Autonomous")
+public class RedLinearBackdrop extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
@@ -27,9 +26,11 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
 
     public double xMidInit = 888;
     public boolean movedBack = false;
+    public boolean isStopped = false;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime preloadTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    public ElapsedTime liftTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public enum AutoState {
         CAMERA_WAIT,
@@ -46,8 +47,26 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
         _init();
         waitForStart();
         while(opModeIsActive()){
-            _loop();
+            if(isStopped){
+                break;
+            } else {
+                _loop();
+            }
         }
+
+        //slides
+        liftTimer.reset();
+        while(liftTimer.time(TimeUnit.SECONDS) < 1.5 && opModeIsActive()){
+            robot.lift.setPower(0.3);
+        }
+        robot.lift.setPower(0);
+        robot.outtake.setPosition(0.35);
+        while(liftTimer.time(TimeUnit.SECONDS) < 3 && opModeIsActive()){}
+        robot.outtake.setPosition(0.01);
+        while(liftTimer.time(TimeUnit.SECONDS) < 4.5 && opModeIsActive()){
+            robot.lift.setPower(-0.3);
+        }
+        robot.lift.setPower(0);
     }
 
     void _init() {
@@ -68,6 +87,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
 
         preloadTimer.startTime();
         cameraTimer.startTime();
+        liftTimer.startTime();
     }
 
 
@@ -229,7 +249,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(-12,0,0,0,0);
+                strafe(-10,0,0,0,0);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.STOP){
@@ -238,6 +258,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
                 robot.frontRight.setPower(0);
                 robot.backLeft.setPower(0);
                 robot.backRight.setPower(0);
+                isStopped = true;
             }
         }
 
