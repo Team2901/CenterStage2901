@@ -124,7 +124,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
                     throw new RuntimeException(e);
                 }
                 strafe(-2,0,0,0,0);
-                robot.preload.setPosition(1);
+                robot.preload.setPosition(0.8);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -161,7 +161,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
                     throw new RuntimeException(e);
                 }
                 strafe(8,0,0,10,10);
-                robot.preload.setPosition(1);
+                robot.preload.setPosition(0.8);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -204,7 +204,7 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                robot.preload.setPosition(1);
+                robot.preload.setPosition(0.8);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

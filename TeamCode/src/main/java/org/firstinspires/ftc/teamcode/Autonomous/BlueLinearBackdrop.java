@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Camera Auto Blue Linear", group = "Autonomous")
-public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
+@Autonomous(name = "Camera Auto Blue Linear Backdrop", group = "Autonomous")
+public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ShapeDetectionBlue pipeline = new ShapeDetectionBlue(this.telemetry);
@@ -27,9 +27,11 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
 
     public double xMidInit = 888;
     public boolean movedBack = false;
+    public boolean isStopped = false;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime preloadTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    public ElapsedTime liftTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     public enum AutoState {
         CAMERA_WAIT,
@@ -46,8 +48,26 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
         _init();
         waitForStart();
         while(opModeIsActive()){
-            _loop();
+            if(isStopped){
+                break;
+            } else {
+                _loop();
+            }
         }
+
+        //slides
+        liftTimer.reset();
+        while(liftTimer.time(TimeUnit.SECONDS) < 1.5){
+            robot.lift.setPower(0.3);
+        }
+        robot.lift.setPower(0);
+        robot.outtake.setPosition(0.35);
+        while(liftTimer.time(TimeUnit.SECONDS) < 3){}
+        robot.outtake.setPosition(0.01);
+        while(liftTimer.time(TimeUnit.SECONDS) < 4.5){
+            robot.lift.setPower(-0.3);
+        }
+        robot.lift.setPower(0);
     }
 
     void _init() {
@@ -68,6 +88,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
 
         preloadTimer.startTime();
         cameraTimer.startTime();
+        liftTimer.startTime();
     }
 
     void _loop() {
@@ -103,33 +124,32 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
             preloadTimer.reset();
         } else if(autoState == AutoState.MOVE_1){
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(26);
+                moveInches(24);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(-12,0,0,0,0);
+                strafe(-22,40,40,0,0);
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                turnByTicks(620);
+                turnByTicks(600);
                 try {
                     Thread.sleep(1500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                moveInches(-10);
-                strafe(-3,0,0,0,0);
+                strafe(3,0,0,0,0);
                 robot.preload.setPosition(0.8);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(3,0,0,0,0);
+                strafe(-3,0,0,0,0);
                 robot.preload.setPosition(0.05);
                 try {
                     Thread.sleep(1000);
@@ -142,7 +162,13 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(12,0,0,0,0);
+                turnByTicks(-110);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                strafe(12,0,0,10,10);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.MOVE_2){
@@ -179,6 +205,18 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                     throw new RuntimeException(e);
                 }
                 moveInches(-42);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                turnByTicks(-110);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                strafe(6,0,0,5,5);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.MOVE_3){
@@ -189,7 +227,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(-6,0,0,0,0);
+                strafe(-10,0,0,0,0);
                 turnByTicks(580);
                 turnByTicks(580);
                 try {
@@ -230,6 +268,12 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+                turnByTicks(-30);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 strafe(-12,0,-10,0,0);
                 autoState = AutoState.STOP;
             }
@@ -239,6 +283,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 robot.frontRight.setPower(0);
                 robot.backLeft.setPower(0);
                 robot.backRight.setPower(0);
+                isStopped = true;
             }
         }
 
