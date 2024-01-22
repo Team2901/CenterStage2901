@@ -57,14 +57,14 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
 
         //slides
         liftTimer.reset();
-        while(liftTimer.time(TimeUnit.SECONDS) < 1.5){
+        while(liftTimer.time(TimeUnit.SECONDS) < 1.5 && opModeIsActive()){
             robot.lift.setPower(0.3);
         }
         robot.lift.setPower(0);
         robot.outtake.setPosition(0.35);
-        while(liftTimer.time(TimeUnit.SECONDS) < 3){}
+        while(liftTimer.time(TimeUnit.SECONDS) < 3 && opModeIsActive()){}
         robot.outtake.setPosition(0.01);
-        while(liftTimer.time(TimeUnit.SECONDS) < 4.5){
+        while(liftTimer.time(TimeUnit.SECONDS) < 4.5 && opModeIsActive()){
             robot.lift.setPower(-0.3);
         }
         robot.lift.setPower(0);
@@ -99,7 +99,7 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
         }
 
         if(autoState == AutoState.CAMERA_WAIT) {
-            if(cameraTimer.time(TimeUnit.SECONDS) < 7) {
+            if(cameraTimer.time(TimeUnit.SECONDS) < 6) {
                 if (pipeline.xMidVal < 130 && pipeline.xMidVal > 5) {
                     spikeMark = 1;
                 } else if (pipeline.xMidVal < 280 && pipeline.xMidVal > 5) {
@@ -223,7 +223,7 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
             if(!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(28);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -231,7 +231,7 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
                 turnByTicks(580);
                 turnByTicks(580);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -246,7 +246,7 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
                 strafe(7,0,0,0,0);
                 robot.preload.setPosition(0.05);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -264,13 +264,13 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
                 }
                 moveInches(-38);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                turnByTicks(-30);
+                turnByTicks(-60);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

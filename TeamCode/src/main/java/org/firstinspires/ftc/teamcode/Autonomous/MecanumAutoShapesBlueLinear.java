@@ -193,7 +193,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 turnByTicks(580);
                 turnByTicks(580);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -208,7 +208,7 @@ public class MecanumAutoShapesBlueLinear extends LinearOpMode implements OpenCvC
                 strafe(7,0,0,0,0);
                 robot.preload.setPosition(0.05);
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
