@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeDetectionBlue extends OpenCvPipeline {
+    // Code Review: You should combine classes ShapeDetection and ShapeDetectionBlue, and have a
+    //              parameter (in constructor) for Red vs Blue. The only difference is the HSV
+    //              inRange values. (And the blur kernel size is slightly different)
 
     private Telemetry telemetry;
     public double xMidVal;
@@ -38,23 +41,30 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         lastImage = new Mat();
         input.copyTo(lastImage);
 
-        //convert to gray
+        //convert to HSV
         Mat HSVImage = new Mat();
         Imgproc.cvtColor(lastImage, HSVImage, Imgproc.COLOR_RGB2HSV);
 
+        // Code Review: This doesn't crop the frame, it just draws a rectangle around the bottom
+        // half of the frame
         Rect cropRect = new Rect(0,120,320,120);
         Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
         Core.inRange(HSVImage, new Scalar(90, 55, 70), new Scalar(140, 255, 250), bwImage);
 
+        // Code Review: Note: blurImg is only used for contours... Also, this is a really big blur kernel.
         Mat blurImg = bwImage;
         Imgproc.medianBlur(bwImage, blurImg, 27);
 
+        // Code Review: Contours are only found to draw them... Did you want to do something else
+        //              with the contours? Such as use the centroid of the largest region (moment 0)?
         Imgproc.findContours(blurImg, blueContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         Imgproc.drawContours(lastImage, blueContours, -1, new Scalar(0, 255, 255));
 
+        // Code Review: The boundingRect is calculated on bwImage. Should it be blurImage?
+        //              boundingRect will find _any_ non-zero pixel from inRange
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
@@ -76,6 +86,6 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         if(rect != null) {
             return rect.x + (rect.width/2);
         }
-        return 500;
+        return 500; // Code Review: This code does nothing. rect != null is already tested.
     }
 }
