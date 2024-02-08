@@ -21,6 +21,12 @@ public class MecanumDriveHardware{
     public DcMotor backRight;
     public DcMotor frontLeft;
     public DcMotor frontRight;
+
+    // Coach Review: While the states robot is being rebuilt, you could work on all the parts that
+    // you know are changing. No more lift/intake/transfer. Instead an arm motor, and several
+    // claw servos.
+    // TBD on whether the drone launcher will be a motor or a servo.
+    // I don't know whether the preload is changing
     public DcMotor lift;
     public DcMotor intake;
     public DcMotor transfer;
@@ -28,7 +34,7 @@ public class MecanumDriveHardware{
     public Servo planeServo;
     public Servo preload;
 
-    public BNO055IMU imu;
+    public BNO055IMU imu; // Coach Feedback: See comment in init() below.
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
@@ -90,6 +96,11 @@ public class MecanumDriveHardware{
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // set up imu
+        // Code Review: Instead of using the BN055IMU for the IMU, the 8.1 SDK from last year
+        // adds a very helpful com.qualcomm.robotcore.hardware.IMU
+        // This includes a neat RevHubOrientationOnRobot that makes handling the yaw/pitch/roll
+        // easy.
+        // https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
