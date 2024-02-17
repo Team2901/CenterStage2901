@@ -57,15 +57,15 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
 
         //slides
         liftTimer.reset();
-        while(liftTimer.time(TimeUnit.SECONDS) < 1.5 && opModeIsActive()){
-            robot.lift.setPower(0.3);
+        while(liftTimer.time(TimeUnit.SECONDS) < 1.25 && opModeIsActive()){
+            robot.lift.setPower(0.1);
         }
         robot.lift.setPower(0);
         robot.outtake.setPosition(0.35);
         while(liftTimer.time(TimeUnit.SECONDS) < 3 && opModeIsActive()){}
         robot.outtake.setPosition(0.01);
-        while(liftTimer.time(TimeUnit.SECONDS) < 4.5 && opModeIsActive()){
-            robot.lift.setPower(-0.3);
+        while(liftTimer.time(TimeUnit.SECONDS) < 4.25 && opModeIsActive()){
+            robot.lift.setPower(-0.1);
         }
         robot.lift.setPower(0);
     }
@@ -168,7 +168,7 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(12,0,0,10,10);
+                strafe(8,0,0,10,10);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.MOVE_2){
@@ -204,19 +204,19 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                moveInches(-42);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                turnByTicks(-110);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                strafe(6,0,0,5,5);
+                moveInches(-46);
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                turnByTicks(-110);
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                strafe(6,0,0,5,5);
                 autoState = AutoState.STOP;
             }
         } else if(autoState == AutoState.MOVE_3){
@@ -291,53 +291,6 @@ public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asy
         telemetry.addData("STATE", autoState);
         telemetry.update();
     }
-
-//    @Override
-//    public void runOpMode() throws InterruptedException {
-//
-//
-//        while(!opModeIsActive()) {
-//            if(pipeline.xMid() > 0) {
-//                if (pipeline.xMid() < 107) {
-//                    spikeMark = 1;
-//                } else if (pipeline.xMid() < 214) {
-//                    spikeMark = 2;
-//                } else if (pipeline.xMid() < 320) {
-//                    spikeMark = 3;
-//                }
-//            }
-//
-//            telemetry.addData("X", pipeline.xMid());
-//            telemetry.addData("Spike Mark", spikeMark);
-//            telemetry.update();
-//        }
-//
-//        waitForStart();
-//
-//        //move forward, strafe (if 1 or 2), deposit purple, move back, strafe left to park, deposit yellow (for BLUE side)
-////        timer.reset();
-//        if(spikeMark == 1){
-//            moveInches(12);
-//            strafe(-12);
-//            robot.preload.setPosition(0.05;
-//            moveInches(-12);
-//            strafe(-24);
-//        } else if(spikeMark == 2){
-//            moveInches(24);
-//            robot.preload.setPosition(0.05;
-//            moveInches(-24);
-//            strafe(-36);
-//            moveInches(24);
-//        } else if(spikeMark == 3){
-//            moveInches(12);
-//            strafe(12);
-//            robot.preload.setPosition(0.05;
-//            moveInches(-12);
-//            strafe(-48);
-//            moveInches(48);
-//        }
-////        robot.intake.setPower(-0.8);
-//    }
 
     private void moveInches(double inches){
         int ticks = (int) (inches * robot.TICKS_PER_INCH);

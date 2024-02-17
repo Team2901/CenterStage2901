@@ -49,7 +49,9 @@ public class ShapeDetection extends OpenCvPipeline {
         Core.inRange(HSVImage, new Scalar(160, 50, 70), new Scalar(180, 255, 250), bwImage);
 
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 29);
+        Imgproc.medianBlur(bwImage, blurImg, 33);
+
+        Mat cropImg = new Mat(blurImg, cropRect);
 
         Imgproc.findContours(blurImg, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 

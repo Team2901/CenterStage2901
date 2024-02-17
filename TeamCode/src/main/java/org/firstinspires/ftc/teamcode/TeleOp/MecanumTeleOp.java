@@ -85,12 +85,14 @@ public class MecanumTeleOp extends OpMode {
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.lift.setPower(1 * liftMod);
             while(robot.lift.isBusy()){}
+            robot.lift.setPower(0);
             robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else if(impGamepad1.a.isInitialPress()){
             robot.lift.setTargetPosition(-100);
             robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.lift.setPower(1 * liftMod);
             while(robot.lift.isBusy()){}
+            robot.lift.setPower(0);
             robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
