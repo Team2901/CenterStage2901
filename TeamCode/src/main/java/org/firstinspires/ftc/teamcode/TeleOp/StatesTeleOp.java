@@ -30,6 +30,7 @@ public class StatesTeleOp extends OpMode {
     public double turnMod = 0.9;
 
     public int maxArmTicks = 7500;
+    public int currentArmTicks = 0;
 
     public double startFrontLeft;
 
@@ -109,11 +110,13 @@ public class StatesTeleOp extends OpMode {
         if(impGamepad1.right_trigger.getValue() > 0){
             robot.arm.setPower(impGamepad1.right_trigger.getValue());
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            currentArmTicks = robot.arm.getCurrentPosition();
         } else if(impGamepad1.left_trigger.getValue() > 0){
             robot.arm.setPower(-impGamepad1.left_trigger.getValue());
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            currentArmTicks = robot.arm.getCurrentPosition();
         } else {
-            robot.arm.setTargetPosition(robot.arm.getCurrentPosition());
+            robot.arm.setTargetPosition(currentArmTicks);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.arm.setPower(1);
         }
