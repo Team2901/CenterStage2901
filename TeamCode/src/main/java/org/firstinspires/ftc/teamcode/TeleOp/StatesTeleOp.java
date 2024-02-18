@@ -28,8 +28,11 @@ public class StatesTeleOp extends OpMode {
     public double rotate;
     public double speedMod = 0.9;
     public double turnMod = 0.9;
+    public double armMod = 0.8;
 
-    public int maxArmTicks = 7500;
+    public int maxHeightArmTicks = 1400; //max height (straight vert)
+    public int maxArmTicks = 2670;
+    public int minArmTicks = 10;
     public int currentArmTicks = 0;
 
     public double startFrontLeft;
@@ -39,10 +42,20 @@ public class StatesTeleOp extends OpMode {
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    double armAngle = 45.0;
+    public double rotationServoPosition = 0.1;
+    public double rotationServoMin = 0.1;
+    public double rotationServoMax = 0.8;
+    public double outtakeLeftClosedPos = 0.6;
+    public double outtakeLeftOpenPos = 0.4;
+    public double outtakeRightClosedPos = 0.725;
+    public double outtakeRightOpenPos = 0.55;
+
+    double initArmAngle = 60.0;
+    double armAngle = initArmAngle;
+
     double error = 0.0;
     double total = 0.0;
-    double kp = 0.9;
+    double kp = 0.0;
     double ki = 0.0;
     double kd = 0.0;
     double kCos = 0.3;
@@ -68,7 +81,7 @@ public class StatesTeleOp extends OpMode {
         impGamepad2.update();
 
         //basic drive base stuff
-        leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
+        leftStickXVal = -impGamepad1.left_stick_x.getValue() * speedMod;
         leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
         rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
         rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
@@ -86,48 +99,36 @@ public class StatesTeleOp extends OpMode {
 
         //set arm to max height
         if(impGamepad1.dpad_up.isInitialPress()){
-//            robot.arm.setTargetPosition(maxArmTicks);
-//            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.arm.setPower(0.6); //negatives might have to be flipped
-//            while(robot.arm.isBusy()){}
-//            robot.arm.setPower(0);
-//            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //armPower(maxArmTicks);
+            currentArmTicks = maxHeightArmTicks;
         }
 
         //set arm to min height/ground
         if(impGamepad1.dpad_down.isInitialPress()){
-//            robot.arm.setTargetPosition(0);
-//            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            robot.arm.setPower(-0.6); //negatives might have to be flipped
-//            while(robot.arm.isBusy()){}
-//            robot.arm.setPower(0);
-//            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //armPower(0);
+            currentArmTicks = minArmTicks;
         }
 
         //arm up
-        if(impGamepad1.right_trigger.getValue() > 0){
-            robot.arm.setPower(impGamepad1.right_trigger.getValue());
+        if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < maxArmTicks){
+            robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
-        } else if(impGamepad1.left_trigger.getValue() > 0){
-            robot.arm.setPower(-impGamepad1.left_trigger.getValue());
+        } else if(impGamepad1.left_trigger.getValue() > 0 && currentArmTicks > minArmTicks){
+            robot.arm.setPower(-impGamepad1.left_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
         } else {
             robot.arm.setTargetPosition(currentArmTicks);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(1);
+            robot.arm.setPower(0.7 * armMod);
         }
 
         //right claw toggle
         if(impGamepad1.right_bumper.isInitialPress()){
             if(!outtakeRightClosed) {
-                robot.outtakeRight.setPosition(1); //update new servo positions
+                robot.outtakeRight.setPosition(outtakeRightClosedPos); //update new servo positions
                 outtakeRightClosed = true;
             } else {
-                robot.outtakeRight.setPosition(0); //update new servo positions
+                robot.outtakeRight.setPosition(outtakeRightOpenPos); //update new servo positions
                 outtakeRightClosed = false;
             }
         }
@@ -135,28 +136,59 @@ public class StatesTeleOp extends OpMode {
         //left claw toggle
         if(impGamepad1.left_bumper.isInitialPress()){
             if(!outtakeLeftClosed) {
-                robot.outtakeLeft.setPosition(1); //update new servo positions
+                robot.outtakeLeft.setPosition(outtakeLeftClosedPos); //update new servo positions
                 outtakeLeftClosed = true;
             } else {
-                robot.outtakeLeft.setPosition(0); //update new servo positions
+                robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
                 outtakeLeftClosed = false;
             }
         }
 
         //drone release
-        if(impGamepad1.a.isInitialPress() || impGamepad1.b.isInitialPress() || impGamepad1.x.isInitialPress() || impGamepad1.y.isInitialPress()){
-            robot.planeServo.setPosition(1); //need to update servo position
+//        if(impGamepad1.a.isInitialPress() || impGamepad1.b.isInitialPress() || impGamepad1.x.isInitialPress() || impGamepad1.y.isInitialPress()){
+//            robot.planeServo.setPosition(1); //need to update servo position
+//        }
+
+        if(armAngle < 75){
+            robot.rotationServo.setPosition(0.125);
+            //when arm angle increases, servo angle decreases
+        } else if (armAngle < 93){ //90 degrees, but a little bit of error in the math so have to adjust manually
+            robot.rotationServo.setPosition(0.1);
+            //servo angle = arm angle + 25
+            //ethan says "zone between 65 and 90 that keeps the servo at the arm angle+25 degrees (so it is as close to horizontal as possible)"
+        } else if(armAngle < 190){
+            robot.rotationServo.setPosition(0.325);
+        } else if(armAngle < 270){
+            robot.rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
         }
 
-        if(armAngle < 65){
-            //servo angle flat to ground
-            //when arm angle increases, servo angle decreases
-        } else if (armAngle < 90){
-            //servo angle = arm angle + 25
-        } else if(armAngle < 190){
-            //bottom of claw points same direction as arm
-        } else if(armAngle < 270){
-            //flat with backboard (60 degrees)
+        //adjust outtakeRight closed position in case it skips (gamepad2)
+        if(impGamepad2.y.isInitialPress()){
+            robot.outtakeRight.setPosition(outtakeRightClosedPos + 0.025);
+            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+        } else if(impGamepad2.a.isInitialPress()){
+            robot.outtakeRight.setPosition(outtakeRightClosedPos - 0.025);
+            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+        }
+
+        //adjust outtakeLeft closed position in case it skips (gamepad2)
+        if(impGamepad2.dpad_down.isInitialPress()){
+            robot.outtakeLeft.setPosition(outtakeLeftClosedPos + 0.025);
+            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+        } else if(impGamepad2.dpad_up.isInitialPress()){
+            robot.outtakeLeft.setPosition(outtakeLeftClosedPos - 0.025);
+            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+        }
+
+        //min at 0.1 and max at 0.8 (wrist)
+
+        //adjust rotationServo/wrist position manually
+        if(impGamepad2.right_bumper.isInitialPress()){
+            robot.rotationServo.setPosition(rotationServoPosition + 0.1);
+            rotationServoPosition = robot.rotationServo.getPosition();
+        } else if(impGamepad2.left_bumper.isInitialPress()){
+            robot.rotationServo.setPosition(rotationServoPosition - 0.1);
+            rotationServoPosition = robot.rotationServo.getPosition();
         }
 
         //slow mode for precision
@@ -170,9 +202,15 @@ public class StatesTeleOp extends OpMode {
 //            }
 //        }
 
+        armAngle = recalculateAngle();
+
         telemetry.addData("arm position", robot.arm.getCurrentPosition());
+        telemetry.addData("arm angle", armAngle);
         telemetry.addData("right trigger", impGamepad1.right_trigger.getValue());
         telemetry.addData("left trigger", impGamepad1.left_trigger.getValue());
+        telemetry.addData("outtakeLeft servo position", robot.outtakeLeft.getPosition());
+        telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
+        telemetry.addData("rotation servo position", robot.rotationServo.getPosition());
         telemetry.update();
     }
 
@@ -201,8 +239,8 @@ public class StatesTeleOp extends OpMode {
     }
 
     public double recalculateAngle(){
-        double calculatedAngle = 0;
-        //find calculated Angle using ticks on motor
+        double calculatedAngle;
+        calculatedAngle = ((210*robot.arm.getCurrentPosition())/2440) + initArmAngle;
         return calculatedAngle;
     }
 }
