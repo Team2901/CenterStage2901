@@ -28,11 +28,11 @@ public class StatesTeleOp extends OpMode {
     public double rotate;
     public double speedMod = 0.9;
     public double turnMod = 0.9;
-    public double armMod = 0.8;
+    public double armMod = 0.6;
 
-    public int maxHeightArmTicks = 1400; //max height (straight vert)
+    public int maxHeightArmTicks = 1700; //max height (straight vert)
     public int maxArmTicks = 2670;
-    public int minArmTicks = 10;
+    public int minArmTicks = 15;
     public int currentArmTicks = 0;
 
     public double startFrontLeft;
@@ -41,14 +41,15 @@ public class StatesTeleOp extends OpMode {
 
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
+    public boolean armModFast = false;
 
     public double rotationServoPosition = 0.1;
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
-    public double outtakeLeftClosedPos = 0.625;
-    public double outtakeLeftOpenPos = 0.4;
-    public double outtakeRightClosedPos = 0.725;
-    public double outtakeRightOpenPos = 0.55;
+    public double outtakeLeftClosedPos = 0.725;
+    public double outtakeLeftOpenPos = 0.55;
+    public double outtakeRightClosedPos = 0.825;
+    public double outtakeRightOpenPos = 0.675;
 
     double initArmAngle = 60.0;
     double armAngle = initArmAngle;
@@ -107,6 +108,16 @@ public class StatesTeleOp extends OpMode {
             currentArmTicks = minArmTicks;
         }
 
+        //fixing claw (outtake) positions with gamepad 1
+        if(impGamepad1.dpad_left.isInitialPress()){
+            robot.outtakeLeft.setPosition(outtakeLeftClosedPos + 0.025);
+            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+        }
+        if(impGamepad1.dpad_right.isInitialPress()){
+            robot.outtakeRight.setPosition(outtakeRightClosedPos + 0.025);
+            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+        }
+
         //arm up
         if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < maxArmTicks){
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
@@ -145,9 +156,19 @@ public class StatesTeleOp extends OpMode {
         }
 
         //drone release
-//        if(impGamepad1.a.isInitialPress() || impGamepad1.b.isInitialPress() || impGamepad1.x.isInitialPress() || impGamepad1.y.isInitialPress()){
+//        if(impGamepad1.a.isInitialPress() || impGamepad1.x.isInitialPress() || impGamepad1.y.isInitialPress()){
 //            robot.planeServo.setPosition(1); //need to update servo position
 //        }
+
+        if(impGamepad1.b.isInitialPress()){
+            if(!armModFast){
+                armMod = 1;
+                armModFast = true;
+            } else {
+                armMod = 0.6;
+                armModFast = false;
+            }
+        }
 
         if(armAngle < 75){
             robot.rotationServo.setPosition(0.125);
@@ -161,6 +182,8 @@ public class StatesTeleOp extends OpMode {
         } else if(armAngle < 270){
             robot.rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
         }
+
+        // GAMEPAD 2 CONTROLS
 
         //adjust outtakeRight closed position in case it skips (gamepad2)
         if(impGamepad2.y.isInitialPress()){
@@ -191,7 +214,12 @@ public class StatesTeleOp extends OpMode {
             rotationServoPosition = robot.rotationServo.getPosition();
         }
 
-        //slow mode for precision
+        //gets rid of arm min ticks
+        if(impGamepad2.a.isInitialPress()){
+            minArmTicks = -10000;
+        }
+
+        //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
 //            if(slowMode == false) {
 //                speedMod = 0.5;

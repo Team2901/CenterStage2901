@@ -16,10 +16,10 @@ public class LoadTeleOp extends OpMode {
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    public double outtakeLeftClosedPos = 0.625;
-    public double outtakeLeftOpenPos = 0.4;
-    public double outtakeRightClosedPos = 0.725;
-    public double outtakeRightOpenPos = 0.55;
+    public double outtakeLeftClosedPos = 0.725;
+    public double outtakeLeftOpenPos = 0.55;
+    public double outtakeRightClosedPos = 0.825;
+    public double outtakeRightOpenPos = 0.675;
     StatesHardware robot = new StatesHardware();
     ImprovedGamepad impGamepad1;
     @Override

@@ -27,6 +27,8 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
     int boundingLine1 = 40;
     int boundingLine2 = 200;
 
+    public int spikeMark = 1;
+
     public Mat processFrame(Mat input) {
         List<MatOfPoint> blueContours = new ArrayList<>();
 
@@ -70,6 +72,14 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
             telemetry.addData("y", rect.y);
             telemetry.addData("xMid", this.xMid());
             xMidVal = this.xMid();
+
+            if (xMidVal > boundingLine2) {
+                spikeMark = 3;
+            } else if (xMidVal > boundingLine1) {
+                spikeMark = 2;
+            } else {
+                spikeMark = 1;
+            }
         }
         telemetry.update();
 
