@@ -45,7 +45,7 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoPosition = 0.1;
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
-    public double outtakeLeftClosedPos = 0.6;
+    public double outtakeLeftClosedPos = 0.625;
     public double outtakeLeftOpenPos = 0.4;
     public double outtakeRightClosedPos = 0.725;
     public double outtakeRightOpenPos = 0.55;

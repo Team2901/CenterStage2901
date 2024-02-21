@@ -24,6 +24,9 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
     Mat lastImage = null;
     Rect rect;
 
+    int boundingLine1 = 40;
+    int boundingLine2 = 200;
+
     public Mat processFrame(Mat input) {
         List<MatOfPoint> blueContours = new ArrayList<>();
 
@@ -42,11 +45,13 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         Mat HSVImage = new Mat();
         Imgproc.cvtColor(lastImage, HSVImage, Imgproc.COLOR_RGB2HSV);
 
-        Rect cropRect = new Rect(0,120,320,120);
-        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
+        Rect cropRect = new Rect(0,40,320,200);
+        Mat croppedFrame = HSVImage.submat(cropRect);
+        lastImage = lastImage.submat(cropRect);
+//        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(HSVImage, new Scalar(90, 100, 70), new Scalar(140, 255, 250), bwImage);
+        Core.inRange(croppedFrame, new Scalar(90, 90, 70), new Scalar(140, 255, 250), bwImage);
 
         Mat blurImg = bwImage;
         Imgproc.medianBlur(bwImage, blurImg, 33);
@@ -58,8 +63,8 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
-        Imgproc.line(lastImage, new Point(130,0), new Point(130,240), new Scalar(0, 0, 0));
-        Imgproc.line(lastImage, new Point(280,0), new Point(280,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(boundingLine1,0), new Point(boundingLine1,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(boundingLine2,0), new Point(boundingLine2,240), new Scalar(0, 0, 0));
         if(rect != null) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
