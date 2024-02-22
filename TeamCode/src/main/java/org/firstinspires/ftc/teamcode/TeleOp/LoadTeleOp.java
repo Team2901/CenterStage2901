@@ -16,10 +16,11 @@ public class LoadTeleOp extends OpMode {
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    public double outtakeLeftClosedPos = 0.725;
-    public double outtakeLeftOpenPos = 0.55;
-    public double outtakeRightClosedPos = 0.825;
-    public double outtakeRightOpenPos = 0.675;
+    public double outtakeLeftClosedPos = StatesTeleOp.outtakeLeftClosedPos;
+    public double outtakeLeftOpenPos = StatesTeleOp.outtakeLeftOpenPos;
+    public double outtakeRightClosedPos = StatesTeleOp.outtakeRightClosedPos;
+    public double outtakeRightOpenPos = StatesTeleOp.outtakeRightOpenPos;
+
     StatesHardware robot = new StatesHardware();
     ImprovedGamepad impGamepad1;
     @Override
@@ -72,5 +73,9 @@ public class LoadTeleOp extends OpMode {
             robot.outtakeLeft.setPosition(outtakeLeftClosedPos - 0.025);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
+
+        telemetry.addData("outtake left pos", robot.outtakeLeft.getPosition());
+        telemetry.addData("outtake right pos", robot.outtakeRight.getPosition());
+        telemetry.update();
     }
 }

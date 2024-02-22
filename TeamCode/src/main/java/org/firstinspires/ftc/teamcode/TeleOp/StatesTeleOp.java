@@ -46,10 +46,11 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoPosition = 0.1;
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
-    public double outtakeLeftClosedPos = 0.725;
-    public double outtakeLeftOpenPos = 0.55;
-    public double outtakeRightClosedPos = 0.825;
-    public double outtakeRightOpenPos = 0.675;
+
+    public static double outtakeLeftClosedPos = 0.725;
+    public static double outtakeLeftOpenPos = 0.55;
+    public static double outtakeRightClosedPos = 0.9;
+    public static double outtakeRightOpenPos = 0.75;
 
     double initArmAngle = 60.0;
     double armAngle = initArmAngle;

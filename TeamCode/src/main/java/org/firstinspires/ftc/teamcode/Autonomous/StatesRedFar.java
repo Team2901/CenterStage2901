@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous (name = "States Red Close", group = "AAutonomous")
-public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
+@Autonomous (name = "States Red Far", group = "AAutonomous")
+public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
     StatesHardware robot = new StatesHardware();
 
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
@@ -49,11 +49,11 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
         MOVE_1,
         MOVE_2,
         MOVE_3,
-        BACKDROP,
+        BACKSTAGE,
         STOP
     }
 
-    StatesRedClose.AutoState autoState;
+    StatesRedFar.AutoState autoState;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -92,7 +92,7 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(this);
 
-        autoState = StatesRedClose.AutoState.CAMERA_WAIT;
+        autoState = StatesRedFar.AutoState.CAMERA_WAIT;
 
 //        cameraTimer.startTime();
     }
@@ -103,105 +103,105 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
             count++;
         }
 
-        if (autoState == StatesRedClose.AutoState.CAMERA_WAIT) {
-            if (cameraTimer.time(TimeUnit.SECONDS) < 7) {
+        if (autoState == StatesRedFar.AutoState.CAMERA_WAIT) {
+            if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
                 telemetry.addData("X Mid", pipeline.xMidVal);
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
             } else {
-                autoState = StatesRedClose.AutoState.CAMERA_DETECTION;
+                autoState = StatesRedFar.AutoState.CAMERA_DETECTION;
             }
-        } else if (autoState == StatesRedClose.AutoState.CAMERA_DETECTION) {
+        } else if (autoState == StatesRedFar.AutoState.CAMERA_DETECTION) {
             if (pipeline.spikeMark == 1) {
-                autoState = StatesRedClose.AutoState.MOVE_1;
+                autoState = StatesRedFar.AutoState.MOVE_1;
             } else if (pipeline.spikeMark == 2) {
-                autoState = StatesRedClose.AutoState.MOVE_2;
+                autoState = StatesRedFar.AutoState.MOVE_2;
             } else if (pipeline.spikeMark == 3) {
-                autoState = StatesRedClose.AutoState.MOVE_3;
+                autoState = StatesRedFar.AutoState.MOVE_3;
             }
-        } else if (autoState == StatesRedClose.AutoState.MOVE_1) {
+        } else if (autoState == StatesRedFar.AutoState.MOVE_1) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(28);
-                strafe(3,0,0,0,0);
-                turnByTicks(-1100); //-90 degrees
-                moveInches(2);
+                moveInches(40);
+                strafe(-12,0,0,0,0);
+                turnByTicks(-2200); //-180 degrees
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                moveInches(-32);
+                moveInches(-8);
+                turnByTicks(-850);
+                moveInches(91);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                strafe(3, 0, 0, 0, 0);
-                autoState = AutoState.BACKDROP;
+                autoState = AutoState.BACKSTAGE;
             }
-        } else if (autoState == StatesRedClose.AutoState.MOVE_2) {
+        } else if (autoState == StatesRedFar.AutoState.MOVE_2) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(27);
+                moveInches(43);
+                turnByTicks(-2100); //-180
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                moveInches(-4);
-                turnByTicks(-1100); //-90 degrees
-                moveInches(-32);
+                moveInches(-3);
+
+                stall.reset();
+                while(stall.time() < 1){ idle(); }
+
+                turnByTicks(-850);
+                moveInches(86);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                strafe(3,0,0,0,0);
-
-                autoState = AutoState.BACKDROP;
+                autoState = AutoState.BACKSTAGE;
             }
-        } else if (autoState == StatesRedClose.AutoState.MOVE_3) {
+        } else if (autoState == StatesRedFar.AutoState.MOVE_3) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                moveInches(25);
-                strafe(24, 0, 0, 0, 0);
-                turnByTicks(-1100); //-90 degrees
+                moveInches(31);
+                strafe(-6,0,0,0,0);
+                turnByTicks(1100); //90 degrees
+                moveInches(6);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                moveInches(-11);
+                moveInches(-9);
+                strafe(-21.5,0,0,0,0);
+
+                stall.reset();
+                while(stall.time() < 1){ idle(); }
+
+//                turnByTicks(-2050); //-180 degrees (idk why this one takes a lot less ticks than the other 180's???)
+                turnByTicks(-75);
+                moveInches(90);
 
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                strafe(-14, 0, 0, 0, 0);
-                autoState = AutoState.BACKDROP;
+                autoState = AutoState.BACKSTAGE;
             }
-        } else if(autoState == AutoState.BACKDROP){
+        } else if(autoState == AutoState.BACKSTAGE){
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
-                robot.rotationServo.setPosition(0.495);
-
-                wristTimer.reset();
-                while (wristTimer.time() < 1.5) { idle(); }
-
-                robot.arm.setTargetPosition(2280);
-                robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm.setPower(0.65);
-
-                while (robot.arm.isBusy() && opModeIsActive()) { idle(); }
-
+//                turnByTicks(2400); //more than 180
+                turnByTicks(95);
                 robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
 
                 stall.reset();
-                while(stall.time() < 3){ idle(); }
+                while(stall.time() < 2){ idle(); }
 
-                robot.arm.setTargetPosition(150);
+                robot.arm.setTargetPosition(300);
                 robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm.setPower(0.65);
-
-                robot.rotationServo.setPosition(0.1);
+                robot.arm.setPower(0.6);
 
                 autoState = AutoState.STOP;
             }
-        }else if (autoState == StatesRedClose.AutoState.STOP) {
+        }else if (autoState == StatesRedFar.AutoState.STOP) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 robot.frontLeft.setPower(0);
                 robot.frontRight.setPower(0);
