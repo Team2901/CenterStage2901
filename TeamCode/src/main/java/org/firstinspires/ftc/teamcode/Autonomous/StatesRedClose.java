@@ -23,6 +23,7 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
 
     public int count = 0;
     public OpenCvCamera camera;
+    public int spikeMark;
 
     public double xMidInit = 888;
     public boolean isStopped = false;
@@ -119,6 +120,8 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
             } else if (pipeline.spikeMark == 3) {
                 autoState = StatesRedClose.AutoState.MOVE_3;
             }
+
+            spikeMark = pipeline.spikeMark;
         } else if (autoState == StatesRedClose.AutoState.MOVE_1) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(28);
@@ -154,6 +157,7 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
                 while(stall.time() < 2){ idle(); }
 
                 strafe(3,0,0,0,0);
+                turnByTicks(-30);
 
                 autoState = AutoState.BACKDROP;
             }
@@ -198,6 +202,15 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
                 robot.arm.setPower(0.65);
 
                 robot.rotationServo.setPosition(0.1);
+
+                //to move into the corner
+                if(spikeMark == 1){
+                    strafe(-38,0,0,0,0);
+                } else if(spikeMark == 2){
+                    strafe(-30,0,0,0,0);
+                } else if(spikeMark == 3){
+                    strafe(-20,0,0,0,0);
+                }
 
                 autoState = AutoState.STOP;
             }

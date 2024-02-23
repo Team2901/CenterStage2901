@@ -53,7 +53,7 @@ public class ShapeDetection extends OpenCvPipeline {
 //        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(croppedFrame, new Scalar(160, 120, 120), new Scalar(180, 255, 250), bwImage);
+        Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
 
         Mat blurImg = bwImage;
         Imgproc.medianBlur(bwImage, blurImg, 33);

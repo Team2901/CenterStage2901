@@ -27,6 +27,7 @@ public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncC
 
     public double xMidInit = 888;
     public boolean isStopped = false;
+    public int spikeMark;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime wristTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
@@ -120,6 +121,8 @@ public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncC
             } else if (pipeline.spikeMark == 3) {
                 autoState = StatesBlueClose.AutoState.MOVE_3;
             }
+
+            spikeMark = pipeline.spikeMark;
         } else if (autoState == StatesBlueClose.AutoState.MOVE_1) {
             if (!robot.frontLeft.isBusy() && !robot.frontRight.isBusy() && !robot.backLeft.isBusy() && !robot.backRight.isBusy()) {
                 moveInches(30);
@@ -201,6 +204,15 @@ public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncC
                 robot.arm.setPower(0.65);
 
                 robot.rotationServo.setPosition(0.1);
+
+                //to move into the corner
+                if(spikeMark == 1){
+                    strafe(18,0,0,0,0);
+                } else if(spikeMark == 2){
+                    strafe(28,0,0,0,0);
+                } else if(spikeMark == 3){
+                    strafe(38,0,0,0,0);
+                }
 
                 autoState = AutoState.STOP;
             }

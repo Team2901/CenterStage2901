@@ -47,9 +47,9 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
 
-    public static double outtakeLeftClosedPos = 0.725;
-    public static double outtakeLeftOpenPos = 0.55;
-    public static double outtakeRightClosedPos = 0.9;
+    public static double outtakeLeftClosedPos = 0.81;
+    public static double outtakeLeftOpenPos = 0.6;
+    public static double outtakeRightClosedPos = 0.975;
     public static double outtakeRightOpenPos = 0.75;
 
     double initArmAngle = 60.0;
@@ -111,11 +111,11 @@ public class StatesTeleOp extends OpMode {
 
         //fixing claw (outtake) positions with gamepad 1
         if(impGamepad1.dpad_left.isInitialPress()){
-            robot.outtakeLeft.setPosition(outtakeLeftClosedPos + 0.025);
+            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
         if(impGamepad1.dpad_right.isInitialPress()){
-            robot.outtakeRight.setPosition(outtakeRightClosedPos + 0.025);
+            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
             outtakeRightClosedPos = robot.outtakeRight.getPosition();
         }
 
@@ -137,10 +137,10 @@ public class StatesTeleOp extends OpMode {
         //right claw toggle
         if(impGamepad1.right_bumper.isInitialPress()){
             if(!outtakeRightClosed) {
-                robot.outtakeRight.setPosition(outtakeRightClosedPos); //update new servo positions
+                robot.outtakeRight.setPosition(outtakeRightClosedPos);
                 outtakeRightClosed = true;
             } else {
-                robot.outtakeRight.setPosition(outtakeRightOpenPos); //update new servo positions
+                robot.outtakeRight.setPosition(outtakeRightOpenPos);
                 outtakeRightClosed = false;
             }
         }
@@ -155,11 +155,6 @@ public class StatesTeleOp extends OpMode {
                 outtakeLeftClosed = false;
             }
         }
-
-        //drone release
-//        if(impGamepad1.a.isInitialPress() || impGamepad1.x.isInitialPress() || impGamepad1.y.isInitialPress()){
-//            robot.planeServo.setPosition(1); //need to update servo position
-//        }
 
         if(impGamepad1.b.isInitialPress()){
             if(!armModFast){
@@ -186,21 +181,26 @@ public class StatesTeleOp extends OpMode {
 
         // GAMEPAD 2 CONTROLS
 
+        //drone release
+        if(impGamepad2.right_trigger.getValue() > 0 || impGamepad2.left_trigger.getValue() > 0){
+            robot.planeServo.setPosition(1); //need to update servo position
+        }
+
         //adjust outtakeRight closed position in case it skips (gamepad2)
         if(impGamepad2.y.isInitialPress()){
-            robot.outtakeRight.setPosition(outtakeRightClosedPos + 0.025);
+            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
             outtakeRightClosedPos = robot.outtakeRight.getPosition();
         } else if(impGamepad2.a.isInitialPress()){
-            robot.outtakeRight.setPosition(outtakeRightClosedPos - 0.025);
+            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() - 0.015);
             outtakeRightClosedPos = robot.outtakeRight.getPosition();
         }
 
         //adjust outtakeLeft closed position in case it skips (gamepad2)
         if(impGamepad2.dpad_down.isInitialPress()){
-            robot.outtakeLeft.setPosition(outtakeLeftClosedPos + 0.025);
+            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         } else if(impGamepad2.dpad_up.isInitialPress()){
-            robot.outtakeLeft.setPosition(outtakeLeftClosedPos - 0.025);
+            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
 
@@ -216,7 +216,7 @@ public class StatesTeleOp extends OpMode {
         }
 
         //gets rid of arm min ticks
-        if(impGamepad2.a.isInitialPress()){
+        if(impGamepad2.b.isInitialPress()){
             minArmTicks = -10000;
         }
 

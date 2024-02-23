@@ -26,7 +26,6 @@ public class StatesHardware{
     public Servo outtakeRight;
     public Servo planeServo;
     public Servo rotationServo;
-    public Servo preload;
 
     public BNO055IMU imu;
 
@@ -39,9 +38,8 @@ public class StatesHardware{
         arm = hardwareMap.dcMotor.get("arm");
         outtakeLeft = hardwareMap.servo.get("outtakeLeft");
         outtakeRight = hardwareMap.servo.get("outtakeRight");
-//        planeServo = hardwareMap.servo.get("planeServo");
+        planeServo = hardwareMap.servo.get("planeServo");
         rotationServo = hardwareMap.servo.get("rotationServo");
-//        preload = hardwareMap.servo.get("preload");
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
