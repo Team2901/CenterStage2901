@@ -56,15 +56,15 @@ public class RedLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asyn
 
         //slides
         liftTimer.reset();
-        while(liftTimer.time(TimeUnit.SECONDS) < 1.5 && opModeIsActive()){
-            robot.lift.setPower(0.3);
+        while(liftTimer.time(TimeUnit.SECONDS) < 1.25 && opModeIsActive()){
+            robot.lift.setPower(0.1);
         }
         robot.lift.setPower(0);
         robot.outtake.setPosition(0.35);
         while(liftTimer.time(TimeUnit.SECONDS) < 3 && opModeIsActive()){}
         robot.outtake.setPosition(0.01);
-        while(liftTimer.time(TimeUnit.SECONDS) < 4.5 && opModeIsActive()){
-            robot.lift.setPower(-0.3);
+        while(liftTimer.time(TimeUnit.SECONDS) < 4.25 && opModeIsActive()){
+            robot.lift.setPower(-0.1);
         }
         robot.lift.setPower(0);
     }
@@ -187,7 +187,7 @@ public class RedLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asyn
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                strafe(2,0,0,0,0);
+                strafe(6,0,0,0,0);
                 robot.preload.setPosition(0);
                 try {
                     Thread.sleep(1000);

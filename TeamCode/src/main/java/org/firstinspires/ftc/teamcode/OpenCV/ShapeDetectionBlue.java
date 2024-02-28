@@ -27,6 +27,11 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
     Mat lastImage = null;
     Rect rect;
 
+    int boundingLine1 = 40;
+    int boundingLine2 = 200;
+
+    public int spikeMark = 1;
+
     public Mat processFrame(Mat input) {
         List<MatOfPoint> blueContours = new ArrayList<>();
 
@@ -47,15 +52,17 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
 
         // Code Review: This doesn't crop the frame, it just draws a rectangle around the bottom
         // half of the frame
-        Rect cropRect = new Rect(0,120,320,120);
-        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
+        Rect cropRect = new Rect(0,40,320,200);
+        Mat croppedFrame = HSVImage.submat(cropRect);
+        lastImage = lastImage.submat(cropRect);
+//        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(HSVImage, new Scalar(90, 55, 70), new Scalar(140, 255, 250), bwImage);
+        Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
 
         // Code Review: Note: blurImg is only used for contours... Also, this is a really big blur kernel.
         Mat blurImg = bwImage;
-        Imgproc.medianBlur(bwImage, blurImg, 27);
+        Imgproc.medianBlur(bwImage, blurImg, 33);
 
         // Code Review: Contours are only found to draw them... Did you want to do something else
         //              with the contours? Such as use the centroid of the largest region (moment 0)?
@@ -68,13 +75,21 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
         rect = Imgproc.boundingRect(bwImage);
         Imgproc.rectangle(lastImage, rect, new Scalar(0, 255, 160), 2);
 
-        Imgproc.line(lastImage, new Point(130,0), new Point(130,240), new Scalar(0, 0, 0));
-        Imgproc.line(lastImage, new Point(280,0), new Point(280,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(boundingLine1,0), new Point(boundingLine1,240), new Scalar(0, 0, 0));
+        Imgproc.line(lastImage, new Point(boundingLine2,0), new Point(boundingLine2,240), new Scalar(0, 0, 0));
         if(rect != null) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
             telemetry.addData("xMid", this.xMid());
             xMidVal = this.xMid();
+
+            if (xMidVal > boundingLine2) {
+                spikeMark = 3;
+            } else if (xMidVal > boundingLine1) {
+                spikeMark = 2;
+            } else {
+                spikeMark = 1;
+            }
         }
         telemetry.update();
 

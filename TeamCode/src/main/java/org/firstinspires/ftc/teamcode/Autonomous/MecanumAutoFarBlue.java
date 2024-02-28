@@ -19,7 +19,7 @@ public class MecanumAutoFarBlue extends LinearOpMode {
 
         strafe(5);
 
-        moveInches(65);
+        moveInches(75);
     }
 
     private void moveInches(double inches){
