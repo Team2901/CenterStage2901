@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Mecanum Base", group = "TeleOp")
-public class MecanumTeleOp extends OpMode {
+public class MecanumTeleOp extends OpMode { // Coach Review: I prefer to use LinearOpMode always. Just FYI.
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
     ImprovedGamepad impGamepad1;
@@ -46,10 +46,12 @@ public class MecanumTeleOp extends OpMode {
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
         robot.init(this.hardwareMap, telemetry);
 
+        // Coach Review: with STOP_AND_RESET_ENCODERS inside of robot.ini(), this should always be 0, right?
         startFrontLeft = robot.frontLeft.getCurrentPosition();
 
 //        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        // Coach Review: OuttakeTimer is unused, and startTime doesn't do what you think.
         outtakeTimer.startTime();
 
 //        robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -67,6 +69,13 @@ public class MecanumTeleOp extends OpMode {
 
         rotate = rightStickXVal * turnMod;
 
+        // Coach Review: Most teams standardize on the GM0 controls for mecanum driving.
+        // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
+        // In particular Y stick up is -1.0, and down is +1.0.
+        // This can be compensated for in any number of ways, such as reversing the motors in your
+        // hardware class.
+        // Feel free to ignore this comment -- I only add it for completeness. If what you have is
+        // working for your driver, that is fine.
         robot.backLeft.setPower(leftStickYVal+leftStickXVal+rotate);
         robot.frontLeft.setPower(leftStickYVal-leftStickXVal+rotate);
         robot.backRight.setPower(leftStickYVal-leftStickXVal-rotate);
@@ -75,6 +84,8 @@ public class MecanumTeleOp extends OpMode {
 //        robot.frontLeft.setPower(leftStickYVal);
 //        robot.frontRight.setPower(leftStickYVal);
 
+        // Coach Review: What is the rotation? This seems to be how far the front left motor has
+        // moved overall, not just rotating?
         telemetry.addData("The ROTATION:", startFrontLeft - robot.frontLeft.getCurrentPosition());
 
 
@@ -172,6 +183,6 @@ public class MecanumTeleOp extends OpMode {
 
         telemetry.addData("Lift Position:", robot.lift.getCurrentPosition());
         telemetry.addData("Outtake Position", robot.outtake.getPosition());
-        telemetry.update();
+        telemetry.update(); // Coach Review: update() is not needed from OpMode and loop()
     }
 }
