@@ -129,7 +129,7 @@ public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCame
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                moveInches(-8);
+                moveInches(-8.5);
                 turnByTicks(-850);
                 moveInches(91);
 
@@ -147,7 +147,7 @@ public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCame
                 stall.reset();
                 while(stall.time() < 2){ idle(); }
 
-                moveInches(-3);
+                moveInches(-5);
 
                 stall.reset();
                 while(stall.time() < 1){ idle(); }
@@ -172,7 +172,7 @@ public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCame
                 while(stall.time() < 2){ idle(); }
 
                 moveInches(-9);
-                strafe(-21.5,0,0,0,0);
+                strafe(-22,0,0,0,0);
 
                 stall.reset();
                 while(stall.time() < 1){ idle(); }

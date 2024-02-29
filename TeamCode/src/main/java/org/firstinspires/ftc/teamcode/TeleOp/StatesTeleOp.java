@@ -47,10 +47,10 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
 
-    public static double outtakeLeftClosedPos = 0.81;
-    public static double outtakeLeftOpenPos = 0.6;
-    public static double outtakeRightClosedPos = 0.975;
-    public static double outtakeRightOpenPos = 0.75;
+    public static double outtakeLeftClosedPos = 0.335;
+    public static double outtakeLeftOpenPos = 0.15;
+    public static double outtakeRightClosedPos = 0.483;
+    public static double outtakeRightOpenPos = 0.280;
 
     double initArmAngle = 60.0;
     double armAngle = initArmAngle;
@@ -177,6 +177,12 @@ public class StatesTeleOp extends OpMode {
             robot.rotationServo.setPosition(0.325);
         } else if(armAngle < 270){
             robot.rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
+        }
+
+        if(armAngle > 93 && armAngle < 190){
+            armMod = 1;
+        } else if (!armModFast){
+            armMod = 0.6;
         }
 
         // GAMEPAD 2 CONTROLS

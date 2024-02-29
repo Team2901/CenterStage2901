@@ -212,6 +212,15 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
                     strafe(-20,0,0,0,0);
                 }
 
+                //move to middle
+//                if(spikeMark == 1){
+//                    strafe(18,0,0,0,0);
+//                } else if(spikeMark == 2){
+//                    strafe(28,0,0,0,0);
+//                } else if(spikeMark == 3){
+//                    strafe(38,0,0,0,0);
+//                }
+
                 autoState = AutoState.STOP;
             }
         }else if (autoState == StatesRedClose.AutoState.STOP) {
