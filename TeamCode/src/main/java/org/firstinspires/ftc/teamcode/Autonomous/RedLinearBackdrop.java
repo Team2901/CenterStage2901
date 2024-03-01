@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class RedLinearBackdrop extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
-    ShapeDetection pipeline = new ShapeDetection(this.telemetry);
+    ShapeDetection pipeline = new ShapeDetection("red",this.telemetry);
 
     public int spikeMark = 0;
     public int count = 0;

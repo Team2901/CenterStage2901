@@ -6,10 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class StatesHardware{
+public class Hardware {
 
     public static final double TICKS_PER_MOTOR_REV = 537.7;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
@@ -29,7 +28,7 @@ public class StatesHardware{
 
     public BNO055IMU imu;
 
-    public void init(HardwareMap hardwareMap, Telemetry telemetry){
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         // initialize motors
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
@@ -49,37 +48,43 @@ public class StatesHardware{
         arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // stop motors during initialization
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
+        setWheelPower(0);
         arm.setPower(0);
 
         // reset encoder positions to 0
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setWheelRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set motors up to run with encoders
-        //backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setWheelRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // better braking
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setWheelZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // set up imu
+        setupIMU(hardwareMap);
+    }
+
+    public void setWheelPower(double power) {
+        backLeft.setPower(power);
+        backRight.setPower(power);
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+    }
+    public void setWheelRunMode(DcMotor.RunMode mode){
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+    }
+    public void setWheelZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
+        frontLeft.setZeroPowerBehavior(behavior);
+        frontRight.setZeroPowerBehavior(behavior);
+        backLeft.setZeroPowerBehavior(behavior);
+        backRight.setZeroPowerBehavior(behavior);
+    }
+    public void setupIMU(HardwareMap hardwareMap){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;

@@ -17,7 +17,16 @@ public class ShapeDetection extends OpenCvPipeline {
 
     private Telemetry telemetry;
     public double xMidVal;
-    public ShapeDetection (Telemetry telemetry){
+
+    Scalar[] colorRange = new Scalar[2];
+    public ShapeDetection(String color, Telemetry telemetry){
+        if(color.toLowerCase().contains("blue")){
+            colorRange[0] = new Scalar(80, 70, 90);
+            colorRange[1] = new Scalar(140, 255, 255);
+        }else if(color.toLowerCase().contains("red")){
+            colorRange[0] = new Scalar(160, 100, 100);
+            colorRange[1] = new Scalar(180, 255, 250);
+        }
         this.telemetry = telemetry;
     }
 
@@ -53,7 +62,7 @@ public class ShapeDetection extends OpenCvPipeline {
 //        Imgproc.rectangle(HSVImage, cropRect, new Scalar(64, 64, 64), 10);
 
         Mat bwImage = new Mat();
-        Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        Core.inRange(croppedFrame,colorRange[0], colorRange[1], bwImage);
 
         Mat blurImg = bwImage;
         Imgproc.medianBlur(bwImage, blurImg, 33);
@@ -84,11 +93,10 @@ public class ShapeDetection extends OpenCvPipeline {
         telemetry.update();
 
         return lastImage;
-//        return bwImage;
     }
 
     public double xMid(){
-        if(rect != null){
+        if(rect != null) {
             return rect.x + (rect.width/2);
         }
         return 500;

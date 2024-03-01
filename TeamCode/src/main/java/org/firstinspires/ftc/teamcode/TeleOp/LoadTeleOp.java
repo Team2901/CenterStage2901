@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 @TeleOp(name = "LoadTeleOp", group = "TeleOp")
@@ -21,7 +21,7 @@ public class LoadTeleOp extends OpMode {
     public double outtakeRightClosedPos = StatesTeleOp.outtakeRightClosedPos;
     public double outtakeRightOpenPos = StatesTeleOp.outtakeRightOpenPos;
 
-    StatesHardware robot = new StatesHardware();
+    Hardware robot = new Hardware();
     ImprovedGamepad impGamepad1;
     @Override
     public void init() {

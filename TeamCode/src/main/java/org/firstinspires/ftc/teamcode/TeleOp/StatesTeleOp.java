@@ -5,17 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
-import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
-
-import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "States Mecanum Base", group = "TeleOp")
 public class StatesTeleOp extends OpMode {
 
-    StatesHardware robot = new StatesHardware();
+    Hardware robot = new Hardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);

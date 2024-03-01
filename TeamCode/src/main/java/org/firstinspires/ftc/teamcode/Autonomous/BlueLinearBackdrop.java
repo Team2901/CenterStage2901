@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
-import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetectionBlue;
+import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class BlueLinearBackdrop extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener{
 
     MecanumDriveHardware robot = new MecanumDriveHardware();
-    ShapeDetectionBlue pipeline = new ShapeDetectionBlue(this.telemetry);
+    ShapeDetection pipeline = new ShapeDetection("blue",this.telemetry);
 
     public int spikeMark = 0;
     public int count = 0;
