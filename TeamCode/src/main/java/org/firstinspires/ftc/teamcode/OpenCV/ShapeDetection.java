@@ -9,6 +9,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class ShapeDetection extends OpenCvPipeline {
     private Telemetry telemetry;
 
     public double xMidVal;
+    public double xCentroid;
+    public boolean usingCentroid = true;
 
     Size targetSize = new Size(320, 240);
 
@@ -37,7 +40,7 @@ public class ShapeDetection extends OpenCvPipeline {
 
     public int spikeMark = 1;
 
-    public int blurSize = 33;
+    public int blurSize = 19;
 
     public Mat processFrame(Mat inputFrameRGB) {
         if (inputFrameRGB == null) {
@@ -78,7 +81,8 @@ public class ShapeDetection extends OpenCvPipeline {
         Mat bwImage = new Mat();
         Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
 
-        // Median blur this mask so that we can ignore the tape strips and any other noise in the mask
+        // Median blur this mask so that we can ignore the tape strips and any other noise
+        // Code Review: Note: blurImg is only used for contours... Also, this is a really big blur kernel.
         Mat blurImg = new Mat();
         Imgproc.medianBlur(bwImage, blurImg, blurSize);
 
@@ -86,7 +90,7 @@ public class ShapeDetection extends OpenCvPipeline {
         //              boundingRect will find _any_ non-zero pixel from inRange
         rect = Imgproc.boundingRect(blurImg);
 
-        if(rect != null) {
+        if(rect != null && !usingCentroid) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
             telemetry.addData("xMid", this.xMid());
@@ -99,8 +103,18 @@ public class ShapeDetection extends OpenCvPipeline {
             } else {
                 spikeMark = 1;
             }
-            telemetry.addData("spikeMark", spikeMark);
         }
+
+        if(usingCentroid){
+            if (xCentroid > boundingLine2) {
+                spikeMark = 3;
+            } else if (xCentroid > boundingLine1) {
+                spikeMark = 2;
+            } else {
+                spikeMark = 1;
+            }
+        }
+        telemetry.addData("spikeMark", spikeMark);
 
         // Do some visualization
         // NOTE: This can be disabled for events!
@@ -119,9 +133,32 @@ public class ShapeDetection extends OpenCvPipeline {
             // Code Review: Contours are only found to draw them... Did you want to do something else
             //              with the contours? Such as use the centroid of the largest region (moment 0)?
             // For now, moved this down below the "only for visualization" line
+            Mat eroded = new Mat();
+            Mat strElement = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE, new Size(7, 7));
+            Imgproc.erode(blurImg, eroded, strElement);
+            Mat dilated = new Mat();
+            Imgproc.dilate(eroded, dilated, strElement);
+
             List<MatOfPoint> contours = new ArrayList<>();
-            Imgproc.findContours(blurImg, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(dilated, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
+
+            // Centroid of contours
+            Moments moments = Imgproc.moments(contours.get(0));
+            double totalPixels = moments.m00;
+            double sumX = moments.m10;
+            double sumY = moments.m01;
+            double averageX = sumX/totalPixels;
+            double averageY = sumY/totalPixels;
+            Imgproc.circle(markup, new Point(averageX, averageY), 2, new Scalar(0,50,70), 2);
+
+            telemetry.addData("Average X", averageX);
+            telemetry.addData("Average Y", averageY);
+            telemetry.addData("Sum X", sumX);
+            telemetry.addData("Sum Y", sumY);
+            telemetry.addData("Total Pixels", totalPixels);
+
+            xCentroid = averageX;
 
             // Make an image showing what the color mask output finds
             Mat onlyFoundColorMask = new Mat();
@@ -175,5 +212,6 @@ public class ShapeDetection extends OpenCvPipeline {
             return rect.x + (rect.width/2);
         }
         return 500; // Code Review: This code does nothing. rect != null is already tested.
+        //Android Studio gets upset if there's no return statement outside of an if
     }
 }
