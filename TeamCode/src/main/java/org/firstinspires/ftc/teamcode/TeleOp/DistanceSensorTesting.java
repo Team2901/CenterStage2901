@@ -45,10 +45,16 @@ public class DistanceSensorTesting extends OpMode {
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
 
-    public static double outtakeLeftClosedPos = 0.335;
-    public static double outtakeLeftOpenPos = 0.15;
-    public static double outtakeRightClosedPos = 0.483;
-    public static double outtakeRightOpenPos = 0.280;
+//    public static double outtakeLeftClosedPos = 0.335;
+//    public static double outtakeLeftOpenPos = 0.15;
+//    public static double outtakeRightClosedPos = 0.483;
+//    public static double outtakeRightOpenPos = 0.280;
+
+    //coachbot settings
+    public static double outtakeLeftClosedPos = 0.255;
+    public static double outtakeLeftOpenPos = 0.105;
+    public static double outtakeRightClosedPos = 0.255;
+    public static double outtakeRightOpenPos = 0.105;
 
     double initArmAngle = 60.0;
     double armAngle = initArmAngle;
@@ -183,11 +189,23 @@ public class DistanceSensorTesting extends OpMode {
             armMod = 0.6;
         }
 
-        if(impGamepad1.a.isInitialPress()){
+//        if(impGamepad1.a.isInitialPress()){
+//            double distanceFromBoard = robot.distanceSensor.getDistance(DistanceUnit.INCH);
+//            if(distanceFromBoard > 2){
+//                moveInches(distanceFromBoard - 2);
+//            }
+//            robot.outtakeRight.setPosition(outtakeRightOpenPos);
+//            robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
+//        }
+
+        if(impGamepad1.a.isPressed()){
             double distanceFromBoard = robot.distanceSensor.getDistance(DistanceUnit.INCH);
-            if(distanceFromBoard > 7){
-                moveInches(distanceFromBoard - 7);
+            while(distanceFromBoard > 2){
+                drivePower(0.35);
             }
+            drivePower(0);
+            robot.outtakeRight.setPosition(outtakeRightOpenPos);
+            robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
         }
 
         // GAMEPAD 2 CONTROLS
@@ -298,10 +316,7 @@ public class DistanceSensorTesting extends OpMode {
         robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft.setPower(0.35);
-        robot.frontRight.setPower(0.35);
-        robot.backLeft.setPower(0.35);
-        robot.backRight.setPower(0.35);
+        drivePower(0.35);
 
         while (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) {
 //            telemetry.addData("Current Left Position", robot.backLeft.getCurrentPosition());
@@ -310,5 +325,12 @@ public class DistanceSensorTesting extends OpMode {
 //
 //            }
         }
+    }
+
+    private void drivePower(double power){
+        robot.frontLeft.setPower(power);
+        robot.frontRight.setPower(power);
+        robot.backLeft.setPower(power);
+        robot.backRight.setPower(power);
     }
 }

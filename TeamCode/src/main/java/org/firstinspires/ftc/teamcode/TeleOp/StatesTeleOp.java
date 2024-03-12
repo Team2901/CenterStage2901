@@ -31,7 +31,7 @@ public class StatesTeleOp extends OpMode {
     public double armMod = 0.6;
 
     public int maxHeightArmTicks = 1700; //max height (straight vert)
-    public int maxArmTicks = 2670;
+    public int maxArmTicks = 10000;
     public int minArmTicks = 15;
     public int currentArmTicks = 0;
 
@@ -120,6 +120,8 @@ public class StatesTeleOp extends OpMode {
         }
 
         //arm up
+
+        // commented out b/c of stability testing 3/7/2024 - should be added back in
         if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < maxArmTicks){
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -131,7 +133,7 @@ public class StatesTeleOp extends OpMode {
         } else {
             robot.arm.setTargetPosition(currentArmTicks);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(0.7 * armMod);
+            robot.arm.setPower(-0.9 * armMod);
         }
 
         //right claw toggle
@@ -165,6 +167,8 @@ public class StatesTeleOp extends OpMode {
                 armModFast = false;
             }
         }
+
+        // commented out for stability testing 3/7/2024
 
         if(armAngle < 75){
             robot.rotationServo.setPosition(0.125);
@@ -240,6 +244,9 @@ public class StatesTeleOp extends OpMode {
         armAngle = recalculateAngle();
 
         telemetry.addData("arm position", robot.arm.getCurrentPosition());
+        telemetry.addData("arm target position", currentArmTicks);
+        telemetry.addData("arm.getTargetPosition", robot.arm.getTargetPosition());
+        telemetry.addData("arm power", robot.arm.getPower());
         telemetry.addData("arm angle", armAngle);
         telemetry.addData("right trigger", impGamepad1.right_trigger.getValue());
         telemetry.addData("left trigger", impGamepad1.left_trigger.getValue());
@@ -273,9 +280,10 @@ public class StatesTeleOp extends OpMode {
         return total;
     }
 
+    //fixed tick count for new 60rpm motors
     public double recalculateAngle(){
         double calculatedAngle;
-        calculatedAngle = ((210*robot.arm.getCurrentPosition())/2440) + initArmAngle;
+        calculatedAngle = ((210*robot.arm.getCurrentPosition())/5460) + initArmAngle;
         return calculatedAngle;
     }
 }
