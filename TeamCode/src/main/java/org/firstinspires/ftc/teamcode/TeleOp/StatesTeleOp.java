@@ -48,9 +48,12 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoMax = 0.8;
 
     public static double outtakeLeftClosedPos = 0.335;
-    public static double outtakeLeftOpenPos = 0.15;
-    public static double outtakeRightClosedPos = 0.483;
-    public static double outtakeRightOpenPos = 0.280;
+   // public static double outtakeLeftOpenPos = 0.15;
+    //public static double outtakeRightClosedPos = 0.483;
+    public static double outtakeRightClosedPos = 0.61;
+    //public static double outtakeRightOpenPos = 0.280;
+    //public static double outtakeRightOpenPos = outtakeRightClosedPos-.203;
+
 
     double initArmAngle = 60.0;
     double armAngle = initArmAngle;
@@ -142,7 +145,8 @@ public class StatesTeleOp extends OpMode {
                 robot.outtakeRight.setPosition(outtakeRightClosedPos);
                 outtakeRightClosed = true;
             } else {
-                robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                //robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                robot.outtakeRight.setPosition(outtakeRightClosedPos-.203);
                 outtakeRightClosed = false;
             }
         }
@@ -153,7 +157,8 @@ public class StatesTeleOp extends OpMode {
                 robot.outtakeLeft.setPosition(outtakeLeftClosedPos); //update new servo positions
                 outtakeLeftClosed = true;
             } else {
-                robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
+                //robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
+                robot.outtakeLeft.setPosition(outtakeLeftClosedPos-.2);
                 outtakeLeftClosed = false;
             }
         }
