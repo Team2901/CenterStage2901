@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
@@ -30,8 +31,8 @@ public class StatesTeleOp extends OpMode {
     public double turnMod = 0.9;
     public double armMod = 0.6;
 
-    public int maxHeightArmTicks = 1700; //max height (straight vert)
-    public int maxArmTicks = 10000;
+    public int maxHeightArmTicks = 3390; //preset deliver point
+    public int maxArmTicks = 5500;
     public int minArmTicks = 15;
     public int currentArmTicks = 0;
 
@@ -91,16 +92,24 @@ public class StatesTeleOp extends OpMode {
         rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
         rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
 
-        rotate = rightStickXVal * turnMod;
+        if(rightStickXVal > 0){
+            rotate = rightStickXVal * turnMod;
+        } else if(impGamepad1.y.isPressed()){
+            rotate = turnToAngle(0) * turnMod;
+        } else {
+            rotate = 0;
+        }
 
         robot.backLeft.setPower(leftStickYVal+leftStickXVal+rotate);
         robot.frontLeft.setPower(leftStickYVal-leftStickXVal+rotate);
         robot.backRight.setPower(leftStickYVal-leftStickXVal-rotate);
         robot.frontRight.setPower(leftStickYVal+leftStickXVal-rotate);
 
-        telemetry.addData("The ROTATION:", startFrontLeft - robot.frontLeft.getCurrentPosition());
-
-        //might have to use PID for the arm, we'll see
+        if(robot.frontLeft.getPower() > 0 || robot.frontRight.getPower() > 0 || robot.backLeft.getPower() > 0 || robot.backRight.getPower() > 0){
+            if(robot.arm.getCurrentPosition() < minArmTicks + 80) {
+                currentArmTicks = minArmTicks + 80;
+            }
+        }
 
         //set arm to max height
         if(impGamepad1.dpad_up.isInitialPress()){
@@ -172,8 +181,6 @@ public class StatesTeleOp extends OpMode {
                 armModFast = false;
             }
         }
-
-        // commented out for stability testing 3/7/2024
 
         if(armAngle < 75){
             robot.rotationServo.setPosition(0.125);
@@ -258,6 +265,7 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("outtakeLeft servo position", robot.outtakeLeft.getPosition());
         telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
         telemetry.addData("rotation servo position", robot.rotationServo.getPosition());
+        telemetry.addData("angle", robot.getAngle());
         telemetry.update();
     }
 
@@ -288,7 +296,42 @@ public class StatesTeleOp extends OpMode {
     //fixed tick count for new 60rpm motors
     public double recalculateAngle(){
         double calculatedAngle;
-        calculatedAngle = ((210*robot.arm.getCurrentPosition())/5460) + initArmAngle;
+        calculatedAngle = ((210*robot.arm.getCurrentPosition())/5360) + initArmAngle;
         return calculatedAngle;
+    }
+
+    public double turnToAngle(double turnAngle){
+
+        //robot.getAngle is between -180 and 180, starting at 0
+        double turnPower = 0;
+        double targetAngle = AngleUnit.normalizeDegrees(turnAngle) + 180;
+        double startAngle = robot.getAngle() + 180;
+        double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
+        if(!(turnError < .5 && turnError > -.5)){
+            if(turnError >= 0){
+                turnPower = turnError/50;
+                if(turnPower > .75){
+                    turnPower = .75;
+                }
+            }else if(turnError < 0){
+                turnPower = turnError/50;
+                if(turnPower < -.75){
+                    turnPower = -.75;
+                }
+            }
+//            robot.frontLeft.setPower(-turnPower);
+//            robot.frontRight.setPower(turnPower);
+//            robot.backLeft.setPower(-turnPower);
+//            robot.backRight.setPower(turnPower);
+
+            double currentAngle = robot.getAngle() + 180;
+            turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
+        }
+//        robot.frontLeft.setPower(0);
+//        robot.frontRight.setPower(0);
+//        robot.backRight.setPower(0);
+//        robot.backLeft.setPower(0);
+
+        return turnPower;
     }
 }
