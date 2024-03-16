@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -74,7 +76,9 @@ public class StatesTeleOp extends OpMode {
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(this.hardwareMap, telemetry);
+
 
         startFrontLeft = robot.frontLeft.getCurrentPosition();
 
@@ -92,12 +96,16 @@ public class StatesTeleOp extends OpMode {
         rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
         rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
 
-        if(rightStickXVal > 0){
+        if(Math.abs(rightStickXVal) > 0){
             rotate = rightStickXVal * turnMod;
         } else if(impGamepad1.y.isPressed()){
-            rotate = turnToAngle(0) * turnMod;
+            rotate = -turnToAngle(0) * turnMod;
         } else {
             rotate = 0;
+        }
+
+        if(impGamepad1.x.isInitialPress()){
+            robot.imu.resetYaw();
         }
 
         robot.backLeft.setPower(leftStickYVal+leftStickXVal+rotate);
@@ -105,7 +113,7 @@ public class StatesTeleOp extends OpMode {
         robot.backRight.setPower(leftStickYVal-leftStickXVal-rotate);
         robot.frontRight.setPower(leftStickYVal+leftStickXVal-rotate);
 
-        if(robot.frontLeft.getPower() > 0 || robot.frontRight.getPower() > 0 || robot.backLeft.getPower() > 0 || robot.backRight.getPower() > 0){
+        if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
             if(robot.arm.getCurrentPosition() < minArmTicks + 80) {
                 currentArmTicks = minArmTicks + 80;
             }
@@ -145,7 +153,8 @@ public class StatesTeleOp extends OpMode {
         } else {
             robot.arm.setTargetPosition(currentArmTicks);
             robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.arm.setPower(-0.9 * armMod);
+            robot.arm.setPower(0.7 * armMod);
+            //robot.arm.setPower(-0.9 * armMod);
         }
 
         //right claw toggle
@@ -304,8 +313,8 @@ public class StatesTeleOp extends OpMode {
 
         //robot.getAngle is between -180 and 180, starting at 0
         double turnPower = 0;
-        double targetAngle = AngleUnit.normalizeDegrees(turnAngle) + 180;
-        double startAngle = robot.getAngle() + 180;
+        double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
+        double startAngle = robot.getAngle();
         double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
         if(!(turnError < .5 && turnError > -.5)){
             if(turnError >= 0){
@@ -324,7 +333,7 @@ public class StatesTeleOp extends OpMode {
 //            robot.backLeft.setPower(-turnPower);
 //            robot.backRight.setPower(turnPower);
 
-            double currentAngle = robot.getAngle() + 180;
+            double currentAngle = robot.getAngle();
             turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
         }
 //        robot.frontLeft.setPower(0);
