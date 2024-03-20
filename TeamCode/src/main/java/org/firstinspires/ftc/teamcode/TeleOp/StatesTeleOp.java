@@ -91,7 +91,7 @@ public class StatesTeleOp extends OpMode {
         impGamepad2.update();
 
         //basic drive base stuff
-        leftStickXVal = -impGamepad1.left_stick_x.getValue() * speedMod;
+        leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
         leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
         rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
         rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
@@ -108,10 +108,16 @@ public class StatesTeleOp extends OpMode {
             robot.imu.resetYaw();
         }
 
-        robot.backLeft.setPower(leftStickYVal+leftStickXVal+rotate);
-        robot.frontLeft.setPower(leftStickYVal-leftStickXVal+rotate);
-        robot.backRight.setPower(leftStickYVal-leftStickXVal-rotate);
-        robot.frontRight.setPower(leftStickYVal+leftStickXVal-rotate);
+        double controllerAngle = AngleUnit.RADIANS.fromDegrees(impGamepad1.left_stick_angle);
+        double robotAngle = AngleUnit.RADIANS.fromDegrees(robot.getAngle());
+
+        double forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle - robotAngle);
+        double strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle - robotAngle);
+
+        robot.backLeft.setPower(forward-strafe+rotate);
+        robot.frontLeft.setPower(forward+strafe+rotate);
+        robot.backRight.setPower(forward+strafe-rotate);
+        robot.frontRight.setPower(forward-strafe-rotate);
 
         if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
             if(robot.arm.getCurrentPosition() < minArmTicks + 80) {
@@ -275,6 +281,10 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
         telemetry.addData("rotation servo position", robot.rotationServo.getPosition());
         telemetry.addData("angle", robot.getAngle());
+        telemetry.addData("joystick radius", impGamepad1.left_stick_radius);
+        telemetry.addData("joystick angle", impGamepad1.left_stick_angle);
+        telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
+        telemetry.addData("left stick y value", impGamepad1.left_stick_y.getValue());
         telemetry.update();
     }
 
