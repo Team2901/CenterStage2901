@@ -102,6 +102,7 @@ public class StatesHardware{
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbFacingDirection);
         IMU.Parameters IMUParameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(IMUParameters);
+        imu.resetYaw();
     }
 
     public double getAngle(){

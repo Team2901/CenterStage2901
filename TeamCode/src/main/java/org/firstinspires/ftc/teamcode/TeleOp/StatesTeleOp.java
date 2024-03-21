@@ -70,6 +70,12 @@ public class StatesTeleOp extends OpMode {
     double iArmMax = 0.25;
 
     boolean fieldOriented = true;
+
+    enum Alliance{
+        RED,
+        BLUE
+    }
+    Alliance alliance = Alliance.RED;
     @Override
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
@@ -78,9 +84,28 @@ public class StatesTeleOp extends OpMode {
         robot.init(this.hardwareMap, telemetry);
 
 
+
         startFrontLeft = robot.frontLeft.getCurrentPosition();
 
         outtakeTimer.startTime();
+
+    }
+
+    @Override
+    public void init_loop() {
+        impGamepad1.update();
+        super.init_loop();
+        telemetry.addLine("Red (B) or Blue (X) Alliance?");
+
+        if(impGamepad1.x.isInitialPress()){
+            alliance = Alliance.BLUE;
+        }
+        if(impGamepad1.b.isInitialPress()){
+            alliance = Alliance.RED;
+        }
+        telemetry.addData("Alliance Color:", alliance);
+        telemetry.update();
+
     }
 
     @Override
@@ -96,13 +121,16 @@ public class StatesTeleOp extends OpMode {
 
         if(Math.abs(rightStickXVal) > 0){
             rotate = rightStickXVal * turnMod;
-        } else if(impGamepad1.y.isPressed()){
-            rotate = -turnToAngle(0) * turnMod;
-        } else {
+        } else if(impGamepad1.x.isPressed()){
+            rotate = -turnToAngle(alliance == Alliance.RED? 90: -90) * turnMod;
+        } else if(impGamepad1.a.isPressed()){
+            rotate = -turnToAngle(alliance == Alliance.RED? 45: -45)*turnMod;
+        }
+        else {
             rotate = 0;
         }
 
-        if(impGamepad1.x.isInitialPress()){
+        if(impGamepad2.x.isInitialPress()){
             robot.imu.resetYaw();
         }
         double controllerAngle = AngleUnit.RADIANS.fromDegrees(impGamepad1.left_stick_angle);
@@ -292,6 +320,7 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
         telemetry.addData("left stick y value", impGamepad1.left_stick_y.getValue());
         telemetry.addData("Field Oriented:", fieldOriented);
+        telemetry.addData("Alliance Color:", alliance);
         telemetry.update();
     }
 
