@@ -9,11 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
-import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
-
-import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "States Mecanum Base", group = "TeleOp")
 public class StatesTeleOp extends OpMode {
@@ -72,6 +68,8 @@ public class StatesTeleOp extends OpMode {
     double dArm = 0.0;
     double cosArm = 0.0;
     double iArmMax = 0.25;
+
+    boolean fieldOriented = true;
     @Override
     public void init() {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
@@ -107,18 +105,26 @@ public class StatesTeleOp extends OpMode {
         if(impGamepad1.x.isInitialPress()){
             robot.imu.resetYaw();
         }
-
         double controllerAngle = AngleUnit.RADIANS.fromDegrees(impGamepad1.left_stick_angle);
         double robotAngle = AngleUnit.RADIANS.fromDegrees(robot.getAngle());
+        double forward;
+        double strafe;
+        if(fieldOriented == true) {
+            forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle - robotAngle);
+            strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle - robotAngle);
+        }
+        else{
+            forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle);
+            strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle);
+        }
+        robot.backLeft.setPower(forward - strafe + rotate);
+        robot.frontLeft.setPower(forward + strafe + rotate);
+        robot.backRight.setPower(forward + strafe - rotate);
+        robot.frontRight.setPower(forward - strafe - rotate);
 
-        double forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle - robotAngle);
-        double strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle - robotAngle);
-
-        robot.backLeft.setPower(forward-strafe+rotate);
-        robot.frontLeft.setPower(forward+strafe+rotate);
-        robot.backRight.setPower(forward+strafe-rotate);
-        robot.frontRight.setPower(forward-strafe-rotate);
-
+        if(impGamepad1.back.isInitialPress()){
+            fieldOriented = !fieldOriented;
+        }
         if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
             if(robot.arm.getCurrentPosition() < minArmTicks + 80) {
                 currentArmTicks = minArmTicks + 80;
@@ -285,6 +291,7 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("joystick angle", impGamepad1.left_stick_angle);
         telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
         telemetry.addData("left stick y value", impGamepad1.left_stick_y.getValue());
+        telemetry.addData("Field Oriented:", fieldOriented);
         telemetry.update();
     }
 
