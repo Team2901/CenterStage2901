@@ -35,7 +35,7 @@ public class ShapeDetectionBlue extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         List<MatOfPoint> blueContours = new ArrayList<>();
 
-        telemetry.clearAll();
+        // telemetry.clearAll();
         if (input == null)
             return null;
 

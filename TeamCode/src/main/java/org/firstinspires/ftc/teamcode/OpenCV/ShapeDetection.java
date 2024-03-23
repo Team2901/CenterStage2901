@@ -47,7 +47,7 @@ public class ShapeDetection extends OpenCvPipeline {
             return null;
         }
 
-        telemetry.clearAll();
+        // telemetry.clearAll();
 
         // Make sure the size is as expected
         // (In case we are using pixel-count thresholds)
@@ -114,11 +114,13 @@ public class ShapeDetection extends OpenCvPipeline {
                 spikeMark = 1;
             }
         }
-        telemetry.addData("spikeMark", spikeMark);
+        else {
+            //using contours...
+        }
 
         // Do some visualization
         // NOTE: This can be disabled for events!
-        boolean doVisualization = true;
+        boolean doVisualization = false;
         Mat outputFrame = null;
         if (doVisualization) {
             // Make an image that will be marked up with lines and such
@@ -206,10 +208,11 @@ public class ShapeDetection extends OpenCvPipeline {
             Mat zeros = new Mat();
             Core.inRange(outputFrame, new Scalar(0, 0, 0), new Scalar(0, 0, 0), zeros);
             outputFrame.setTo(new Scalar(1, 1, 1), zeros);
+            return outputFrame;
         }
-
-        telemetry.update();
-        return outputFrame;
+        else {
+            return inputFrameRGB;
+        }
     }
 
     public double xMid(){
