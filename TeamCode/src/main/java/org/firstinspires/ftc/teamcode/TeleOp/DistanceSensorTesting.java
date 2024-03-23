@@ -190,7 +190,7 @@ public class DistanceSensorTesting extends OpMode {
         }
 
 //        if(impGamepad1.a.isInitialPress()){
-//            double distanceFromBoard = robot.distanceSensor.getDistance(DistanceUnit.INCH);
+//            double distanceFromBoard = robot.distanceSensorLeft.getDistance(DistanceUnit.INCH);
 //            if(distanceFromBoard > 2){
 //                moveInches(distanceFromBoard - 2);
 //            }
@@ -199,7 +199,7 @@ public class DistanceSensorTesting extends OpMode {
 //        }
 
         if(impGamepad1.a.isPressed()){
-            double distanceFromBoard = robot.distanceSensor.getDistance(DistanceUnit.INCH);
+            double distanceFromBoard = robot.distanceSensorLeft.getDistance(DistanceUnit.INCH);
             while(distanceFromBoard > 2){
                 drivePower(0.35);
             }
@@ -269,7 +269,15 @@ public class DistanceSensorTesting extends OpMode {
         telemetry.addData("OuttakeLeft Servo Position", robot.outtakeLeft.getPosition());
         telemetry.addData("OuttakeRight Servo Position", robot.outtakeRight.getPosition());
         telemetry.addData("Rotation Servo Position", robot.rotationServo.getPosition());
-        telemetry.addData("Distance (in)", robot.distanceSensor.getDistance(DistanceUnit.INCH));
+        telemetry.addLine();
+        telemetry.addData("Left Distance (in)", robot.distanceSensorLeft.getDistance(DistanceUnit.INCH));
+        telemetry.addData("Right Distance (in)", robot.distanceSensorRight.getDistance(DistanceUnit.INCH));
+        telemetry.addData("Left Color RED", robot.colorSensorLeft.red());
+        telemetry.addData("Left Color GREEN", robot.colorSensorLeft.green());
+        telemetry.addData("Left Color BLUE", robot.colorSensorLeft.blue());
+        telemetry.addData("Right Color RED", robot.colorSensorRight.red());
+        telemetry.addData("Right Color GREEN", robot.colorSensorRight.green());
+        telemetry.addData("Right Color BLUE", robot.colorSensorRight.blue());
         telemetry.update();
     }
 

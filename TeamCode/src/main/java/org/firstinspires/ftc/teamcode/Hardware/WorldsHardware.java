@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -27,7 +29,10 @@ public class WorldsHardware {
     public Servo outtakeRight;
     public Servo planeServo;
     public Servo rotationServo;
-    public DistanceSensor distanceSensor;
+    public DistanceSensor distanceSensorLeft;
+    public DistanceSensor distanceSensorRight;
+    public ColorRangeSensor colorSensorLeft;
+    public ColorRangeSensor colorSensorRight;
 
     public BNO055IMU imu;
 
@@ -42,7 +47,10 @@ public class WorldsHardware {
         outtakeRight = hardwareMap.servo.get("outtakeRight");
         planeServo = hardwareMap.servo.get("planeServo");
         rotationServo = hardwareMap.servo.get("rotationServo");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
+        colorSensorLeft = hardwareMap.get(ColorRangeSensor.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(ColorRangeSensor.class, "colorSensorRight");
 
 
         // set motor directions (for normal robot)

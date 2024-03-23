@@ -144,21 +144,26 @@ public class ShapeDetection extends OpenCvPipeline {
             Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
 
             // Centroid of contours
-            Moments moments = Imgproc.moments(contours.get(0));
-            double totalPixels = moments.m00;
-            double sumX = moments.m10;
-            double sumY = moments.m01;
-            double averageX = sumX/totalPixels;
-            double averageY = sumY/totalPixels;
-            Imgproc.circle(markup, new Point(averageX, averageY), 2, new Scalar(0,50,70), 2);
+            if(contours.size() > 0) {
+                Moments moments = Imgproc.moments(contours.get(0));
+                double totalPixels = moments.m00;
+                double sumX = moments.m10;
+                double sumY = moments.m01;
+                double averageX = sumX / totalPixels;
+                double averageY = sumY / totalPixels;
+                Imgproc.circle(markup, new Point(averageX, averageY), 2, new Scalar(0, 50, 70), 2);
 
-            telemetry.addData("Average X", averageX);
-            telemetry.addData("Average Y", averageY);
-            telemetry.addData("Sum X", sumX);
-            telemetry.addData("Sum Y", sumY);
-            telemetry.addData("Total Pixels", totalPixels);
+                telemetry.addData("Average X", averageX);
+                telemetry.addData("Average Y", averageY);
+                telemetry.addData("Sum X", sumX);
+                telemetry.addData("Sum Y", sumY);
+                telemetry.addData("Total Pixels", totalPixels);
 
-            xCentroid = averageX;
+                xCentroid = averageX;
+            } else {
+                telemetry.addLine("No Contours Found");
+                return inputFrameRGB;
+            }
 
             // Make an image showing what the color mask output finds
             Mat onlyFoundColorMask = new Mat();
