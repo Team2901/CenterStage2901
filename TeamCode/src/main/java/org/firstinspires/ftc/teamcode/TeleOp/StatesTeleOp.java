@@ -46,12 +46,10 @@ public class StatesTeleOp extends OpMode {
     public double rotationServoMin = 0.1;
     public double rotationServoMax = 0.8;
 
-    public static double outtakeLeftClosedPos = 0.335;
-   // public static double outtakeLeftOpenPos = 0.15;
-    //public static double outtakeRightClosedPos = 0.483;
-    public static double outtakeRightClosedPos = 0.61;
-    //public static double outtakeRightOpenPos = 0.280;
-    //public static double outtakeRightOpenPos = outtakeRightClosedPos-.203;
+    public static double outtakeLeftClosedPos = 0.315;
+    public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.2;
+    public static double outtakeRightClosedPos = 0.3;
+    public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.2;
 
 
     double initArmAngle = 60.0;
@@ -83,12 +81,9 @@ public class StatesTeleOp extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(this.hardwareMap, telemetry);
 
-
-
         startFrontLeft = robot.frontLeft.getCurrentPosition();
 
         outtakeTimer.startTime();
-
     }
 
     @Override
@@ -268,10 +263,10 @@ public class StatesTeleOp extends OpMode {
 
         //adjust outtakeLeft closed position in case it skips (gamepad2)
         if(impGamepad2.dpad_down.isInitialPress()){
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
+            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         } else if(impGamepad2.dpad_up.isInitialPress()){
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
+            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
 
