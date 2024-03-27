@@ -20,7 +20,9 @@ android {
 
     packagingOptions {
         jniLibs.useLegacyPackaging true
+        exclude "META-INF/DEPENDENCIES"
     }
+
 }
 
 dependencies {
@@ -34,4 +36,7 @@ dependencies {
 
     //opencv
     implementation 'org.openftc:easyopencv:1.7.0'
+    implementation 'com.github.bubblecloud:vecmath:M2RELEASE-TAG-NaN'
+//    implementation 'org.knowm.xchart:xchart:3.8.7'
+    implementation 'com.image-charts:image-charts:6.0.55'
 }
