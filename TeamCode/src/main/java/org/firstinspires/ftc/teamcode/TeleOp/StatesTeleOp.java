@@ -72,9 +72,10 @@ public class StatesTeleOp extends OpMode {
     Alliance alliance = Alliance.RED;
     @Override
     public void init() {
-        impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
-        impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1", telemetry);
+        impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2", telemetry);
         robot.init(this.hardwareMap, telemetry);
 
         startFrontLeft = robot.frontLeft.getCurrentPosition();
@@ -85,18 +86,15 @@ public class StatesTeleOp extends OpMode {
     @Override
     public void init_loop() {
         impGamepad1.update();
-        super.init_loop();
-        telemetry.addLine("Red (B) or Blue (X) Alliance?");
 
+        telemetry.addData("Help", "Red (B) or Blue (X) Alliance?");
         if(impGamepad1.x.isInitialPress()){
             alliance = Alliance.BLUE;
         }
         if(impGamepad1.b.isInitialPress()){
             alliance = Alliance.RED;
         }
-        telemetry.addData("Alliance Color:", alliance);
-        telemetry.update();
-
+        telemetry.addData("Current Alliance:", alliance);
     }
 
     @Override

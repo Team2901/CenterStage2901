@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Utilities;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -17,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class ImprovedGamepad {
+    private static String Tag = "ImprovedGamepad";
     public static double StickDeadZone = 0.01;
     private Double lastKnownStickDeadZone = null;
     public static double TriggerDeadZone = 0.01;
@@ -25,6 +31,7 @@ public class ImprovedGamepad {
     private final Gamepad hardwareGamepad;
     private final ElapsedTime timer;
     private final String name;
+    private final Telemetry telemetry;
 
     public Joystick left_stick;
     public Joystick right_stick;
@@ -48,16 +55,23 @@ public class ImprovedGamepad {
     public AnalogInput left_trigger;
     public AnalogInput right_trigger;
 
-    Timer watchdogTimer = new Timer();
-
     public ImprovedGamepad(
             final Gamepad hardwareGamepad,
             final ElapsedTime timer,
             final String name) {
+        this(hardwareGamepad, timer, name, null);
+    }
+
+    public ImprovedGamepad(
+            final Gamepad hardwareGamepad,
+            final ElapsedTime timer,
+            final String name,
+            final Telemetry telemetry) {
 
         this.hardwareGamepad = hardwareGamepad;
         this.timer = timer;
         this.name = (null != name) ? name : "";
+        this.telemetry = telemetry;
 
         this.right_stick = new Joystick(String.format("%s_right_stick", this.name));
         this.left_stick = new Joystick(String.format("%s_left_stick", this.name));
@@ -81,30 +95,13 @@ public class ImprovedGamepad {
         this.left_trigger = new AnalogInput(String.format("%s_left_trigger", this.name));
         this.right_trigger = new AnalogInput(String.format("%s_right_trigger", this.name));
 
-        //Thread t = new Thread(watchdog);
-        //t.start();
-
-        // If the opmode is TeleOp, set
-        /*if (null != opmode.getClass().getAnnotation(TeleOp.class)) */ {
-            watchdogTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    throw new RuntimeException("You forgot to call update!");
-                }
-            }, 10 * 1000L);
-        }
+        Thread t = new Thread(watchdog);
+        t.start();
     }
 
     public void update() {
         // We need to feed the watchdog
-        //watchdog.feed();
-        // If update is called, kill the timer
-        // We don't really keep the watchdog timer going forever; assume if called once that
-        // it will continue to be called
-        /*if (watchdogTimer != null) {
-            watchdogTimer.cancel();
-            watchdogTimer = null;
-        }*/
+        watchdog.feed();
 
         // Check for Config updates
         // Having FTCDashboard Config only come from public static really messes with our class
@@ -145,27 +142,43 @@ public class ImprovedGamepad {
         right_trigger.update(Double.valueOf(hardwareGamepad.right_trigger), time);
     }
 
-    /*
     UpdateWatchdog watchdog = new UpdateWatchdog();
     private class UpdateWatchdog implements Runnable
     {
         BlockingQueue<Boolean> watchdogFood = new LinkedBlockingQueue<>();
+        //Telemetry.Item telemetryItem;
 
         @Override
         public void run() {
+            Log.d(Tag, "Watchdog starting");
             try {
-                Boolean food = watchdogFood.poll(10, TimeUnit.SECONDS);
-                if (food == null) {
-                    throw new RuntimeException("You forgot to call update!");
-                }
+                Boolean food = null;
+                do {
+                    food = watchdogFood.poll(1, TimeUnit.SECONDS);
+                    if (food == null) {
+                        Log.w(Tag, String.format(Locale.ENGLISH, "%s Watchdog timeout!", name));
+                        if (telemetry != null) {
+                            //telemetryItem = telemetry.addData(name, "You forgot to call update!");
+                            telemetry.addData(name, "You forgot to call update!");
+                        }
+                    }
+                    /* Dashboard doesn't support remove item telemetry.removeItem(telemetryItem);
+                    else if (telemetryItem != null) {
+                        telemetryItem.setValue("");
+                        telemetryItem = null;
+                    }*/
+                    else if (telemetry != null) {
+                        telemetry.addData(name, "");
+                    }
+                } while ((food == null) || (food != false));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+            Log.d(Tag, "Watchdog ending");
         }
 
         public void feed() {
             watchdogFood.add(true);
         }
     }
-     */
 }
