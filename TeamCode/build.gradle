@@ -37,6 +37,9 @@ dependencies {
     //opencv
     implementation 'org.openftc:easyopencv:1.7.0'
     implementation 'com.github.bubblecloud:vecmath:M2RELEASE-TAG-NaN'
+    // https://mvnrepository.com/artifact/info.laht.threekt/math
+    implementation group: 'info.laht.threekt', name: 'math', version: 'r1-ALPHA-27'
+
 //    implementation 'org.knowm.xchart:xchart:3.8.7'
-    implementation 'com.image-charts:image-charts:6.0.55'
+//    implementation 'com.image-charts:image-charts:6.0.55'
 }
