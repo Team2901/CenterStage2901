@@ -1,8 +1,19 @@
 package org.firstinspires.ftc.teamcode.Utilities;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class ImprovedGamepad {
@@ -37,6 +48,8 @@ public class ImprovedGamepad {
     public AnalogInput left_trigger;
     public AnalogInput right_trigger;
 
+    Timer watchdogTimer = new Timer();
+
     public ImprovedGamepad(
             final Gamepad hardwareGamepad,
             final ElapsedTime timer,
@@ -67,10 +80,31 @@ public class ImprovedGamepad {
         this.right_bumper = new Button(String.format("%s_right_bumper", this.name));
         this.left_trigger = new AnalogInput(String.format("%s_left_trigger", this.name));
         this.right_trigger = new AnalogInput(String.format("%s_right_trigger", this.name));
+
+        //Thread t = new Thread(watchdog);
+        //t.start();
+
+        // If the opmode is TeleOp, set
+        /*if (null != opmode.getClass().getAnnotation(TeleOp.class)) */ {
+            watchdogTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    throw new RuntimeException("You forgot to call update!");
+                }
+            }, 10 * 1000L);
+        }
     }
 
     public void update() {
-        // TODO: Watchdog for update not being called...
+        // We need to feed the watchdog
+        //watchdog.feed();
+        // If update is called, kill the timer
+        // We don't really keep the watchdog timer going forever; assume if called once that
+        // it will continue to be called
+        /*if (watchdogTimer != null) {
+            watchdogTimer.cancel();
+            watchdogTimer = null;
+        }*/
 
         // Check for Config updates
         // Having FTCDashboard Config only come from public static really messes with our class
@@ -110,4 +144,28 @@ public class ImprovedGamepad {
         left_trigger.update(Double.valueOf(hardwareGamepad.left_trigger), time);
         right_trigger.update(Double.valueOf(hardwareGamepad.right_trigger), time);
     }
+
+    /*
+    UpdateWatchdog watchdog = new UpdateWatchdog();
+    private class UpdateWatchdog implements Runnable
+    {
+        BlockingQueue<Boolean> watchdogFood = new LinkedBlockingQueue<>();
+
+        @Override
+        public void run() {
+            try {
+                Boolean food = watchdogFood.poll(10, TimeUnit.SECONDS);
+                if (food == null) {
+                    throw new RuntimeException("You forgot to call update!");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        public void feed() {
+            watchdogFood.add(true);
+        }
+    }
+     */
 }
