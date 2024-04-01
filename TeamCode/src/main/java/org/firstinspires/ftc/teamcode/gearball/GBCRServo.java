@@ -18,6 +18,8 @@ public class GBCRServo {
 
     private final double MAXPWR = 0.25;
     private final double MINPWR = 0.08;
+    private final double MINDST = 0.01;
+
 
     public double angle;
     public double voltage;
@@ -77,7 +79,7 @@ public class GBCRServo {
         double targetAngle = startAngle + theta;
         double distFromTarget = targetAngle - angle;
 
-        while (Math.abs(distFromTarget) > 0.03) {
+        while (Math.abs(distFromTarget) > MINDST) {
             updateAngle();
             distFromTarget = targetAngle - angle;
             double power = Math.min(MAXPWR, Math.max(-MAXPWR, distFromTarget * 2.5));
@@ -136,7 +138,7 @@ public class GBCRServo {
             return true;
         }
 //        power = pid.update(angle);
-        power = Math.copySign(targetVelocity, diff);//Math.min(MAXPWR, Math.max(-MAXPWR, diff / 2 + Math.copySign(0.1, diff)));
+        power = Math.copySign(MINPWR, diff);//Math.min(MAXPWR, Math.max(-MAXPWR, diff / 2 + Math.copySign(0.1, diff)));
         servo.setPower(-power);
 //        double distFromTarget = targetAngle - angle;
 //        if (Math.abs(distFromTarget) < 0.08) {
@@ -156,7 +158,7 @@ public class GBCRServo {
     public boolean moveTowardTarget() {
         updateAngle();
         double diff = targetAngle - angle;
-        if (Math.abs(diff) <= 0.03 || Math.signum(diff) != Math.signum(targetAngle - previousAngle)) {
+        if (Math.abs(diff) <= MINDST || Math.signum(diff) != Math.signum(targetAngle - previousAngle)) {
             servo.setPower(0);
             previousAngle = targetAngle;
             return true;

@@ -18,8 +18,8 @@ public class GBMPGear {
     private final double ROLL_RATIO = 48.0 / 40;
 
     private final double MAXPWR = 0.3;
-    private final double MINPWR = 0.2;
-    private final double MINDST = 0.03;
+    private final double MINPWR = 0.15;
+    private final double MINDST = 0.01;
     ImprovedGamepad gamepad;
 
     //servo forwards and backwards
@@ -188,20 +188,20 @@ public class GBMPGear {
         targetRoll = roll;
         dPitch = targetPitch - this.pitch;
         dRoll = targetRoll - this.roll;
-        telemetryD.addData("dPitch", dPitch);
-//        telemetry.addData("dPitch", dPitch);
-//        telemetry.addData("dRoll", dRoll);
+//        telemetryD.addData("dPitch", dPitch);
+        telemetry.addData("dPitch", dPitch);
+        telemetry.addData("dRoll", dRoll);
         telemetry.update();
         if (Math.abs(dPitch) < MINDST) dPitch = 0;
         if (Math.abs(dRoll) < MINDST) dRoll = 0;
-        telemetryD.addData("aPitch", dPitch);
+//        telemetryD.addData("aPitch", dPitch);
 
         orientationStatus = 0;
 
         servoB.updateAngle();
         servoF.updateAngle();
 
-        double servoFTarget = dPitch * PITCH_RATIO; //+ dRoll * ROLL_RATIO;
+        double servoFTarget = dPitch * PITCH_RATIO + dRoll * ROLL_RATIO;
         double servoBTarget = -dRoll * ROLL_RATIO;
         double smallest = Math.min(Math.abs(servoFTarget), Math.abs(servoBTarget));
         double servoFVel = Math.abs(servoFTarget) / smallest * MINPWR;
@@ -231,7 +231,9 @@ public class GBMPGear {
 //            servoB.setTargetAbsolute(0, MINPWR);
 //        }
         telemetryD.addData("pitch", this.pitch);
+        telemetryD.addData("roll", this.roll);
         telemetryD.addData("targetPitch", targetPitch);
+        telemetryD.addData("targetRoll", targetRoll);
         telemetryD.addData("F", servoF.angle);
         telemetryD.addData("tF", servoF.targetAngle);
         telemetryD.addData("dF", servoF.targetAngle-servoF.angle);

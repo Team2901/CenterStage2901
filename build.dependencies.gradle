@@ -2,7 +2,7 @@ repositories {
     google() // Needed for androidx
     mavenCentral()
     maven { url = 'https://maven.brott.dev/' }
-    maven { url = 'https://jitpack.io' }
+//    maven { url = 'https://jitpack.io' }
     flatDir {
         dirs rootProject.file('libs')
     }

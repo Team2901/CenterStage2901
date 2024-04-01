@@ -25,6 +25,24 @@ android {
 
 }
 
+configurations.forEach { it ->
+    def config = it
+    def configName = config.name
+    def taskName = "sync${configName.capitalize()}Dependencies"
+
+    task "$taskName"(type: Sync) {
+        group = "Troubleshooting"
+        description = "Syncs $configName dependencies into build/deps/$configName"
+
+        from config
+        into "$buildDir/deps/$configName"
+    }
+}
+
+configurations.all{
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
@@ -36,10 +54,11 @@ dependencies {
 
     //opencv
     implementation 'org.openftc:easyopencv:1.7.0'
-    implementation 'com.github.bubblecloud:vecmath:M2RELEASE-TAG-NaN'
+//    implementation 'com.github.bubblecloud:vecmath:M2RELEASE-TAG-NaN'
     // https://mvnrepository.com/artifact/info.laht.threekt/math
-    implementation group: 'info.laht.threekt', name: 'math', version: 'r1-ALPHA-27'
-
+    implementation ('info.laht.threekt:math:r1-ALPHA-27'){
+        exclude group: 'org.slf4j'
+    }
 //    implementation 'org.knowm.xchart:xchart:3.8.7'
 //    implementation 'com.image-charts:image-charts:6.0.55'
 }

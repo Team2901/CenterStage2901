@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.bubblecloud.vecmath.Vector3f;
+//import org.bubblecloud.vecmath.Vector3f;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 @TeleOp(name = "gearBallDrive", group = "AAAtest")
@@ -33,7 +33,7 @@ public class gearBallDrive extends LinearOpMode {
     }
     double factor = 1;
 
-    Vector3f targetVector = new Vector3f(0,1,0);
+//    Vector3f targetVector = new Vector3f(0,1,0);
 
     void _loop(){
         impGamepad1.update();
