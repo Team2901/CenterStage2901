@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -22,6 +23,7 @@ public class ShapeDetection extends OpenCvPipeline {
     //              inRange values. (And the blur kernel size is slightly different)
 
     private Telemetry telemetry;
+    private StatesHardware robot;
 
     public double xMidVal;
     public double xCentroid;
@@ -31,6 +33,10 @@ public class ShapeDetection extends OpenCvPipeline {
 
     public ShapeDetection (Telemetry telemetry){
         this.telemetry = telemetry;
+    }
+    public ShapeDetection (Telemetry telemetry, StatesHardware robot){
+        this.telemetry = telemetry;
+        this.robot = robot;
     }
 
     Rect rect;
@@ -79,7 +85,11 @@ public class ShapeDetection extends OpenCvPipeline {
 
         // Find the pixels in the image that are our desired color (in HSV space)
         Mat bwImage = new Mat();
-        Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        if(robot == null || robot.alliance == StatesHardware.Alliance.RED) {
+                Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        } else {
+            Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
+        }
 
         // Median blur this mask so that we can ignore the tape strips and any other noise
         // Code Review: Note: blurImg is only used for contours... Also, this is a really big blur kernel.

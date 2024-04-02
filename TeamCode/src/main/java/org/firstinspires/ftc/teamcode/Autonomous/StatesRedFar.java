@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous (name = "States Red Far", group = "AAutonomous")
+@Autonomous (name = "States Red Far", group = "States Autonomous")
 public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
     StatesHardware robot = new StatesHardware();
 

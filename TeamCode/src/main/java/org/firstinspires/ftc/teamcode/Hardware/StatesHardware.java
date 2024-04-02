@@ -36,6 +36,24 @@ public class StatesHardware{
 
     public IMU imu;
 
+    public enum Alliance {
+        RED,
+        BLUE
+    }
+    public Alliance alliance = Alliance.RED;
+
+    public enum StartLocation {
+        FAR,
+        CLOSE
+    }
+    public StartLocation startLocation = StartLocation.FAR;
+
+    public enum Config {
+        WORLDS,
+        STATES
+    }
+    public Config config = Config.WORLDS;
+
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
         backLeft = hardwareMap.dcMotor.get("backLeft");
