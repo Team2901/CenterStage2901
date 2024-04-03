@@ -20,10 +20,6 @@ public class StatesTeleOp extends OpMode {
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    public double rightStickYVal;
-    public double rightStickXVal;
-    public double leftStickYVal;
-    public double leftStickXVal;
     public double rotate;
     public double speedMod = 0.9;
     public double turnMod = 0.9;
@@ -76,9 +72,10 @@ public class StatesTeleOp extends OpMode {
     Alliance alliance = Alliance.RED;
     @Override
     public void init() {
-        impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
-        impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1", telemetry);
+        impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2", telemetry);
         robot.init(this.hardwareMap, telemetry);
 
         startFrontLeft = robot.frontLeft.getCurrentPosition();
@@ -89,18 +86,15 @@ public class StatesTeleOp extends OpMode {
     @Override
     public void init_loop() {
         impGamepad1.update();
-        super.init_loop();
-        telemetry.addLine("Red (B) or Blue (X) Alliance?");
 
+        telemetry.addData("Help", "Red (B) or Blue (X) Alliance?");
         if(impGamepad1.x.isInitialPress()){
             alliance = Alliance.BLUE;
         }
         if(impGamepad1.b.isInitialPress()){
             alliance = Alliance.RED;
         }
-        telemetry.addData("Alliance Color:", alliance);
-        telemetry.update();
-
+        telemetry.addData("Current Alliance:", alliance);
     }
 
     @Override
@@ -109,36 +103,32 @@ public class StatesTeleOp extends OpMode {
         impGamepad2.update();
 
         //basic drive base stuff
-        leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
-        leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
-        rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
-        rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
-
-        if(Math.abs(rightStickXVal) > 0){
-            rotate = rightStickXVal * turnMod;
-        } else if(impGamepad1.x.isPressed()){
+        if (Math.abs(impGamepad1.right_stick.x.getValue()) > 0) {
+            rotate = impGamepad1.right_stick.x.getValue() * turnMod;
+        } else if (impGamepad1.x.isPressed()) {
             rotate = -turnToAngle(alliance == Alliance.RED? 90: -90) * turnMod;
-        } else if(impGamepad1.a.isPressed()){
+        } else if (impGamepad1.a.isPressed() && !impGamepad1.start.isPressed()) {
             rotate = -turnToAngle(alliance == Alliance.RED? 45: -45)*turnMod;
         }
         else {
             rotate = 0;
         }
 
-        if(impGamepad2.x.isInitialPress()){
+        if (impGamepad2.x.isInitialPress()) {
             robot.imu.resetYaw();
         }
-        double controllerAngle = AngleUnit.RADIANS.fromDegrees(impGamepad1.left_stick_angle);
+
+        double controllerAngle = AngleUnit.RADIANS.fromDegrees(impGamepad1.left_stick.angle.getValue());
         double robotAngle = AngleUnit.RADIANS.fromDegrees(robot.getAngle());
         double forward;
         double strafe;
         if(fieldOriented == true) {
-            forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle - robotAngle);
-            strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle - robotAngle);
+            forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
+            strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
         }
         else{
-            forward = impGamepad1.left_stick_radius * Math.cos(controllerAngle);
-            strafe = impGamepad1.left_stick_radius * -Math.sin(controllerAngle);
+            forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
+            strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
         }
         robot.backLeft.setPower(forward - strafe + rotate);
         robot.frontLeft.setPower(forward + strafe + rotate);
@@ -310,10 +300,13 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
         telemetry.addData("rotation servo position", robot.rotationServo.getPosition());
         telemetry.addData("angle", robot.getAngle());
-        telemetry.addData("joystick radius", impGamepad1.left_stick_radius);
-        telemetry.addData("joystick angle", impGamepad1.left_stick_angle);
+        telemetry.addData("joystick raw radius", impGamepad1.left_stick.radius.getRawValue());
+        telemetry.addData("joystick radius", impGamepad1.left_stick.radius.getValue());
+        telemetry.addData("joystick angle", impGamepad1.left_stick.angle.getValue());
+        telemetry.addData("left stick raw x value", impGamepad1.left_stick.x.getRawValue());
+        telemetry.addData("left stick raw y value", impGamepad1.left_stick.y.getRawValue());
         telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
-        telemetry.addData("left stick y value", impGamepad1.left_stick_y.getValue());
+        telemetry.addData("left stick y value", impGamepad1.left_stick.y.getValue());
         telemetry.addData("Field Oriented:", fieldOriented);
         telemetry.addData("Alliance Color:", alliance);
         telemetry.update();
