@@ -106,7 +106,7 @@ public class StatesRedFar extends LinearOpMode implements OpenCvCamera.AsyncCame
         if (autoState == StatesRedFar.AutoState.CAMERA_WAIT) {
             if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("X Mid", pipeline.pixelXValAverage);
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
             } else {
                 autoState = StatesRedFar.AutoState.CAMERA_DETECTION;

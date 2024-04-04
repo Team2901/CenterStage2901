@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -95,15 +94,15 @@ public class MecanumAutoShapesLinear extends LinearOpMode implements OpenCvCamer
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 7) {
-                if (pipeline.xMidVal < 130 && pipeline.xMidVal > 5) {
+                if (pipeline.pixelXValAverage < 130 && pipeline.pixelXValAverage > 5) {
                     spikeMark = 1;
-                } else if (pipeline.xMidVal < 280 && pipeline.xMidVal > 5) {
+                } else if (pipeline.pixelXValAverage < 280 && pipeline.pixelXValAverage > 5) {
                     spikeMark = 2;
                 } else {
                     spikeMark = 3;
                 }
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("X Mid", pipeline.pixelXValAverage);
 //                telemetry.addData("X Init", xMidInit);
             } else {
                 autoState = AutoState.CAMERA_DETECTION;

@@ -25,16 +25,16 @@ public class ShapeDetection extends OpenCvPipeline {
     private Telemetry telemetry;
     private StatesHardware robot;
 
-    public double xMidVal;
     public double xCentroid;
     public boolean usingCentroid = true;
 
     Size targetSize = new Size(320, 240);
 
-    public ShapeDetection (Telemetry telemetry){
+    public ShapeDetection(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
-    public ShapeDetection (Telemetry telemetry, StatesHardware robot){
+
+    public ShapeDetection(Telemetry telemetry, StatesHardware robot) {
         this.telemetry = telemetry;
         this.robot = robot;
     }
@@ -47,6 +47,9 @@ public class ShapeDetection extends OpenCvPipeline {
     public int spikeMark = 1;
 
     public int blurSize = 19;
+
+    public double pixelXValAverage = -1.0;
+    private final double newPixelXValWeight = 0.2;
 
     public Mat processFrame(Mat inputFrameRGB) {
         if (inputFrameRGB == null) {
@@ -75,18 +78,18 @@ public class ShapeDetection extends OpenCvPipeline {
         //Rect cropRect = new Rect(0,40,320,200);
         //Mat croppedFrame = HSVImage.submat(cropRect);
         //Mat croppedInputFrameRGB = inputFrameRGB.submat(cropRect);
-        Rect blankRect = new Rect(0,0,320,40);
+        Rect blankRect = new Rect(0, 0, 320, 40);
         Mat croppedFrame = new Mat();
         HSVImage.copyTo(croppedFrame);
-        Imgproc.rectangle(croppedFrame, blankRect, new Scalar(0,0,0), -1);
+        Imgproc.rectangle(croppedFrame, blankRect, new Scalar(0, 0, 0), -1);
         Mat croppedInputFrameRGB = new Mat();
         inputFrameRGB.copyTo(croppedInputFrameRGB);
-        Imgproc.rectangle(croppedInputFrameRGB, blankRect, new Scalar(0,0,0), -1);
+        Imgproc.rectangle(croppedInputFrameRGB, blankRect, new Scalar(0, 0, 0), -1);
 
         // Find the pixels in the image that are our desired color (in HSV space)
         Mat bwImage = new Mat();
-        if(robot == null || robot.alliance == StatesHardware.Alliance.RED) {
-                Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        if (robot == null || robot.alliance == StatesHardware.Alliance.RED) {
+            Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
         } else {
             Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
         }
@@ -100,31 +103,16 @@ public class ShapeDetection extends OpenCvPipeline {
         //              boundingRect will find _any_ non-zero pixel from inRange
         rect = Imgproc.boundingRect(blurImg);
 
-        if(rect != null && !usingCentroid) {
+        if (rect != null && !usingCentroid) {
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
             telemetry.addData("xMid", this.xMid());
-            xMidVal = this.xMid();
 
-            if (xMidVal > boundingLine2) {
-                spikeMark = 3;
-            } else if (xMidVal > boundingLine1) {
-                spikeMark = 2;
-            } else {
-                spikeMark = 1;
-            }
+            addPixelXVal(this.xMid());
         }
-
-        if(usingCentroid){
-            if (xCentroid > boundingLine2) {
-                spikeMark = 3;
-            } else if (xCentroid > boundingLine1) {
-                spikeMark = 2;
-            } else {
-                spikeMark = 1;
-            }
-        }
-        else {
+        if (usingCentroid) {
+            addPixelXVal(xCentroid);
+        } else {
             //using contours...
         }
 
@@ -156,7 +144,7 @@ public class ShapeDetection extends OpenCvPipeline {
             Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
 
             // Centroid of contours
-            if(contours.size() > 0) {
+            if (contours.size() > 0) {
                 Moments moments = Imgproc.moments(contours.get(0));
                 double totalPixels = moments.m00;
                 double sumX = moments.m10;
@@ -219,15 +207,29 @@ public class ShapeDetection extends OpenCvPipeline {
             Core.inRange(outputFrame, new Scalar(0, 0, 0), new Scalar(0, 0, 0), zeros);
             outputFrame.setTo(new Scalar(1, 1, 1), zeros);
             return outputFrame;
-        }
-        else {
+        } else {
             return inputFrameRGB;
         }
     }
 
-    public double xMid(){
-        if(rect != null){
-            return rect.x + (rect.width/2);
+    public void addPixelXVal(double pixelXVal) {
+        if (pixelXValAverage == -1.0) {
+            pixelXValAverage = pixelXVal;
+        } else {
+            pixelXValAverage = (pixelXValAverage * (1 - newPixelXValWeight) + pixelXVal * newPixelXValWeight);
+        }
+        if (pixelXValAverage > boundingLine2) {
+            spikeMark = 3;
+        } else if (pixelXValAverage > boundingLine1) {
+            spikeMark = 2;
+        } else {
+            spikeMark = 1;
+        }
+    }
+
+    public double xMid() {
+        if (rect != null) {
+            return rect.x + (rect.width / 2);
         }
         return 500; // Code Review: This code does nothing. rect != null is already tested.
         //Android Studio gets upset if there's no return statement outside of an if

@@ -115,15 +115,15 @@ public class RedLinearBackdrop extends LinearOpMode implements OpenCvCamera.Asyn
 
         if(autoState == AutoState.CAMERA_WAIT) {
             if(cameraTimer.time(TimeUnit.SECONDS) < 7) {
-                if (pipeline.xMidVal < 130 && pipeline.xMidVal > 5) {
+                if (pipeline.pixelXValAverage < 130 && pipeline.pixelXValAverage > 5) {
                     spikeMark = 1;
-                } else if (pipeline.xMidVal < 280 && pipeline.xMidVal > 5) {
+                } else if (pipeline.pixelXValAverage < 280 && pipeline.pixelXValAverage > 5) {
                     spikeMark = 2;
                 } else {
                     spikeMark = 3;
                 }
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("X Mid", pipeline.pixelXValAverage);
 //                telemetry.addData("X Init", xMidInit);
             } else {
                 autoState = AutoState.CAMERA_DETECTION;

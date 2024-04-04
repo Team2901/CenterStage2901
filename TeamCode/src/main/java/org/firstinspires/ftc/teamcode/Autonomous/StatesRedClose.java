@@ -107,7 +107,7 @@ public class StatesRedClose extends LinearOpMode implements OpenCvCamera.AsyncCa
         if (autoState == StatesRedClose.AutoState.CAMERA_WAIT) {
             if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("X Mid", pipeline.pixelXValAverage);
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
             } else {
                 autoState = StatesRedClose.AutoState.CAMERA_DETECTION;

@@ -150,7 +150,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         } else if (autoState == AutoState.CAMERA_WAIT) {
             if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
                 telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("X Mid", pipeline.pixelXValAverage);
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
             } else {
                 autoState = AutoState.CAMERA_DETECTION;
