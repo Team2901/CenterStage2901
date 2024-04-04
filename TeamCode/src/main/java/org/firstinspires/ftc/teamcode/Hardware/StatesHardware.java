@@ -44,6 +44,7 @@ public class StatesHardware{
     public static int maxHeightArmTicks = 3390; //preset deliver point
     public static int maxArmTicks = 5500;
     public static int minArmTicks = 15;
+    public int initArmAngle = 60;
 
     public enum Alliance {
         RED,
@@ -135,5 +136,61 @@ public class StatesHardware{
     public double getAngle(){
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
         return AngleUnit.normalizeDegrees(angles.getYaw(AngleUnit.DEGREES));
+    }
+
+    public double recalculateAngle(){
+        double calculatedAngle;
+        calculatedAngle = ((210*arm.getCurrentPosition())/5360) + initArmAngle;
+        return calculatedAngle;
+    }
+
+    public double turnToAngle(double turnAngle){
+
+        //robot.getAngle is between -180 and 180, starting at 0
+        double turnPower = 0;
+        double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
+        double startAngle = getAngle();
+        double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
+        if(!(turnError < .5 && turnError > -.5)){
+            if(turnError >= 0){
+                turnPower = turnError/50;
+                if(turnPower > .75){
+                    turnPower = .75;
+                }
+            }else if(turnError < 0){
+                turnPower = turnError/50;
+                if(turnPower < -.75){
+                    turnPower = -.75;
+                }
+            }
+//            robot.frontLeft.setPower(-turnPower);
+//            robot.frontRight.setPower(turnPower);
+//            robot.backLeft.setPower(-turnPower);
+//            robot.backRight.setPower(turnPower);
+
+            double currentAngle = getAngle();
+            turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
+        }
+//        robot.frontLeft.setPower(0);
+//        robot.frontRight.setPower(0);
+//        robot.backRight.setPower(0);
+//        robot.backLeft.setPower(0);
+
+        return turnPower;
+    }
+    public void adjustWrist(){
+        double armAngle = recalculateAngle();
+        if(armAngle < 75){
+            rotationServo.setPosition(0.125);
+            //when arm angle increases, servo angle decreases
+        } else if (armAngle < 93){ //90 degrees, but a little bit of error in the math so have to adjust manually
+            rotationServo.setPosition(0.1);
+            //servo angle = arm angle + 25
+            //ethan says "zone between 65 and 90 that keeps the servo at the arm angle+25 degrees (so it is as close to horizontal as possible)"
+        } else if(armAngle < 190){
+            rotationServo.setPosition(0.325);
+        } else if(armAngle < 270){
+            rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
+        }
     }
 }

@@ -35,31 +35,7 @@ public class StatesTeleOp extends OpMode {
 
     public double rotationServoPosition = 0.1;
 
-    public double outtakeRightClosedPos = StatesHardware.outtakeRightClosedPos;
-    public double outtakeLeftClosedPos = StatesHardware.outtakeLeftClosedPos;
-
-    double initArmAngle = 60.0;
-    double armAngle = initArmAngle;
-
-    double error = 0.0;
-    double total = 0.0;
-    double kp = 0.0;
-    double ki = 0.0;
-    double kd = 0.0;
-    double kCos = 0.3;
-    double pArm = 0.0;
-    double iArm = 0.0;
-    double dArm = 0.0;
-    double cosArm = 0.0;
-    double iArmMax = 0.25;
-
     boolean fieldOriented = true;
-
-    enum Alliance{
-        RED,
-        BLUE
-    }
-    Alliance alliance = Alliance.RED;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -77,12 +53,12 @@ public class StatesTeleOp extends OpMode {
 
         telemetry.addData("Help", "Red (B) or Blue (X) Alliance?");
         if(impGamepad1.x.isInitialPress()){
-            alliance = Alliance.BLUE;
+            robot.alliance = StatesHardware.Alliance.BLUE;
         }
         if(impGamepad1.b.isInitialPress()){
-            alliance = Alliance.RED;
+            robot.alliance = StatesHardware.Alliance.RED;
         }
-        telemetry.addData("Current Alliance:", alliance);
+        telemetry.addData("Current Alliance:", robot.alliance);
     }
 
     @Override
@@ -90,13 +66,15 @@ public class StatesTeleOp extends OpMode {
         impGamepad1.update();
         impGamepad2.update();
 
+        double armAngle = robot.recalculateAngle();
+
         //basic drive base stuff
         if (Math.abs(impGamepad1.right_stick.x.getValue()) > 0) {
             rotate = impGamepad1.right_stick.x.getValue() * turnMod;
         } else if (impGamepad1.x.isPressed()) {
-            rotate = -turnToAngle(alliance == Alliance.RED? 90: -90) * turnMod;
+            rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 90: -90) * turnMod;
         } else if (impGamepad1.a.isPressed() && !impGamepad1.start.isPressed()) {
-            rotate = -turnToAngle(alliance == Alliance.RED? 45: -45)*turnMod;
+            rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 45: -45)*turnMod;
         }
         else {
             rotate = 0;
@@ -145,11 +123,11 @@ public class StatesTeleOp extends OpMode {
         //fixing claw (outtake) positions with gamepad 1
         if(impGamepad1.dpad_left.isInitialPress()){
             robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
-            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
         if(impGamepad1.dpad_right.isInitialPress()){
             robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
-            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
         }
 
         //arm up
@@ -173,11 +151,11 @@ public class StatesTeleOp extends OpMode {
         //right claw toggle
         if(impGamepad1.right_bumper.isInitialPress()){
             if(!outtakeRightClosed) {
-                robot.outtakeRight.setPosition(outtakeRightClosedPos);
+                robot.outtakeRight.setPosition(robot.outtakeRightClosedPos);
                 outtakeRightClosed = true;
             } else {
                 //robot.outtakeRight.setPosition(outtakeRightOpenPos);
-                robot.outtakeRight.setPosition(outtakeRightClosedPos-.203);
+                robot.outtakeRight.setPosition(robot.outtakeRightClosedPos-.203);
                 outtakeRightClosed = false;
             }
         }
@@ -185,11 +163,11 @@ public class StatesTeleOp extends OpMode {
         //left claw toggle
         if(impGamepad1.left_bumper.isInitialPress()){
             if(!outtakeLeftClosed) {
-                robot.outtakeLeft.setPosition(outtakeLeftClosedPos); //update new servo positions
+                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos); //update new servo positions
                 outtakeLeftClosed = true;
             } else {
                 //robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
-                robot.outtakeLeft.setPosition(outtakeLeftClosedPos-.2);
+                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos-.2);
                 outtakeLeftClosed = false;
             }
         }
@@ -204,25 +182,13 @@ public class StatesTeleOp extends OpMode {
             }
         }
 
-        if(armAngle < 75){
-            robot.rotationServo.setPosition(0.125);
-            //when arm angle increases, servo angle decreases
-        } else if (armAngle < 93){ //90 degrees, but a little bit of error in the math so have to adjust manually
-            robot.rotationServo.setPosition(0.1);
-            //servo angle = arm angle + 25
-            //ethan says "zone between 65 and 90 that keeps the servo at the arm angle+25 degrees (so it is as close to horizontal as possible)"
-        } else if(armAngle < 190){
-            robot.rotationServo.setPosition(0.325);
-        } else if(armAngle < 270){
-            robot.rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
-        }
-
         if(armAngle > 93 && armAngle < 190){
             armMod = 1;
         } else if (!armModFast){
             armMod = 0.6;
         }
 
+        robot.adjustWrist();
         // GAMEPAD 2 CONTROLS
 
         //drone release
@@ -233,19 +199,19 @@ public class StatesTeleOp extends OpMode {
         //adjust outtakeRight closed position in case it skips (gamepad2)
         if(impGamepad2.y.isInitialPress()){
             robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
-            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
         } else if(impGamepad2.a.isInitialPress()){
             robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() - 0.015);
-            outtakeRightClosedPos = robot.outtakeRight.getPosition();
+            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
         }
 
         //adjust outtakeLeft closed position in case it skips (gamepad2)
         if(impGamepad2.dpad_down.isInitialPress()){
             robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
-            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         } else if(impGamepad2.dpad_up.isInitialPress()){
             robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
-            outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
 
         //min at 0.1 and max at 0.8 (wrist)
@@ -275,8 +241,6 @@ public class StatesTeleOp extends OpMode {
 //            }
 //        }
 
-        armAngle = recalculateAngle();
-
         telemetry.addData("arm position", robot.arm.getCurrentPosition());
         telemetry.addData("arm target position", currentArmTicks);
         telemetry.addData("arm.getTargetPosition", robot.arm.getTargetPosition());
@@ -296,73 +260,9 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
         telemetry.addData("left stick y value", impGamepad1.left_stick.y.getValue());
         telemetry.addData("Field Oriented:", fieldOriented);
-        telemetry.addData("Alliance Color:", alliance);
+        telemetry.addData("Alliance Color:", robot.alliance);
         telemetry.update();
     }
 
-    public double armPower(int target){
 
-        error = target - robot.arm.getCurrentPosition();
-        dArm = (error - pArm) / PIDTimer.seconds();
-        iArm = iArm + (error * PIDTimer.seconds());
-        pArm = error;
-        armAngle = recalculateAngle();
-        cosArm = Math.cos(Math.toRadians(armAngle));
-        total = ((pArm * kp) + (iArm * ki) + (dArm * kd))/100 + (cosArm * kCos);
-        PIDTimer.reset();
-
-        if(iArm > iArmMax){
-            iArm = iArmMax;
-        }else if(iArm < -iArmMax){
-            iArm = -iArmMax;
-        }
-
-        if(total > .5){
-            total = .5;
-        }
-
-        return total;
-    }
-
-    //fixed tick count for new 60rpm motors
-    public double recalculateAngle(){
-        double calculatedAngle;
-        calculatedAngle = ((210*robot.arm.getCurrentPosition())/5360) + initArmAngle;
-        return calculatedAngle;
-    }
-
-    public double turnToAngle(double turnAngle){
-
-        //robot.getAngle is between -180 and 180, starting at 0
-        double turnPower = 0;
-        double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
-        double startAngle = robot.getAngle();
-        double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
-        if(!(turnError < .5 && turnError > -.5)){
-            if(turnError >= 0){
-                turnPower = turnError/50;
-                if(turnPower > .75){
-                    turnPower = .75;
-                }
-            }else if(turnError < 0){
-                turnPower = turnError/50;
-                if(turnPower < -.75){
-                    turnPower = -.75;
-                }
-            }
-//            robot.frontLeft.setPower(-turnPower);
-//            robot.frontRight.setPower(turnPower);
-//            robot.backLeft.setPower(-turnPower);
-//            robot.backRight.setPower(turnPower);
-
-            double currentAngle = robot.getAngle();
-            turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
-        }
-//        robot.frontLeft.setPower(0);
-//        robot.frontRight.setPower(0);
-//        robot.backRight.setPower(0);
-//        robot.backLeft.setPower(0);
-
-        return turnPower;
-    }
 }
