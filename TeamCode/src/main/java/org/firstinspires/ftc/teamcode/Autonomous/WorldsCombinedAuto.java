@@ -364,7 +364,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 wristTimer.reset();
                 while (wristTimer.time() < 1.5) { idle(); }
 
-                moveArm(2280);
+                moveArm(robot.maxHeightArmTicks);
 
                 while (robot.arm.isBusy() && opModeIsActive()) { idle(); }
 
