@@ -36,6 +36,11 @@ public class StatesHardware{
 
     public IMU imu;
 
+    public static double outtakeLeftClosedPos = 0.315;
+    public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.2;
+    public static double outtakeRightClosedPos = 0.3;
+    public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.2;
+
     public enum Alliance {
         RED,
         BLUE

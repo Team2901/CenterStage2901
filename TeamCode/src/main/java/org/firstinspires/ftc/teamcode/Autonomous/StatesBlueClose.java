@@ -36,10 +36,10 @@ public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncC
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    public double outtakeLeftClosedPos = StatesTeleOp.outtakeLeftClosedPos;
-    public double outtakeLeftOpenPos = StatesTeleOp.outtakeLeftClosedPos - 0.2;
-    public double outtakeRightClosedPos = StatesTeleOp.outtakeRightClosedPos;
-    public double outtakeRightOpenPos = StatesTeleOp.outtakeRightClosedPos - 0.2;
+    public double outtakeLeftClosedPos = StatesHardware.outtakeLeftClosedPos;
+    public double outtakeLeftOpenPos = StatesHardware.outtakeLeftOpenPos;
+    public double outtakeRightClosedPos = StatesHardware.outtakeRightClosedPos;
+    public double outtakeRightOpenPos = StatesHardware.outtakeRightOpenPos;
 
     public int currentArmTicks = 0;
     double initArmAngle = 60.0;
