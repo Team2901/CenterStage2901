@@ -87,10 +87,10 @@ public class DistanceSensorTesting extends OpMode {
         impGamepad2.update();
 
         //basic drive base stuff
-        leftStickXVal = -impGamepad1.left_stick_x.getValue() * speedMod;
-        leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
-        rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
-        rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
+        leftStickXVal = -impGamepad1.left_stick.x.getValue() * speedMod;
+        leftStickYVal = impGamepad1.left_stick.y.getValue() * speedMod;
+        rightStickXVal = impGamepad1.right_stick.x.getValue() * speedMod;
+        rightStickYVal = impGamepad1.right_stick.y.getValue() * speedMod;
 
         rotate = rightStickXVal * turnMod;
 

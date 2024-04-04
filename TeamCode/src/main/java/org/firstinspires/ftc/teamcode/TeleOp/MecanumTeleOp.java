@@ -62,10 +62,10 @@ public class MecanumTeleOp extends OpMode { // Coach Review: I prefer to use Lin
         impGamepad1.update();
         impGamepad2.update();
 
-        leftStickXVal = impGamepad1.left_stick_x.getValue() * speedMod;
-        leftStickYVal = impGamepad1.left_stick_y.getValue() * speedMod;
-        rightStickXVal = impGamepad1.right_stick_x.getValue() * speedMod;
-        rightStickYVal = impGamepad1.right_stick_y.getValue() * speedMod;
+        leftStickXVal = impGamepad1.left_stick.x.getValue() * speedMod;
+        leftStickYVal = impGamepad1.left_stick.y.getValue() * speedMod;
+        rightStickXVal = impGamepad1.right_stick.x.getValue() * speedMod;
+        rightStickYVal = impGamepad1.right_stick.y.getValue() * speedMod;
 
         rotate = rightStickXVal * turnMod;
 

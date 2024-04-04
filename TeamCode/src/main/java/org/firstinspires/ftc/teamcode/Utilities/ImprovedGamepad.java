@@ -1,154 +1,184 @@
 package org.firstinspires.ftc.teamcode.Utilities;
 
+import android.util.Log;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ImprovedGamepad {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-    private final static float DEFAULT_STICK_DEAD_ZONE_VALUE = 0.1f;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+@Config
+public class ImprovedGamepad {
+    private static String Tag = "ImprovedGamepad";
+    public static double StickDeadZone = 0.01;
+    private Double lastKnownStickDeadZone = null;
+    public static double TriggerDeadZone = 0.01;
+    private Double lastKnownTriggerDeadZone = null;
 
     private final Gamepad hardwareGamepad;
     private final ElapsedTime timer;
     private final String name;
-    private final float stickDeadZoneValue;
+    private final Telemetry telemetry;
 
-    public FloatButton left_stick_x;
-    public FloatButton left_stick_y;
-    public FloatButton right_stick_x;
-    public FloatButton right_stick_y;
-    public BooleanButton dpad_up;
-    public BooleanButton dpad_down;
-    public BooleanButton dpad_left;
-    public BooleanButton dpad_right;
-    public BooleanButton a;
-    public BooleanButton b;
-    public BooleanButton x;
-    public BooleanButton y;
-    public BooleanButton guide;
-    public BooleanButton start;
-    public BooleanButton back;
-    public BooleanButton left_bumper;
-    public BooleanButton right_bumper;
-    public BooleanButton left_stick_button;
-    public BooleanButton right_stick_button;
-    public JoyStickButton left_stick;
-    public JoyStickButton right_stick;
-    public FloatButton left_trigger;
-    public FloatButton right_trigger;
+    public Joystick left_stick;
+    public Joystick right_stick;
 
+    public Button dpad_up;
+    public Button dpad_down;
+    public Button dpad_left;
+    public Button dpad_right;
 
-    public double raw_left_stick_radius = 0;
-    public double raw_right_stick_radius = 0;
+    public Button a;
+    public Button b;
+    public Button x;
+    public Button y;
 
-    public double left_stick_radius = 0;
-    public double right_stick_radius = 0;
+    public Button guide;
+    public Button start;
+    public Button back;
 
-    // angle 0 = pushed forward, angle 90 = pushed left, etc
-    public double left_stick_angle = 0;
-    public double right_stick_angle = 0;
+    public Button left_bumper;
+    public Button right_bumper;
+    public AnalogInput left_trigger;
+    public AnalogInput right_trigger;
 
-    public ImprovedGamepad(final Gamepad hardwareGamepad,
-                           final ElapsedTime timer,
-                           final String name) {
-        this(hardwareGamepad, timer, name, DEFAULT_STICK_DEAD_ZONE_VALUE);
+    public ImprovedGamepad(
+            final Gamepad hardwareGamepad,
+            final ElapsedTime timer,
+            final String name) {
+        this(hardwareGamepad, timer, name, null);
     }
 
-    public ImprovedGamepad(final Gamepad hardwareGamepad,
-                           final ElapsedTime timer,
-                           final String name,
-                           final float stickDeadZoneValue) {
+    public ImprovedGamepad(
+            final Gamepad hardwareGamepad,
+            final ElapsedTime timer,
+            final String name,
+            final Telemetry telemetry) {
 
         this.hardwareGamepad = hardwareGamepad;
         this.timer = timer;
         this.name = (null != name) ? name : "";
-        this.stickDeadZoneValue = stickDeadZoneValue;
+        this.telemetry = telemetry;
 
-        this.right_stick = new JoyStickButton(String.format("%s_right_stick", this.name), stickDeadZoneValue);
-        this.left_stick = new JoyStickButton(String.format("%s_left_stick", this.name), stickDeadZoneValue);
+        this.right_stick = new Joystick(String.format("%s_right_stick", this.name));
+        this.left_stick = new Joystick(String.format("%s_left_stick", this.name));
 
-        this.left_stick_x = this.left_stick.x;
-        this.left_stick_y = this.left_stick.y;
-        this.right_stick_x = this.right_stick.x;
-        this.right_stick_y = this.right_stick.y;
+        this.dpad_up = new Button(String.format("%s_dpad_up", this.name));
+        this.dpad_down = new Button(String.format("%s_dpad_down", this.name));
+        this.dpad_left = new Button(String.format("%s_dpad_left", this.name));
+        this.dpad_right = new Button(String.format("%s_dpad_right", this.name));
 
-        this.dpad_up = new BooleanButton(String.format("%s_dpad_up", this.name));
-        this.dpad_down = new BooleanButton(String.format("%s_dpad_down", this.name));
-        this.dpad_left = new BooleanButton(String.format("%s_dpad_left", this.name));
-        this.dpad_right = new BooleanButton(String.format("%s_dpad_right", this.name));
-        this.a = new BooleanButton(String.format("%s_a", this.name));
-        this.b = new BooleanButton(String.format("%s_b", this.name));
-        this.x = new BooleanButton(String.format("%s_x", this.name));
-        this.y = new BooleanButton(String.format("%s_y", this.name));
-        this.guide = new BooleanButton(String.format("%s_guide", this.name));
-        this.start = new BooleanButton(String.format("%s_start", this.name));
-        this.back = new BooleanButton(String.format("%s_back", this.name));
-        this.left_bumper = new BooleanButton(String.format("%s_left_bumper", this.name));
-        this.right_bumper = new BooleanButton(String.format("%s_right_bumper", this.name));
-        this.left_stick_button = new BooleanButton(String.format("%s_left_stick_button", this.name));
-        this.right_stick_button = new BooleanButton(String.format("%s_right_stick_button", this.name));
+        this.a = new Button(String.format("%s_a", this.name));
+        this.b = new Button(String.format("%s_b", this.name));
+        this.x = new Button(String.format("%s_x", this.name));
+        this.y = new Button(String.format("%s_y", this.name));
 
-        this.left_trigger = new FloatButton(String.format("%s_left_trigger", this.name), 0.25f);
-        this.right_trigger = new FloatButton(String.format("%s_right_trigger", this.name), 0.25f);
+        this.guide = new Button(String.format("%s_guide", this.name));
+        this.start = new Button(String.format("%s_start", this.name));
+        this.back = new Button(String.format("%s_back", this.name));
 
+        this.left_bumper = new Button(String.format("%s_left_bumper", this.name));
+        this.right_bumper = new Button(String.format("%s_right_bumper", this.name));
+        this.left_trigger = new AnalogInput(String.format("%s_left_trigger", this.name));
+        this.right_trigger = new AnalogInput(String.format("%s_right_trigger", this.name));
+
+        Thread t = new Thread(watchdog);
+        t.start();
     }
 
     public void update() {
+        // We need to feed the watchdog
+        watchdog.feed();
+
+        // Check for Config updates
+        // Having FTCDashboard Config only come from public static really messes with our class
+        // abstraction design here.
+        if ((lastKnownStickDeadZone == null) || (lastKnownStickDeadZone != StickDeadZone)) {
+            left_stick.setDeadZone(StickDeadZone);
+            right_stick.setDeadZone(StickDeadZone);
+            lastKnownStickDeadZone = StickDeadZone;
+        }
+        if ((lastKnownTriggerDeadZone == null) || (lastKnownTriggerDeadZone != TriggerDeadZone)) {
+            left_trigger.setDeadZone(TriggerDeadZone);
+            right_trigger.setDeadZone(TriggerDeadZone);
+            lastKnownTriggerDeadZone = TriggerDeadZone;
+        }
 
         double time = timer.time();
 
-        left_stick.update(hardwareGamepad.left_stick_x, hardwareGamepad.left_stick_y, time);
-        right_stick.update(hardwareGamepad.right_stick_x, hardwareGamepad.right_stick_y, time);
+        left_stick.update(Double.valueOf(hardwareGamepad.left_stick_x), Double.valueOf(hardwareGamepad.left_stick_y), hardwareGamepad.left_stick_button, time);
+        right_stick.update(Double.valueOf(hardwareGamepad.right_stick_x), Double.valueOf(hardwareGamepad.right_stick_y), hardwareGamepad.right_stick_button, time);
+
         dpad_up.update(hardwareGamepad.dpad_up, time);
         dpad_down.update(hardwareGamepad.dpad_down, time);
         dpad_left.update(hardwareGamepad.dpad_left, time);
         dpad_right.update(hardwareGamepad.dpad_right, time);
+
         a.update(hardwareGamepad.a, time);
         b.update(hardwareGamepad.b, time);
         x.update(hardwareGamepad.x, time);
         y.update(hardwareGamepad.y, time);
+
         guide.update(hardwareGamepad.guide, time);
         start.update(hardwareGamepad.start, time);
         back.update(hardwareGamepad.back, time);
+
         left_bumper.update(hardwareGamepad.left_bumper, time);
         right_bumper.update(hardwareGamepad.right_bumper, time);
-        left_stick_button.update(hardwareGamepad.left_stick_button, time);
-        right_stick_button.update(hardwareGamepad.right_stick_button, time);
-        left_trigger.update(hardwareGamepad.left_trigger, time);
-        right_trigger.update(hardwareGamepad.right_trigger, time);
-
-
-        raw_right_stick_radius = AngleUtilities.getRadius(right_stick_x.getRawValue(), right_stick_y.getRawValue());
-
-        if (raw_right_stick_radius > stickDeadZoneValue) {
-            right_stick_radius = (raw_right_stick_radius - stickDeadZoneValue) / (1 - stickDeadZoneValue);
-            right_stick_angle = getJoystickAngle(right_stick_x, right_stick_y);
-        } else {
-            right_stick_radius = 0;
-            // else keep last known angle
-        }
-
-        raw_left_stick_radius = AngleUtilities.getRadius(left_stick_x.getRawValue(), left_stick_y.getRawValue());
-
-        if (raw_left_stick_radius > stickDeadZoneValue) {
-            left_stick_radius = (raw_left_stick_radius - stickDeadZoneValue) / (1 - stickDeadZoneValue);
-            left_stick_angle = getJoystickAngle(left_stick_x, left_stick_y);
-        } else {
-            left_stick_radius = 0;
-            // else keep last known angle
-        }
+        left_trigger.update(Double.valueOf(hardwareGamepad.left_trigger), time);
+        right_trigger.update(Double.valueOf(hardwareGamepad.right_trigger), time);
     }
 
-    private double getJoystickAngle(FloatButton stick_x, FloatButton stick_y) {
-        double angleRad = Math.atan2(stick_y.getRawValue(), stick_x.getRawValue());
-        double angleDegrees = AngleUtilities.radiansDegreesTranslation(angleRad);
-        // offset by 90 degrees so that forward is angle 0
-        return AngleUtilities.getNormalizedAngle(angleDegrees - 90);
-    }
+    UpdateWatchdog watchdog = new UpdateWatchdog();
+    private class UpdateWatchdog implements Runnable
+    {
+        BlockingQueue<Boolean> watchdogFood = new LinkedBlockingQueue<>();
+        //Telemetry.Item telemetryItem;
 
-    public boolean areButtonsActive(){
-        return dpad_left.isPressed() || dpad_down.isPressed() || dpad_up.isPressed() || dpad_right.isPressed() ||
-                a.isPressed() || b.isPressed() || x.isPressed() || y.isPressed() ||
-                right_bumper.isPressed() || left_bumper.isPressed() || right_trigger.isPressed() ||
-                left_trigger.isPressed() || right_stick.isPressed() || left_stick.isPressed();
+        @Override
+        public void run() {
+            Log.d(Tag, "Watchdog starting");
+            try {
+                Boolean food = null;
+                do {
+                    food = watchdogFood.poll(1, TimeUnit.SECONDS);
+                    if (food == null) {
+                        Log.w(Tag, String.format(Locale.ENGLISH, "%s Watchdog timeout!", name));
+                        if (telemetry != null) {
+                            //telemetryItem = telemetry.addData(name, "You forgot to call update!");
+                            telemetry.addData(name, "You forgot to call update!");
+                        }
+                    }
+                    /* Dashboard doesn't support remove item telemetry.removeItem(telemetryItem);
+                    else if (telemetryItem != null) {
+                        telemetryItem.setValue("");
+                        telemetryItem = null;
+                    }*/
+                    else if (telemetry != null) {
+                        telemetry.addData(name, "");
+                    }
+                } while ((food == null) || (food != false));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Log.d(Tag, "Watchdog ending");
+        }
+
+        public void feed() {
+            watchdogFood.add(true);
+        }
     }
 }
