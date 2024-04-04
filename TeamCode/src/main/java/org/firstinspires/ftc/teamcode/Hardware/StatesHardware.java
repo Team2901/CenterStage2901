@@ -41,6 +41,10 @@ public class StatesHardware{
     public static double outtakeRightClosedPos = 0.3;
     public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.2;
 
+    public static int maxHeightArmTicks = 3390; //preset deliver point
+    public static int maxArmTicks = 5500;
+    public static int minArmTicks = 15;
+
     public enum Alliance {
         RED,
         BLUE

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,24 +31,15 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
     public OpenCvCamera camera;
     public int spikeMark;
 
-    public double xMidInit = 888;
     public boolean isStopped = false;
 
     public ElapsedTime cameraTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public ElapsedTime wristTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime stall = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    public boolean outtakeRightClosed = false;
-    public boolean outtakeLeftClosed = false;
-
-    public double outtakeLeftClosedPos = StatesHardware.outtakeLeftClosedPos;
     public double outtakeLeftOpenPos = StatesHardware.outtakeLeftOpenPos;
-    public double outtakeRightClosedPos = StatesHardware.outtakeRightClosedPos;
     public double outtakeRightOpenPos = StatesHardware.outtakeRightOpenPos;
 
-    public int currentArmTicks = 0;
-    double initArmAngle = 60.0;
-    double armAngle = initArmAngle;
     double waitSec = 0;
 
     public enum AutoState {
@@ -64,6 +57,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         _init();
 
         while(opModeInInit()){
@@ -117,10 +111,6 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             }
         }
 
-//            robot.arm.setPower(0);
-//            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //robot.arm.setTargetPosition();
-
         while (opModeIsActive()) { idle();}
     }
 
@@ -133,6 +123,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(this);
+        FtcDashboard.getInstance().startCameraStream(camera,0);
 
         autoState = AutoState.STALL;
     }

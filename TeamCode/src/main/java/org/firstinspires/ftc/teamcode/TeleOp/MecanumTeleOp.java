@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Utilities.CountDownTimer;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.Hardware.MecanumDriveHardware;
 
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "Mecanum Base", group = "TeleOp")
@@ -20,6 +21,7 @@ public class MecanumTeleOp extends OpMode { // Coach Review: I prefer to use Lin
 //    CountDownTimer timer = new CountDownTimer(ElapsedTime.Resolution.SECONDS);
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
+    ElapsedTime planetimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     public double rightStickYVal;
     public double rightStickXVal;
     public double leftStickYVal;
@@ -124,7 +126,7 @@ public class MecanumTeleOp extends OpMode { // Coach Review: I prefer to use Lin
         // setting max and min for the lift so the robot doesn't break, manual
 //        if(robot.lift.getCurrentPosition() > -7500 && impGamepad1.right_trigger.getValue() != 0) {
 //            if (impGamepad1.right_trigger.getValue() > 0) {
-//                robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMod);
+//                robot.lift.setPower(-impGamepad1.right_trigger.getValue() * liftMo d);
 //            } else {
 //                robot.lift.setPower(0);
 //            }
@@ -149,8 +151,19 @@ public class MecanumTeleOp extends OpMode { // Coach Review: I prefer to use Lin
 
         //changed speed ut not uploaded to robot
 
-        if(impGamepad1.left_bumper.isInitialPress() || impGamepad1.right_bumper.isInitialPress()) {
-            robot.planeServo.setPosition(0);
+        //while(impGamepad1.left_bumper.isInitialPress() || impGamepad1.right_bumper.isInitialPress()) {
+        if(impGamepad1.left_bumper.isPressed() || impGamepad1.right_bumper.isPressed()) {
+            planetimer.reset();
+            planetimer.startTime();
+            telemetry.addData("TimerPart1:", true);
+        }
+        if(planetimer.time(TimeUnit.SECONDS) < .25) {
+                //robot.planeServo.setPosition(0);
+                telemetry.addData("TimerPart2:", true);
+                robot.planeMotor.setPower(.7);
+            }
+        else{
+            robot.planeMotor.setPower(0);
         }
 
         if(impGamepad1.x.isInitialPress()){

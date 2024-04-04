@@ -31,7 +31,8 @@ public class MecanumDriveHardware{
     public DcMotor intake;
     public DcMotor transfer;
     public Servo outtake;
-    public Servo planeServo;
+    //public Servo planeServo;
+    public DcMotor planeMotor;
     public Servo preload;
 
     public BNO055IMU imu; // Coach Feedback: See comment in init() below.
@@ -46,8 +47,9 @@ public class MecanumDriveHardware{
         intake = hardwareMap.dcMotor.get("intake");
         transfer = hardwareMap.dcMotor.get("transfer");
         outtake = hardwareMap.servo.get("outtake");
-        planeServo = hardwareMap.servo.get("planeServo");
-        preload = hardwareMap.servo.get("preload");
+        //planeServo = hardwareMap.servo.get("planeServo");
+        planeMotor = hardwareMap.dcMotor.get("planeMotor");
+        preload = hardwareMap.get(Servo.class, "preload");
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -57,6 +59,7 @@ public class MecanumDriveHardware{
         lift.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        planeMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // stop motors during initialization
         backLeft.setPower(0);
@@ -66,6 +69,7 @@ public class MecanumDriveHardware{
         lift.setPower(0);
         intake.setPower(0);
         transfer.setPower(0);
+        planeMotor.setPower(0);
 
         // reset encoder positions to 0
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -87,6 +91,7 @@ public class MecanumDriveHardware{
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        planeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // better braking
