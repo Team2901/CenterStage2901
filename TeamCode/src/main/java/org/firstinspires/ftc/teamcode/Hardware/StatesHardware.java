@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.ConfigurationUtility;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
 
 public class StatesHardware{
 
@@ -36,6 +38,7 @@ public class StatesHardware{
 
     public IMU imu;
 
+    // all init values below are set for the states robot
     public static double outtakeLeftClosedPos = 0.315;
     public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.2;
     public static double outtakeRightClosedPos = 0.3;
@@ -45,6 +48,9 @@ public class StatesHardware{
     public static int maxArmTicks = 5500;
     public static int minArmTicks = 15;
     public int initArmAngle = 60;
+
+    public static int boundingLine1 = 40;
+    public static int boundingLine2 = 200;
 
     public enum Alliance {
         RED,
@@ -63,6 +69,12 @@ public class StatesHardware{
         STATES
     }
     public Config config = Config.WORLDS;
+
+    public enum ParkLocation {
+        MIDDLE,
+        CORNER
+    }
+    public ParkLocation parkLocation = ParkLocation.CORNER;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
         // initialize motors
@@ -95,7 +107,6 @@ public class StatesHardware{
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set motors up to run with encoders
         //backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -130,7 +141,11 @@ public class StatesHardware{
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbFacingDirection);
         IMU.Parameters IMUParameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(IMUParameters);
-        imu.resetYaw();
+
+        String configName = ConfigUtilities.getRobotConfigurationName();
+        if(configName.equals("Worlds Robot")){
+
+        }
     }
 
     public double getAngle(){

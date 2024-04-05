@@ -95,6 +95,14 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             }
             telemetry.addData("Stall Time", waitSec);
 
+            telemetry.addLine("Park in the Middle (D-pad Left) or Corner (D-pad Right)?");
+            if(impGamepad1.dpad_left.isInitialPress()){
+                robot.parkLocation = ParkLocation.MIDDLE;
+            } else if(impGamepad1.dpad_right.isInitialPress()){
+                robot.parkLocation = ParkLocation.CORNER;
+            }
+            telemetry.addData("Parking Location", robot.parkLocation);
+
             telemetry.update();
         }
 
@@ -118,12 +126,16 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
         impGamepad2 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad2");
         robot.init(this.hardwareMap, telemetry);
+
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(this);
         FtcDashboard.getInstance().startCameraStream(camera,0);
+
+        robot.imu.resetYaw();
+        robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         autoState = AutoState.STALL;
     }
@@ -187,23 +199,32 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 strafe(21, 0, 0, 0, 0);
                 autoState = AutoState.BACKDROP;
             } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
-                moveInches(40);
-                strafe(-12,0,0,0,0);
-                turnByTicks(-2200); //-180 degrees
-                robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                if(robot.parkLocation == ParkLocation.MIDDLE){
+                    moveInches(40);
+                    strafe(-12, 0, 0, 0, 0);
+                    turnByTicks(-2200); //-180 degrees
 
-                stall(2);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
 
-                moveInches(-8.5);
-                turnByTicks(-850);
+                    moveInches(-8.5);
+                    turnByTicks(-850);
+                } else {
+                    moveInches(22);
+                    strafe(-12,0,0,0,0);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
+                    moveInches(-21);
+                    turnByTicks(1100);
+                }
+
                 moveInches(91);
-
                 stall(2);
 
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
                 moveInches(31);
-                strafe(6,0,0,0,0);
+                strafe(6, 0, 0, 0, 0);
                 turnByTicks(-1100); //-90 degrees
                 moveInches(6);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -211,13 +232,18 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 stall(2);
 
                 moveInches(-9);
-                strafe(21.5,0,0,0,0);
 
-                stall(1);
+                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                    strafe(21.5, 0, 0, 0, 0);
 
-                turnByTicks(75);
+                    stall(1);
+
+                    turnByTicks(75);
+                } else {
+                    strafe(-30,0,0,0,0);
+                }
+
                 moveInches(90);
-
                 stall(1);
 
                 autoState = AutoState.BACKSTAGE;
@@ -256,34 +282,51 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 autoState = AutoState.BACKDROP;
             } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
-                moveInches(43);
-                turnByTicks(-2100); //-180
-                robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                    moveInches(43);
+                    turnByTicks(-2100); //-180
 
-                stall(2);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
 
-                moveInches(-5);
+                    moveInches(-5);
+                    stall(1);
+                    turnByTicks(-850);
+                } else {
+                    moveInches(25);
 
-                stall(1);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
 
-                turnByTicks(-850);
+                    moveInches(-24);
+                    turnByTicks(1100);
+                }
+
                 moveInches(86);
-
                 stall(2);
 
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
-                moveInches(43);
-                turnByTicks(-2100); //-180
-                robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                    moveInches(43);
+                    turnByTicks(-2100); //-180
 
-                stall(2);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
 
-                moveInches(-3);
+                    moveInches(-3);
+                    stall(1);
+                    turnByTicks(975); //90 degrees
+                } else {
+                    moveInches(25);
 
-                stall(1);
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
 
-                turnByTicks(975); //90 degrees
+                    moveInches(-24);
+                    turnByTicks(-850);
+                }
+
                 moveInches(86);
 
                 stall(1);
@@ -323,7 +366,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 autoState = AutoState.BACKDROP;
             } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
                 moveInches(31);
-                strafe(-6,0,0,0,0);
+                strafe(-6, 0, 0, 0, 0);
                 turnByTicks(1100); //90 degrees
                 moveInches(6);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -331,27 +374,45 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 stall(2);
 
                 moveInches(-9);
-                strafe(-22,0,0,0,0);
 
-                stall(1);
+                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                    strafe(-22, 0, 0, 0, 0);
+
+                    stall(1);
 
 //                turnByTicks(-2050); //-180 degrees (idk why this one takes a lot less ticks than the other 180's???)
-                turnByTicks(-75);
+                    turnByTicks(-75);
+                } else {
+                    strafe(30,0,0,0,0);
+                }
+
                 moveInches(90);
 
                 stall(2);
 
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
-                moveInches(40);
-                strafe(14,0,0,0,0);
-                turnByTicks(-2200); //-180 degrees
-                robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                    moveInches(40);
+                    strafe(14, 0, 0, 0, 0);
+                    turnByTicks(-2200); //-180 degrees
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
-                stall(2);
+                    stall(2);
 
-                moveInches(-8);
-                turnByTicks(1150); //90 degrees
+                    moveInches(-8);
+                    turnByTicks(1150); //90 degrees
+                } else {
+                    moveInches(22);
+                    strafe(14,0,0,0,0);
+
+                    robot.outtakeRight.setPosition(outtakeRightOpenPos);
+                    stall(2);
+
+                    moveInches(-21);
+                    turnByTicks(-850);
+                }
+
                 moveInches(91);
 
                 stall(1);
@@ -376,33 +437,45 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 robot.rotationServo.setPosition(0.1);
 
-                //to move into the corner
-                if(robot.alliance == Alliance.RED) {
-                    if (spikeMark == 1) {
-                        strafe(-38, 0, 0, 0, 0);
-                    } else if (spikeMark == 2) {
-                        strafe(-30, 0, 0, 0, 0);
-                    } else if (spikeMark == 3) {
-                        strafe(-20, 0, 0, 0, 0);
-                    }
-                } else if(robot.alliance == Alliance.BLUE){
-                    if(spikeMark == 1){
-                        strafe(18,0,0,0,0);
-                    } else if(spikeMark == 2){
-                        strafe(28,0,0,0,0);
-                    } else if(spikeMark == 3){
-                        strafe(38,0,0,0,0);
+                if(robot.parkLocation == ParkLocation.CORNER) {
+                    if (robot.alliance == Alliance.RED) {
+                        if (spikeMark == 1) {
+                            strafe(-38, 0, 0, 0, 0);
+                        } else if (spikeMark == 2) {
+                            strafe(-30, 0, 0, 0, 0);
+                        } else if (spikeMark == 3) {
+                            strafe(-20, 0, 0, 0, 0);
+                        }
+                    } else if (robot.alliance == Alliance.BLUE) {
+                        if (spikeMark == 1) {
+                            strafe(18, 0, 0, 0, 0);
+                        } else if (spikeMark == 2) {
+                            strafe(28, 0, 0, 0, 0);
+                        } else if (spikeMark == 3) {
+                            strafe(38, 0, 0, 0, 0);
+                        }
                     }
                 }
 
-                //move to middle
-//                if(spikeMark == 1){
-//                    strafe(18,0,0,0,0);
-//                } else if(spikeMark == 2){
-//                    strafe(28,0,0,0,0);
-//                } else if(spikeMark == 3){
-//                    strafe(38,0,0,0,0);
-//                }
+                if(robot.parkLocation == ParkLocation.MIDDLE){
+                    if(robot.alliance == Alliance.RED){
+                        if(spikeMark == 1){
+                            strafe(18,0,0,0,0);
+                        } else if(spikeMark == 2){
+                            strafe(28,0,0,0,0);
+                        } else if(spikeMark == 3){
+                            strafe(38,0,0,0,0);
+                        }
+                    } else if(robot.alliance == Alliance.BLUE){ // has not been tested yet
+                        if (spikeMark == 1) {
+                            strafe(-38, 0, 0, 0, 0);
+                        } else if (spikeMark == 2) {
+                            strafe(-30, 0, 0, 0, 0);
+                        } else if (spikeMark == 3) {
+                            strafe(-20, 0, 0, 0, 0);
+                        }
+                    }
+                }
 
                 autoState = AutoState.STOP;
 

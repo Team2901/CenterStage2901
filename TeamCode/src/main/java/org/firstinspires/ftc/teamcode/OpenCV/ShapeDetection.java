@@ -51,8 +51,6 @@ public class ShapeDetection extends OpenCvPipeline {
     private Mat zeros = new Mat();
 
     // Public configuration
-    public static int boundingLine1 = 40;
-    public static int boundingLine2 = 200;
     public static int blurSize = 19;
     public static boolean doVisualization = true;
     public static boolean usingCentroid = false;
@@ -149,9 +147,9 @@ public class ShapeDetection extends OpenCvPipeline {
 
                 double xCentroid = averageX;
 
-                if (xCentroid > boundingLine2) {
+                if (xCentroid > robot.boundingLine2) {
                     spikeMark = 3;
-                } else if (xCentroid > boundingLine1) {
+                } else if (xCentroid > robot.boundingLine1) {
                     spikeMark = 2;
                 } else {
                     spikeMark = 1;
@@ -169,9 +167,9 @@ public class ShapeDetection extends OpenCvPipeline {
             telemetry.addData("X Mid", xMidVal);
 
             // Classify the spikemark based on the x mid value
-            if (xMidVal > boundingLine2) {
+            if (xMidVal > robot.boundingLine2) {
                 spikeMark = 3;
-            } else if (xMidVal > boundingLine1) {
+            } else if (xMidVal > robot.boundingLine1) {
                 spikeMark = 2;
             } else {
                 spikeMark = 1;
@@ -187,8 +185,8 @@ public class ShapeDetection extends OpenCvPipeline {
             Imgproc.rectangle(markup, rect, new Scalar(0, 255, 160), 2);
 
             // Draw the threshold lines. These should be between the tape lines separating the spikes.
-            Imgproc.line(markup, new Point(boundingLine1, 0), new Point(boundingLine1, 240), new Scalar(0, 0, 0));
-            Imgproc.line(markup, new Point(boundingLine2, 0), new Point(boundingLine2, 240), new Scalar(0, 0, 0));
+            Imgproc.line(markup, new Point(robot.boundingLine1, 0), new Point(robot.boundingLine1, 240), new Scalar(0, 0, 0));
+            Imgproc.line(markup, new Point(robot.boundingLine2, 0), new Point(robot.boundingLine2, 240), new Scalar(0, 0, 0));
 
             // Make an image showing what the color mask output finds
             Imgproc.cvtColor(bwImage, bwImage, Imgproc.COLOR_GRAY2RGB);
