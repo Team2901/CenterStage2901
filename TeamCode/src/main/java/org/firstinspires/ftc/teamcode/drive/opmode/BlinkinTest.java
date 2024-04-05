@@ -18,34 +18,63 @@ public class BlinkinTest extends OpMode {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1");
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2");
 
-        blinkin = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkin"));
+        blinkin = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
     }
+
+//    int patternNumber = 0;
 
     public void loop() {
         impGamepad1.update();
         impGamepad2.update();
+//        if(impGamepad1.a.isInitialPress()){
+//            patternNumber++;
+//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(patternNumber));
+//        }else if(impGamepad1.y.isInitialPress()){
+//            patternNumber--;
+//            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(patternNumber));
+//        }
+//        telemetry.addData("pattern", patternNumber);
+//        telemetry.update();
 
-        if(impGamepad1.left_bumper.getValue()){
-            if(impGamepad1.a.isInitialPress()){
-                blinkin.setPixel1(Blinkin.PixelColor.GREEN);
+        if (impGamepad1.left_bumper.getValue()) {
+            blinkin.setPixelLeftStatus(Blinkin.PixelStatus.REQUESTED);
+            if (impGamepad1.a.isInitialPress()) {
+                blinkin.setPixelLeft(Blinkin.PixelColor.GREEN);
             }
-            if(impGamepad1.y.isInitialPress()){
-                blinkin.setPixel1(Blinkin.PixelColor.YELLOW);
+            if (impGamepad1.y.isInitialPress()) {
+                blinkin.setPixelLeft(Blinkin.PixelColor.YELLOW);
             }
-            if(impGamepad1.x.isInitialPress()){
-                blinkin.setPixel1(Blinkin.PixelColor.WHITE);
+            if (impGamepad1.x.isInitialPress()) {
+                blinkin.setPixelLeft(Blinkin.PixelColor.PURPLE);
+            }
+            if (impGamepad1.b.isInitialPress()) {
+                blinkin.setPixelLeft(Blinkin.PixelColor.WHITE);
             }
         }
-        if(impGamepad1.right_bumper.getValue()){
-            if(impGamepad1.a.isInitialPress()){
-                blinkin.setPixel2(Blinkin.PixelColor.GREEN);
+        if (impGamepad1.right_bumper.getValue()) {
+            blinkin.setPixelRightStatus(Blinkin.PixelStatus.REQUESTED);
+            if (impGamepad1.a.isInitialPress()) {
+                blinkin.setPixelRight(Blinkin.PixelColor.GREEN);
             }
-            if(impGamepad1.y.isInitialPress()){
-                blinkin.setPixel2(Blinkin.PixelColor.YELLOW);
+            if (impGamepad1.y.isInitialPress()) {
+                blinkin.setPixelRight(Blinkin.PixelColor.YELLOW);
             }
-            if(impGamepad1.x.isInitialPress()){
-                blinkin.setPixel2(Blinkin.PixelColor.WHITE);
+            if (impGamepad1.b.isInitialPress()) {
+                blinkin.setPixelRight(Blinkin.PixelColor.WHITE);
             }
+            if (impGamepad1.x.isInitialPress()) {
+                blinkin.setPixelRight(Blinkin.PixelColor.PURPLE);
+            }
+        }
+        if (impGamepad1.left_trigger.getValue() > 0.5) {
+            blinkin.setPixelLeftStatus(Blinkin.PixelStatus.EMPTY);
+        } else if (impGamepad1.right_trigger.getValue() > 0.5) {
+            blinkin.setPixelRightStatus(Blinkin.PixelStatus.EMPTY);
+        }
+        if(impGamepad1.left_stick.click.isInitialPress()){
+            blinkin.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
+        }else if(impGamepad1.right_stick.click.isInitialPress()){
+            blinkin.setPixelRightStatus(Blinkin.PixelStatus.HELD);
         }
         blinkin.update();
     }
