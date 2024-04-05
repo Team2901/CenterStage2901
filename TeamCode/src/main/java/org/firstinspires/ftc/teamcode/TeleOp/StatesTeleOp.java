@@ -88,14 +88,27 @@ public class StatesTeleOp extends OpMode {
         double robotAngle = AngleUnit.RADIANS.fromDegrees(robot.getAngle());
         double forward;
         double strafe;
-        if(fieldOriented == true) {
-            forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
-            strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
+
+        if(fieldOriented) {
+            if(impGamepad1.y.isPressed()){
+                //TODO
+                forward = robot.approachBackdrop();
+                strafe = 0;
+            } else {
+                forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
+                strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
+            }
         }
         else{
-            forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
-            strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
+            if(impGamepad1.y.isPressed()){
+                forward = robot.approachBackdrop();
+                strafe = 0;
+            } else {
+                forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
+                strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
+            }
         }
+
         robot.backLeft.setPower(forward - strafe + rotate);
         robot.frontLeft.setPower(forward + strafe + rotate);
         robot.backRight.setPower(forward + strafe - rotate);
@@ -189,6 +202,7 @@ public class StatesTeleOp extends OpMode {
         }
 
         robot.adjustWrist();
+
         // GAMEPAD 2 CONTROLS
 
         //drone release

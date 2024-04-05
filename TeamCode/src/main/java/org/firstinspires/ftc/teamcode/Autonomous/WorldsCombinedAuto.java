@@ -63,14 +63,6 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         while(opModeInInit()){
             impGamepad1.update();
 
-            telemetry.addLine("States (LB) or Worlds (RB) Hardware?");
-            if(impGamepad1.left_bumper.isInitialPress()){
-                robot.config = Config.STATES;
-            } else if(impGamepad1.right_bumper.isInitialPress()){
-                robot.config = Config.WORLDS;
-            }
-            telemetry.addData("Config", robot.config);
-
             telemetry.addLine("Red (B) or Blue (X)?");
             if(impGamepad1.x.isInitialPress()){
                 robot.alliance = Alliance.BLUE;

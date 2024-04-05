@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
@@ -35,6 +38,10 @@ public class StatesHardware{
     public Servo outtakeRight;
     public Servo planeServo;
     public Servo rotationServo;
+    public DistanceSensor distanceSensorLeft;
+    public DistanceSensor distanceSensorRight;
+    public ColorRangeSensor colorSensorLeft;
+    public ColorRangeSensor colorSensorRight;
 
     public IMU imu;
 
@@ -87,6 +94,10 @@ public class StatesHardware{
         outtakeRight = hardwareMap.servo.get("outtakeRight");
         planeServo = hardwareMap.servo.get("planeServo");
         rotationServo = hardwareMap.servo.get("rotationServo");
+        distanceSensorLeft = hardwareMap.get(DistanceSensor.class, "distanceSensorLeft");
+        distanceSensorRight = hardwareMap.get(DistanceSensor.class, "distanceSensorRight");
+        colorSensorLeft = hardwareMap.get(ColorRangeSensor.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(ColorRangeSensor.class, "colorSensorRight");
 
         // set motor directions (so it doesn't perpetually rotate)
         backLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -207,5 +218,23 @@ public class StatesHardware{
         } else if(armAngle < 270){
             rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
         }
+    }
+
+    public static double approachingSpeed = 0.35;
+    public static double slowingDistance = 4;
+    public static double backdropOffset = 2;
+    public double approachBackdrop(){
+        double drivePower = 0;
+        double targetDistance = backdropOffset;
+        double currentDistance = distanceSensorLeft.getDistance(DistanceUnit.INCH);
+        double distanceError = currentDistance-targetDistance;
+        double kp = (approachingSpeed/slowingDistance);
+
+        drivePower = distanceError * kp;
+        if(drivePower > approachingSpeed){
+            drivePower = approachingSpeed;
+        }
+
+        return drivePower;
     }
 }
