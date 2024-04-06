@@ -602,7 +602,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
         double targetAngle = currentAngle + theta;
 
-        double distance = -1;
+        double distance = 100;
         double dtheta;
 
         robot.setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
