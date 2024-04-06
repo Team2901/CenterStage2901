@@ -139,6 +139,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         autoState = AutoState.STALL;
     }
 
+    long startTime = System.currentTimeMillis();
+
     //base code from StatesRedClose
     void _loop() {
         if (count == 0) {
@@ -157,16 +159,19 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 //            } else {
 //                autoState = AutoState.CAMERA_DETECTION;
 //            }
-            long startTime = System.currentTimeMillis();
 
             //Wait until # of frames processed
-            while (camera.getFrameCount() < IMGPROC_SAMPLES && opModeIsActive()) {
+            if (camera.getFrameCount() >= IMGPROC_SAMPLES) {
+                telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime) / 1000.0);
+                telemetry.addData("X Mid", pipeline.xMidVal);
+                telemetry.addData("Spike Mark", pipeline.spikeMark);
+                autoState = AutoState.CAMERA_DETECTION;
+                camera.closeCameraDevice();
+            }else{
                 idle();
             }
-            telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime) / 1000.0);
-            telemetry.addData("X Mid", pipeline.xMidVal);
-            telemetry.addData("Spike Mark", pipeline.spikeMark);
-            autoState = AutoState.CAMERA_DETECTION;
+
+
         } else if (autoState == AutoState.CAMERA_DETECTION) {
             if (pipeline.spikeMark == 1) {
                 autoState = AutoState.MOVE_1;

@@ -14,10 +14,7 @@ import com.qualcomm.robotcore.hardware.configuration.ConfigurationUtility;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
 
@@ -111,34 +108,22 @@ public class StatesHardware {
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // stop motors during initialization
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
+        setDrivePower(0);
         arm.setPower(0);
 
         // reset encoder positions to 0
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set motors up to run with encoders
         //backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setDriveRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // better braking
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // set up imu
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -256,5 +241,12 @@ public class StatesHardware {
         frontRight.setPower(power);
         backLeft.setPower(power);
         backRight.setPower(power);
+    }
+
+    public void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        frontLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        frontRight.setZeroPowerBehavior(zeroPowerBehavior);
+        backLeft.setZeroPowerBehavior(zeroPowerBehavior);
+        backRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 }

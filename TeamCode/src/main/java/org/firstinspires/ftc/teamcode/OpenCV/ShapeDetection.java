@@ -27,8 +27,8 @@ public class ShapeDetection extends OpenCvPipeline {
     // To be deleted - kept only for old code
     public double xMidVal = 0;
 
-    public double pixelXValAverage = -1.0;
-    private final double newPixelXValWeight = 0.2;
+    public Double pixelXValAverage;
+    public static final double newPixelXValWeight = 0.2;
 
     Size targetSize = new Size(320, 240);
     Size pipelineSize;
@@ -160,7 +160,7 @@ public class ShapeDetection extends OpenCvPipeline {
             telemetry.addData("X Mid", xMidVal);
 
             // Classify the spikemark based on the x mid value
-            this.addPixelXVal(xMidVal);
+            if(!rect.empty())addPixelXVal(xMidVal);
         }
 
         // Do some visualization
@@ -222,7 +222,7 @@ public class ShapeDetection extends OpenCvPipeline {
     }
 
     public void addPixelXVal(double pixelXVal) {
-        if (pixelXValAverage == -1.0) {
+        if (pixelXValAverage == null) {
             pixelXValAverage = pixelXVal;
         } else {
             pixelXValAverage = (pixelXValAverage * (1 - newPixelXValWeight) + pixelXVal * newPixelXValWeight);
