@@ -27,13 +27,16 @@ public class ShapeDetection extends OpenCvPipeline {
     // To be deleted - kept only for old code
     public double xMidVal = 0;
 
+    public double pixelXValAverage = -1.0;
+    private final double newPixelXValWeight = 0.2;
+
     Size targetSize = new Size(320, 240);
     Size pipelineSize;
 
     // Private things, allocate once
     private static final int CV_8U3 = 16;
     private static final int CV_8U4 = 24;
-    private static final Rect blankRect = new Rect(0,0,320,40);
+    private static final Rect blankRect = new Rect(0, 0, 320, 40);
     private Mat threeChannelInputFrame = null;
     private final Mat resizedInputFrame = new Mat(targetSize, CV_8U3);
     private final Mat HSVImage = new Mat(targetSize, CV_8U3);
@@ -57,11 +60,11 @@ public class ShapeDetection extends OpenCvPipeline {
 
     public int spikeMark = 1; // TODO: Make this an Enum
 
-    public ShapeDetection (Telemetry telemetry) {
+    public ShapeDetection(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
-    public ShapeDetection (Telemetry telemetry, StatesHardware robot){
+    public ShapeDetection(Telemetry telemetry, StatesHardware robot) {
         this.telemetry = telemetry;
         this.robot = robot;
     }
@@ -82,8 +85,7 @@ public class ShapeDetection extends OpenCvPipeline {
         // Note: This is only really relevant for eocv-sim and use of jpg images
         if (inputFrameRGB.type() == CV_8U4) {
             Imgproc.cvtColor(inputFrameRGB, threeChannelInputFrame, Imgproc.COLOR_RGBA2RGB);
-        }
-        else {
+        } else {
             inputFrameRGB.copyTo(threeChannelInputFrame);
         }
 
@@ -101,13 +103,13 @@ public class ShapeDetection extends OpenCvPipeline {
         //Mat croppedFrame = HSVImage.submat(cropRect);
         //Mat croppedInputFrameRGB = inputFrameRGB.submat(cropRect);
         HSVImage.copyTo(croppedFrame);
-        Imgproc.rectangle(croppedFrame, blankRect, new Scalar(0,0,0), -1);
+        Imgproc.rectangle(croppedFrame, blankRect, new Scalar(0, 0, 0), -1);
         resizedInputFrame.copyTo(croppedInputFrameRGB);
-        Imgproc.rectangle(croppedInputFrameRGB, blankRect, new Scalar(0,0,0), -1);
+        Imgproc.rectangle(croppedInputFrameRGB, blankRect, new Scalar(0, 0, 0), -1);
 
         // Find the pixels in the image that are our desired color (in HSV space)
-        if(robot == null || robot.alliance == StatesHardware.Alliance.RED) {
-                Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        if (robot == null || robot.alliance == StatesHardware.Alliance.RED) {
+            Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
         } else {
             Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
         }
@@ -118,7 +120,7 @@ public class ShapeDetection extends OpenCvPipeline {
         // Get the bounding rectangle from the mask after median blur
         Rect rect = Imgproc.boundingRect(blurImg);
 
-        if(usingCentroid){
+        if (usingCentroid) {
             Mat eroded = new Mat();
             Mat strElement = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE, new Size(7, 7));
             Imgproc.erode(blurImg, eroded, strElement);
@@ -130,7 +132,7 @@ public class ShapeDetection extends OpenCvPipeline {
             Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
 
             // Centroid of contours
-            if(contours.size() > 0) {
+            if (contours.size() > 0) {
                 Moments moments = Imgproc.moments(contours.get(0));
                 double totalPixels = moments.m00;
                 double sumX = moments.m10;
@@ -145,21 +147,12 @@ public class ShapeDetection extends OpenCvPipeline {
                 telemetry.addData("Sum Y", sumY);
                 telemetry.addData("Total Pixels", totalPixels);
 
-                double xCentroid = averageX;
-
-                if (xCentroid > robot.boundingLine2) {
-                    spikeMark = 3;
-                } else if (xCentroid > robot.boundingLine1) {
-                    spikeMark = 2;
-                } else {
-                    spikeMark = 1;
-                }
+                addPixelXVal(averageX);
             } else {
                 telemetry.addLine("No Contours Found");
                 return inputFrameRGB;
             }
-        }
-        else {
+        } else {
             // Determine the middle of the bounding rect, in x dimension
             telemetry.addData("x", rect.x);
             telemetry.addData("y", rect.y);
@@ -167,14 +160,7 @@ public class ShapeDetection extends OpenCvPipeline {
             telemetry.addData("X Mid", xMidVal);
 
             // Classify the spikemark based on the x mid value
-            if (xMidVal > robot.boundingLine2) {
-                spikeMark = 3;
-            } else if (xMidVal > robot.boundingLine1) {
-                spikeMark = 2;
-            } else {
-                spikeMark = 1;
-            }
-            telemetry.addData("Spike Mark", spikeMark);
+            this.addPixelXVal(xMidVal);
         }
 
         // Do some visualization
@@ -227,12 +213,28 @@ public class ShapeDetection extends OpenCvPipeline {
             outputFrame.setTo(new Scalar(1, 1, 1), zeros);
 
             Imgproc.resize(outputFrame, outputFrame, pipelineSize);
-        }
-        else {
+        } else {
             inputFrameRGB.copyTo(outputFrame);
         }
 
         telemetry.update();
         return outputFrame;
+    }
+
+    public void addPixelXVal(double pixelXVal) {
+        if (pixelXValAverage == -1.0) {
+            pixelXValAverage = pixelXVal;
+        } else {
+            pixelXValAverage = (pixelXValAverage * (1 - newPixelXValWeight) + pixelXVal * newPixelXValWeight);
+        }
+
+        if (pixelXValAverage > robot.boundingLine2) {
+            spikeMark = 3;
+        } else if (pixelXValAverage > robot.boundingLine1) {
+            spikeMark = 2;
+        } else {
+            spikeMark = 1;
+        }
+        telemetry.addData("Spike Mark", spikeMark);
     }
 }

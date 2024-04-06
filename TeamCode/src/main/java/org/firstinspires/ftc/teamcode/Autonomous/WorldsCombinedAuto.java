@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware.*;
@@ -26,6 +27,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
     ImprovedGamepad impGamepad2;
 
     ShapeDetection pipeline = new ShapeDetection(this.telemetry, robot);
+
+    public static final int IMGPROC_SAMPLES = 10;
 
     public int count = 0;
     public OpenCvCamera camera;
@@ -143,13 +146,21 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             stall(waitSec);
             autoState = AutoState.CAMERA_WAIT;
         } else if (autoState == AutoState.CAMERA_WAIT) {
-            if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
-                telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
-                telemetry.addData("X Mid", pipeline.xMidVal);
-                telemetry.addData("Spike Mark", pipeline.spikeMark);
-            } else {
-                autoState = AutoState.CAMERA_DETECTION;
-            }
+//            if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
+//                telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
+//                telemetry.addData("X Mid", pipeline.xMidVal);
+//                telemetry.addData("Spike Mark", pipeline.spikeMark);
+//            } else {
+//                autoState = AutoState.CAMERA_DETECTION;
+//            }
+            long startTime = System.currentTimeMillis();
+
+            //Wait until # of frames processed
+            while(camera.getFrameCount() < IMGPROC_SAMPLES){}
+            telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime)/1000.0);
+            telemetry.addData("X Mid", pipeline.xMidVal);
+            telemetry.addData("Spike Mark", pipeline.spikeMark);
+            autoState = AutoState.CAMERA_DETECTION;
         } else if (autoState == AutoState.CAMERA_DETECTION) {
             if (pipeline.spikeMark == 1) {
                 autoState = AutoState.MOVE_1;
