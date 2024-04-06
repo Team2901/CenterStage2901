@@ -167,6 +167,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             telemetry.addData("X Mid", pipeline.xMidVal);
             telemetry.addData("Spike Mark", pipeline.spikeMark);
             autoState = AutoState.CAMERA_DETECTION;
+            camera.closeCameraDevice();
         } else if (autoState == AutoState.CAMERA_DETECTION) {
             if (pipeline.spikeMark == 1) {
                 autoState = AutoState.MOVE_1;
