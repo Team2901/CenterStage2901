@@ -605,7 +605,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
         robot.setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        while (Math.abs(distance) > 1) {
+        while (Math.abs(distance) > 1 && opModeIsActive() ) {
             //using delta so angles are less annoying. dtheta > 10 means jump from +- 180 to -+ 180
             dtheta = getIMUYaw() - currentAngle;
             if (dtheta < 10) currentAngle += dtheta;
