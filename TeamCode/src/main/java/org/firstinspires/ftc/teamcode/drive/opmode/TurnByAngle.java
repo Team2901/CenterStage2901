@@ -50,6 +50,7 @@ public class TurnByAngle extends LinearOpMode {
         }
 
         telemetry.addData("Turn Angle", angle);
+        telemetry.update();
     }
 
     /**
