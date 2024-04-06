@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
@@ -260,6 +261,14 @@ public class StatesTeleOp extends OpMode {
             StatesHardware.minArmTicks = -10000;
         }
 
+        // Reset arm encoder
+        // (We removed it from init, so now it is a button press in case it is needed)
+        if(impGamepad2.back.isInitialPress()){
+            DcMotor.RunMode currentMode = robot.arm.getMode();
+            robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.arm.setMode(currentMode);
+        }
+
         //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
 //            if(slowMode == false) {
@@ -291,6 +300,9 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("left stick y value", impGamepad1.left_stick.y.getValue());
         telemetry.addData("Field Oriented:", fieldOriented);
         telemetry.addData("Alliance Color:", robot.alliance);
+        telemetry.addData("distance", robot.distanceSensorLeft.getDistance(DistanceUnit.INCH));
+        telemetry.addData("forward", forward);
+        telemetry.addData("frontLeft power", robot.frontLeft.getPower());
         telemetry.update();
     }
 
