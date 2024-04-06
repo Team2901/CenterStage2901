@@ -91,8 +91,7 @@ public class StatesTeleOp extends OpMode {
 
         if(fieldOriented) {
             if(impGamepad1.y.isPressed()){
-                //TODO
-                forward = robot.approachBackdrop();
+                forward = -robot.approachBackdrop();
                 strafe = 0;
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
@@ -101,7 +100,7 @@ public class StatesTeleOp extends OpMode {
         }
         else{
             if(impGamepad1.y.isPressed()){
-                forward = robot.approachBackdrop();
+                forward = -robot.approachBackdrop();
                 strafe = 0;
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
