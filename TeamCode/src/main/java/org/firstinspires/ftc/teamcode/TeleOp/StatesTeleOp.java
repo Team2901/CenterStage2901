@@ -44,6 +44,8 @@ public class StatesTeleOp extends OpMode {
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2", telemetry);
         robot.init(this.hardwareMap, telemetry);
 
+        currentArmTicks = robot.arm.getCurrentPosition();
+
         outtakeTimer.startTime();
     }
 
@@ -144,7 +146,7 @@ public class StatesTeleOp extends OpMode {
 
         //arm up
 
-        // commented out b/c of stability testing 3/7/2024 - should be added back in
+        //should be commented back in once impGamepad is fixed ======================================
         if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < StatesHardware.maxArmTicks){
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -159,6 +161,21 @@ public class StatesTeleOp extends OpMode {
             robot.arm.setPower(0.7 * armMod);
             //robot.arm.setPower(-0.9 * armMod);
         }
+
+//        if(gamepad1.right_trigger > 0 && currentArmTicks < StatesHardware.maxArmTicks){
+//            robot.arm.setPower(gamepad1.right_trigger * armMod);
+//            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            currentArmTicks = robot.arm.getCurrentPosition();
+//        } else if(gamepad1.left_trigger > 0 && currentArmTicks > StatesHardware.minArmTicks){
+//            robot.arm.setPower(-gamepad1.left_trigger * armMod);
+//            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            currentArmTicks = robot.arm.getCurrentPosition();
+//        } else {
+//            robot.arm.setTargetPosition(currentArmTicks);
+//            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            robot.arm.setPower(0.7 * armMod);
+//            //robot.arm.setPower(-0.9 * armMod);
+//        }
 
         //right claw toggle
         if(impGamepad1.right_bumper.isInitialPress()){

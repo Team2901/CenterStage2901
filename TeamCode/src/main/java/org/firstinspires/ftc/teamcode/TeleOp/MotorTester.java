@@ -63,5 +63,11 @@ public class MotorTester extends OpMode {
         } else {
             robot.arm.setPower(0);
         }
+        telemetry.addData("Encoder count FL", robot.frontLeft.getCurrentPosition());
+        telemetry.addData("Encoder count FR", robot.frontRight.getCurrentPosition());
+        telemetry.addData("Encoder count BL", robot.backLeft.getCurrentPosition());
+        telemetry.addData("Encoder count BR", robot.backRight.getCurrentPosition());
+
+        telemetry.update();
     }
 }

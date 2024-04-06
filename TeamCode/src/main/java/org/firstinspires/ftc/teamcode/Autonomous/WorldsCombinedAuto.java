@@ -167,11 +167,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
                 autoState = AutoState.CAMERA_DETECTION;
                 camera.closeCameraDevice();
-            }else{
-                idle();
             }
-
-
         } else if (autoState == AutoState.CAMERA_DETECTION) {
             if (pipeline.spikeMark == 1) {
                 autoState = AutoState.MOVE_1;
@@ -606,7 +602,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
         double targetAngle = currentAngle + theta;
 
-        double distance = -1;
+        double distance = 100;
         double dtheta;
 
         robot.setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

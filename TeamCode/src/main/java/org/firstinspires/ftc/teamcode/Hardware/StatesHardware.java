@@ -105,7 +105,6 @@ public class StatesHardware {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
-        arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // stop motors during initialization
         setDrivePower(0);
@@ -144,7 +143,11 @@ public class StatesHardware {
 
         String configName = ConfigUtilities.getRobotConfigurationName();
         if (configName.equals("Worlds Robot")) {
-
+            arm.setDirection(DcMotorSimple.Direction.FORWARD);
+            maxArmTicks = 4480;
+            maxHeightArmTicks = 2945;
+        } else {
+            arm.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
 
