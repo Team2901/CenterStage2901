@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
 
-public class StatesHardware{
+public class StatesHardware {
 
     public static final double TICKS_PER_MOTOR_REV = 537.7;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
@@ -63,27 +63,31 @@ public class StatesHardware{
         RED,
         BLUE
     }
+
     public Alliance alliance = Alliance.RED;
 
     public enum StartLocation {
         FAR,
         CLOSE
     }
+
     public StartLocation startLocation = StartLocation.FAR;
 
     public enum Config {
         WORLDS,
         STATES
     }
+
     public Config config = Config.WORLDS;
 
     public enum ParkLocation {
         MIDDLE,
         CORNER
     }
+
     public ParkLocation parkLocation = ParkLocation.CORNER;
 
-    public void init(HardwareMap hardwareMap, Telemetry telemetry){
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         // initialize motors
         backLeft = hardwareMap.dcMotor.get("backLeft");
         backRight = hardwareMap.dcMotor.get("backRight");
@@ -154,38 +158,38 @@ public class StatesHardware{
         imu.initialize(IMUParameters);
 
         String configName = ConfigUtilities.getRobotConfigurationName();
-        if(configName.equals("Worlds Robot")){
+        if (configName.equals("Worlds Robot")) {
 
         }
     }
 
-    public double getAngle(){
+    public double getAngle() {
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
         return AngleUnit.normalizeDegrees(angles.getYaw(AngleUnit.DEGREES));
     }
 
-    public double recalculateAngle(){
+    public double recalculateAngle() {
         double calculatedAngle;
-        calculatedAngle = ((210*arm.getCurrentPosition())/5360) + initArmAngle;
+        calculatedAngle = ((210 * arm.getCurrentPosition()) / 5360) + initArmAngle;
         return calculatedAngle;
     }
 
-    public double turnToAngle(double turnAngle){
+    public double turnToAngle(double turnAngle) {
 
         //robot.getAngle is between -180 and 180, starting at 0
         double turnPower = 0;
         double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
         double startAngle = getAngle();
         double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
-        if(!(turnError < .5 && turnError > -.5)){
-            if(turnError >= 0){
-                turnPower = turnError/50;
-                if(turnPower > .75){
+        if (!(turnError < .5 && turnError > -.5)) {
+            if (turnError >= 0) {
+                turnPower = turnError / 50;
+                if (turnPower > .75) {
                     turnPower = .75;
                 }
-            }else if(turnError < 0){
-                turnPower = turnError/50;
-                if(turnPower < -.75){
+            } else if (turnError < 0) {
+                turnPower = turnError / 50;
+                if (turnPower < -.75) {
                     turnPower = -.75;
                 }
             }
@@ -204,18 +208,19 @@ public class StatesHardware{
 
         return turnPower;
     }
-    public void adjustWrist(){
+
+    public void adjustWrist() {
         double armAngle = recalculateAngle();
-        if(armAngle < 75){
+        if (armAngle < 75) {
             rotationServo.setPosition(0.125);
             //when arm angle increases, servo angle decreases
-        } else if (armAngle < 93){ //90 degrees, but a little bit of error in the math so have to adjust manually
+        } else if (armAngle < 93) { //90 degrees, but a little bit of error in the math so have to adjust manually
             rotationServo.setPosition(0.1);
             //servo angle = arm angle + 25
             //ethan says "zone between 65 and 90 that keeps the servo at the arm angle+25 degrees (so it is as close to horizontal as possible)"
-        } else if(armAngle < 190){
+        } else if (armAngle < 190) {
             rotationServo.setPosition(0.325);
-        } else if(armAngle < 270){
+        } else if (armAngle < 270) {
             rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
         }
     }
@@ -223,18 +228,33 @@ public class StatesHardware{
     public static double approachingSpeed = 0.35;
     public static double slowingDistance = 4;
     public static double backdropOffset = 2;
-    public double approachBackdrop(){
+
+    public double approachBackdrop() {
         double drivePower = 0;
         double targetDistance = backdropOffset;
         double currentDistance = distanceSensorLeft.getDistance(DistanceUnit.INCH);
-        double distanceError = currentDistance-targetDistance;
-        double kp = (approachingSpeed/slowingDistance);
+        double distanceError = currentDistance - targetDistance;
+        double kp = (approachingSpeed / slowingDistance);
 
         drivePower = distanceError * kp;
-        if(drivePower > approachingSpeed){
+        if (drivePower > approachingSpeed) {
             drivePower = approachingSpeed;
         }
 
         return drivePower;
+    }
+
+    public void setDriveRunMode(DcMotor.RunMode mode) {
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
+    }
+
+    public void setDrivePower(double power) {
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
     }
 }

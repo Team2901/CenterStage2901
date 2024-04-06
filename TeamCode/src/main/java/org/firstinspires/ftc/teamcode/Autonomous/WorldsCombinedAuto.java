@@ -2,25 +2,26 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware.*;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
-import org.firstinspires.ftc.teamcode.TeleOp.StatesTeleOp;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Vector;
 
-@Autonomous (name = "Worlds Combined Auto", group = "AAutonomous")
+@Autonomous(name = "Worlds Combined Auto", group = "AAutonomous")
 public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
     StatesHardware robot = new StatesHardware();
     ImprovedGamepad impGamepad1;
@@ -56,6 +57,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         BACKSTAGE,
         STOP
     }
+
     AutoState autoState;
 
     @Override
@@ -63,37 +65,37 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         _init();
 
-        while(opModeInInit()){
+        while (opModeInInit()) {
             impGamepad1.update();
 
             telemetry.addLine("Red (B) or Blue (X)?");
-            if(impGamepad1.x.isInitialPress()){
+            if (impGamepad1.x.isInitialPress()) {
                 robot.alliance = Alliance.BLUE;
-            } else if(impGamepad1.b.isInitialPress()){
+            } else if (impGamepad1.b.isInitialPress()) {
                 robot.alliance = Alliance.RED;
             }
             telemetry.addData("Alliance", robot.alliance);
 
             telemetry.addLine("Far (Y) or Close (A)?");
-            if(impGamepad1.y.isInitialPress()){
+            if (impGamepad1.y.isInitialPress()) {
                 robot.startLocation = StartLocation.FAR;
-            } else if(impGamepad1.a.isInitialPress()){
+            } else if (impGamepad1.a.isInitialPress()) {
                 robot.startLocation = StartLocation.CLOSE;
             }
             telemetry.addData("Starting Location", robot.startLocation);
 
             telemetry.addLine("Add wait time? (D-pad Up or Down)");
-            if(impGamepad1.dpad_up.isInitialPress()){
+            if (impGamepad1.dpad_up.isInitialPress()) {
                 waitSec += 0.5;
-            } else if(impGamepad1.dpad_down.isInitialPress() && waitSec >= 0.5){
+            } else if (impGamepad1.dpad_down.isInitialPress() && waitSec >= 0.5) {
                 waitSec -= 0.5;
             }
             telemetry.addData("Stall Time", waitSec);
 
             telemetry.addLine("Park in the Middle (D-pad Left) or Corner (D-pad Right)?");
-            if(impGamepad1.dpad_left.isInitialPress()){
+            if (impGamepad1.dpad_left.isInitialPress()) {
                 robot.parkLocation = ParkLocation.MIDDLE;
-            } else if(impGamepad1.dpad_right.isInitialPress()){
+            } else if (impGamepad1.dpad_right.isInitialPress()) {
                 robot.parkLocation = ParkLocation.CORNER;
             }
             telemetry.addData("Parking Location", robot.parkLocation);
@@ -114,7 +116,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             }
         }
 
-        while (opModeIsActive()) { idle();}
+        while (opModeIsActive()) {
+            idle();
+        }
     }
 
     void _init() {
@@ -127,7 +131,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam, cameraMonitorViewID);
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(this);
-        FtcDashboard.getInstance().startCameraStream(camera,0);
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         robot.imu.resetYaw();
         robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,7 +146,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             count++;
         }
 
-        if(autoState == AutoState.STALL){
+        if (autoState == AutoState.STALL) {
             stall(waitSec);
             autoState = AutoState.CAMERA_WAIT;
         } else if (autoState == AutoState.CAMERA_WAIT) {
@@ -156,8 +160,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             long startTime = System.currentTimeMillis();
 
             //Wait until # of frames processed
-            while(camera.getFrameCount() < IMGPROC_SAMPLES){}
-            telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime)/1000.0);
+            while (camera.getFrameCount() < IMGPROC_SAMPLES) {
+            }
+            telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime) / 1000.0);
             telemetry.addData("X Mid", pipeline.xMidVal);
             telemetry.addData("Spike Mark", pipeline.spikeMark);
             autoState = AutoState.CAMERA_DETECTION;
@@ -172,9 +177,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
             spikeMark = pipeline.spikeMark;
         } else if (autoState == AutoState.MOVE_1) {
-            if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.CLOSE) {
+            if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(28);
-                strafe(3, 0, 0, 0, 0);
+                strafe(3);
                 turnByTicks(-1100); //-90 degrees
                 moveInches(2);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -185,11 +190,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(3, 0, 0, 0, 0);
+                strafe(3);
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE){
+            } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(30);
-                strafe(-24, 0, 0, 0, 0);
+                strafe(-24);
                 turnByTicks(1070); //90 degrees - a little
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
@@ -199,12 +204,12 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(21, 0, 0, 0, 0);
+                strafe(21);
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
-                if(robot.parkLocation == ParkLocation.MIDDLE){
+            } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
                     moveInches(40);
-                    strafe(-12, 0, 0, 0, 0);
+                    strafe(-12);
                     turnByTicks(-2200); //-180 degrees
 
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -214,7 +219,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     turnByTicks(-850);
                 } else {
                     moveInches(22);
-                    strafe(-12,0,0,0,0);
+                    strafe(-12);
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
                     stall(2);
                     moveInches(-21);
@@ -227,7 +232,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
                 moveInches(31);
-                strafe(6, 0, 0, 0, 0);
+                strafe(6);
                 turnByTicks(-1100); //-90 degrees
                 moveInches(6);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -236,14 +241,14 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-9);
 
-                if(robot.parkLocation == ParkLocation.MIDDLE) {
-                    strafe(21.5, 0, 0, 0, 0);
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
+                    strafe(21.5);
 
                     stall(1);
 
                     turnByTicks(75);
                 } else {
-                    strafe(-30,0,0,0,0);
+                    strafe(-30);
                 }
 
                 moveInches(90);
@@ -264,11 +269,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(3,0,0,0,0);
+                strafe(3);
                 turnByTicks(-30);
 
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE){
+            } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(27);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
@@ -280,12 +285,12 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(3,0,0,0,0);
+                strafe(3);
                 turnByTicks(30);
 
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
-                if(robot.parkLocation == ParkLocation.MIDDLE) {
+            } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
                     moveInches(43);
                     turnByTicks(-2100); //-180
 
@@ -310,7 +315,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
-                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
                     moveInches(43);
                     turnByTicks(-2100); //-180
 
@@ -339,7 +344,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         } else if (autoState == AutoState.MOVE_3) {
             if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(25);
-                strafe(24, 0, 0, 0, 0);
+                strafe(24);
                 turnByTicks(-1100); //-90 degrees
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
@@ -349,11 +354,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(-14, 0, 0, 0, 0);
+                strafe(-14);
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE){
+            } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(31);
-                strafe(-3,0,0,0,0);
+                strafe(-3);
                 turnByTicks(1100); //90 degrees
                 moveInches(3);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -364,12 +369,12 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(1);
 
-                strafe(3, 0, 0, 0, 0);
+                strafe(3);
                 turnByTicks(-80);
                 autoState = AutoState.BACKDROP;
-            } else if(robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR){
+            } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
                 moveInches(31);
-                strafe(-6, 0, 0, 0, 0);
+                strafe(-6);
                 turnByTicks(1100); //90 degrees
                 moveInches(6);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
@@ -378,15 +383,15 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-9);
 
-                if(robot.parkLocation == ParkLocation.MIDDLE) {
-                    strafe(-22, 0, 0, 0, 0);
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
+                    strafe(-22);
 
                     stall(1);
 
 //                turnByTicks(-2050); //-180 degrees (idk why this one takes a lot less ticks than the other 180's???)
                     turnByTicks(-75);
                 } else {
-                    strafe(30,0,0,0,0);
+                    strafe(30);
                 }
 
                 moveInches(90);
@@ -395,9 +400,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 autoState = AutoState.BACKSTAGE;
             } else { //blue far
-                if(robot.parkLocation == ParkLocation.MIDDLE) {
+                if (robot.parkLocation == ParkLocation.MIDDLE) {
                     moveInches(40);
-                    strafe(14, 0, 0, 0, 0);
+                    strafe(14);
                     turnByTicks(-2200); //-180 degrees
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
@@ -407,7 +412,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     turnByTicks(1150); //90 degrees
                 } else {
                     moveInches(22);
-                    strafe(14,0,0,0,0);
+                    strafe(14);
 
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
                     stall(2);
@@ -422,88 +427,89 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 autoState = AutoState.BACKSTAGE;
             }
-        } else if(autoState == AutoState.BACKDROP){
-                robot.rotationServo.setPosition(0.495);
+        } else if (autoState == AutoState.BACKDROP) {
+            robot.rotationServo.setPosition(0.495);
 
-                wristTimer.reset();
-                while (wristTimer.time() < 1.5) { idle(); }
+            wristTimer.reset();
+            while (wristTimer.time() < 1.5) {
+                idle();
+            }
 
-                moveArm(robot.maxHeightArmTicks);
+            moveArm(robot.maxHeightArmTicks);
 
-                while (robot.arm.isBusy() && opModeIsActive()) { idle(); }
+            while (robot.arm.isBusy() && opModeIsActive()) {
+                idle();
+            }
 
-                robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
+            robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
 
-                stall(3);
+            stall(3);
 
-                moveArm(150);
+            moveArm(150);
 
-                robot.rotationServo.setPosition(0.1);
+            robot.rotationServo.setPosition(0.1);
 
-                if(robot.parkLocation == ParkLocation.CORNER) {
-                    if (robot.alliance == Alliance.RED) {
-                        if (spikeMark == 1) {
-                            strafe(-38, 0, 0, 0, 0);
-                        } else if (spikeMark == 2) {
-                            strafe(-30, 0, 0, 0, 0);
-                        } else if (spikeMark == 3) {
-                            strafe(-20, 0, 0, 0, 0);
-                        }
-                    } else if (robot.alliance == Alliance.BLUE) {
-                        if (spikeMark == 1) {
-                            strafe(18, 0, 0, 0, 0);
-                        } else if (spikeMark == 2) {
-                            strafe(28, 0, 0, 0, 0);
-                        } else if (spikeMark == 3) {
-                            strafe(38, 0, 0, 0, 0);
-                        }
+            if (robot.parkLocation == ParkLocation.CORNER) {
+                if (robot.alliance == Alliance.RED) {
+                    if (spikeMark == 1) {
+                        strafe(-38);
+                    } else if (spikeMark == 2) {
+                        strafe(-30);
+                    } else if (spikeMark == 3) {
+                        strafe(-20);
+                    }
+                } else if (robot.alliance == Alliance.BLUE) {
+                    if (spikeMark == 1) {
+                        strafe(18);
+                    } else if (spikeMark == 2) {
+                        strafe(28);
+                    } else if (spikeMark == 3) {
+                        strafe(38);
                     }
                 }
+            }
 
-                if(robot.parkLocation == ParkLocation.MIDDLE){
-                    if(robot.alliance == Alliance.RED){
-                        if(spikeMark == 1){
-                            strafe(18,0,0,0,0);
-                        } else if(spikeMark == 2){
-                            strafe(28,0,0,0,0);
-                        } else if(spikeMark == 3){
-                            strafe(38,0,0,0,0);
-                        }
-                    } else if(robot.alliance == Alliance.BLUE){ // has not been tested yet
-                        if (spikeMark == 1) {
-                            strafe(-38, 0, 0, 0, 0);
-                        } else if (spikeMark == 2) {
-                            strafe(-30, 0, 0, 0, 0);
-                        } else if (spikeMark == 3) {
-                            strafe(-20, 0, 0, 0, 0);
-                        }
+            if (robot.parkLocation == ParkLocation.MIDDLE) {
+                if (robot.alliance == Alliance.RED) {
+                    if (spikeMark == 1) {
+                        strafe(18);
+                    } else if (spikeMark == 2) {
+                        strafe(28);
+                    } else if (spikeMark == 3) {
+                        strafe(38);
+                    }
+                } else if (robot.alliance == Alliance.BLUE) { // has not been tested yet
+                    if (spikeMark == 1) {
+                        strafe(-38);
+                    } else if (spikeMark == 2) {
+                        strafe(-30);
+                    } else if (spikeMark == 3) {
+                        strafe(-20);
                     }
                 }
+            }
 
-                autoState = AutoState.STOP;
+            autoState = AutoState.STOP;
 
-        }else if(autoState == AutoState.BACKSTAGE){
-                if(robot.alliance == Alliance.RED){
-                    turnByTicks(95);
-                } else if(robot.alliance == Alliance.BLUE){
-                    turnByTicks(-95);
-                }
+        } else if (autoState == AutoState.BACKSTAGE) {
+            if (robot.alliance == Alliance.RED) {
+                turnByTicks(95);
+            } else if (robot.alliance == Alliance.BLUE) {
+                turnByTicks(-95);
+            }
 
-                robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
+            robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
 
-                stall(2);
+            stall(2);
 
-                robot.arm.setTargetPosition(300);
-                robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm.setPower(0.6);
+            robot.arm.setTargetPosition(300);
+            robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.arm.setPower(0.6);
 
-                autoState = AutoState.STOP;
-        }else if (autoState == AutoState.STOP) {
-                robot.frontLeft.setPower(0);
-                robot.frontRight.setPower(0);
-                robot.backLeft.setPower(0);
-                robot.backRight.setPower(0);
-                isStopped = true;
+            autoState = AutoState.STOP;
+        } else if (autoState == AutoState.STOP) {
+            robot.setDrivePower(0);
+            isStopped = true;
         }
 
         telemetry.addData("Spike Mark", pipeline.spikeMark);
@@ -519,15 +525,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         robot.backLeft.setTargetPosition(robot.backLeft.getCurrentPosition() + ticks);
         robot.backRight.setTargetPosition(robot.backRight.getCurrentPosition() + ticks);
 
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft.setPower(0.35);
-        robot.frontRight.setPower(0.35);
-        robot.backLeft.setPower(0.35);
-        robot.backRight.setPower(0.35);
+        robot.setDrivePower(0.35);
 
         while (opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) {
 //            telemetry.addData("Current Left Position", robot.backLeft.getCurrentPosition());
@@ -538,6 +538,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         }
     }
 
+    //overloaded method so 0,0,0,0 isn't everywhere
+    private void strafe(double inches){
+        strafe(inches,0,0,0,0);
+    }
+
     private void strafe(double inches, int FLTicks, int FRTicks, int BLTicks, int BRTicks) {
         int ticks = (int) (inches * robot.TICKS_PER_INCH);
 
@@ -546,30 +551,18 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         robot.backLeft.setTargetPosition(robot.backLeft.getCurrentPosition() - ticks - BLTicks);
         robot.backRight.setTargetPosition(robot.backRight.getCurrentPosition() + ticks + BRTicks);
 
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft.setPower(0.35);
-        robot.frontRight.setPower(0.35);
-        robot.backLeft.setPower(0.35);
-        robot.backRight.setPower(0.35);
+        robot.setDrivePower(0.35);
 
         while (opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) {
 //            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
 //            telemetry.addData("Current Right Position", robot.frontRight.getCurrentPosition());
         }
 
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
+        robot.setDrivePower(0);
 
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setDriveRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void turnByTicks(int ticks) {
@@ -583,15 +576,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         robot.backLeft.setTargetPosition(robot.backLeft.getCurrentPosition() + BLTicks);
         robot.backRight.setTargetPosition(robot.backRight.getCurrentPosition() + BRTicks);
 
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setDriveRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.frontLeft.setPower(0.35);
-        robot.frontRight.setPower(0.35);
-        robot.backLeft.setPower(0.35);
-        robot.backRight.setPower(0.35);
+        robot.setDrivePower(0.35);
 
         while (opModeIsActive() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) {
 //            telemetry.addData("Current Left Position", robot.frontLeft.getCurrentPosition());
@@ -599,15 +586,64 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         }
     }
 
-    public void moveArm(int ticks){
+    /**
+     * Turn by degrees, should turn same direction as turnByTicks
+     * Might overshoot and flip directions a little
+     *
+     * @param theta degrees to turn by
+     */
+
+    public void turnByDegrees(double theta) {
+        double pwr = 0.35;
+
+        double currentAngle = getIMUYaw();
+
+        double targetAngle = currentAngle + theta;
+
+        double distance = -1;
+        double dtheta;
+
+        robot.setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        while (Math.abs(distance) > 1) {
+            //using delta so angles are less annoying. dtheta > 10 means jump from +- 180 to -+ 180
+            dtheta = getIMUYaw() - currentAngle;
+            if (dtheta < 10) currentAngle += dtheta;
+
+            distance = targetAngle - currentAngle;
+
+            double sign = Math.signum(distance);
+
+            robot.frontLeft.setPower(pwr * sign);
+            robot.frontRight.setPower(-pwr * sign);
+            robot.backLeft.setPower(pwr * sign);
+            robot.backRight.setPower(-pwr * sign);
+        }
+
+        robot.setDrivePower(0);
+
+    }
+
+    /**
+     * @return The side-to-side lateral rotation of the robot (rotation around the Z axis), normalized to the range of [-180,+180) degrees.
+     */
+
+    public double getIMUYaw() {
+        YawPitchRollAngles angles = robot.imu.getRobotYawPitchRollAngles();
+        return angles.getYaw(AngleUnit.DEGREES);
+    }
+
+    public void moveArm(int ticks) {
         robot.arm.setTargetPosition(ticks);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(0.65);
     }
 
-    public void stall(double seconds){
+    public void stall(double seconds) {
         stall.reset();
-        while(stall.time() < seconds){ idle(); }
+        while (stall.time() < seconds) {
+            idle();
+        }
     }
 
     @Override
