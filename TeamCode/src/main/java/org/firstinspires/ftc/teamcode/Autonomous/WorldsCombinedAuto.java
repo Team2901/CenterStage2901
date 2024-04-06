@@ -160,7 +160,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             long startTime = System.currentTimeMillis();
 
             //Wait until # of frames processed
-            while (camera.getFrameCount() < IMGPROC_SAMPLES) {
+            while (camera.getFrameCount() < IMGPROC_SAMPLES && opModeIsActive()) {
+                idle();
             }
             telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime) / 1000.0);
             telemetry.addData("X Mid", pipeline.xMidVal);
@@ -539,8 +540,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
     }
 
     //overloaded method so 0,0,0,0 isn't everywhere
-    private void strafe(double inches){
-        strafe(inches,0,0,0,0);
+    private void strafe(double inches) {
+        strafe(inches, 0, 0, 0, 0);
     }
 
     private void strafe(double inches, int FLTicks, int FRTicks, int BLTicks, int BRTicks) {
@@ -605,7 +606,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
         robot.setDriveRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        while (Math.abs(distance) > 1 && opModeIsActive() ) {
+        while (Math.abs(distance) > 1 && opModeIsActive()) {
             //using delta so angles are less annoying. dtheta > 10 means jump from +- 180 to -+ 180
             dtheta = getIMUYaw() - currentAngle;
             if (dtheta < 10) currentAngle += dtheta;
