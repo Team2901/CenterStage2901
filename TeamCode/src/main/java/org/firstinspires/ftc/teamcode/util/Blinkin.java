@@ -15,6 +15,7 @@ public class Blinkin {
     private final int YELLOW = 85;
     private final int GREEN = 87;
     private final int PURPLE = 95;
+    private final int BLACK = 100;
 
 
     public enum PixelColor {
@@ -47,19 +48,10 @@ public class Blinkin {
         setPixelStatus(PixelStatus.EMPTY);
 
         startTime = System.currentTimeMillis();
-//        setPixelLeft(PixelColor.GRAY);
-//        setPixelRight(PixelColor.GRAY);
     }
 
-//    public void setBlinkTime(int blinkTime) {
-//        this.blinkTime = blinkTime;
-//    }
-//
-//    public void setRestTime(int restTime) {
-//        this.restTime = restTime;
-//    }
-
     public void setPixelLeft(PixelColor color) {
+        startTime = System.currentTimeMillis();
         switch (color) {
             case WHITE: {
                 pixelLeft = WHITE;
@@ -81,6 +73,7 @@ public class Blinkin {
     }
 
     public void setPixelRight(PixelColor color) {
+        startTime = System.currentTimeMillis();
         switch (color) {
             case WHITE: {
                 pixelRight = WHITE;
@@ -101,12 +94,65 @@ public class Blinkin {
         }
     }
 
+    public void cycleLeftPixel(){
+        startTime = System.currentTimeMillis();
+        switch (pixelLeft) {
+            case WHITE: {
+                pixelLeft = YELLOW;
+                break;
+            }
+            case YELLOW: {
+                pixelLeft = GREEN;
+                break;
+            }
+            case GREEN: {
+                pixelLeft = PURPLE;
+                break;
+            }
+            case PURPLE: {
+                pixelLeft = BLACK;
+                break;
+            }
+            case BLACK:{
+                pixelLeft = WHITE;
+                break;
+            }
+        }
+    }
+
+    public void cycleRightPixel(){
+        startTime = System.currentTimeMillis();
+        switch (pixelRight) {
+            case WHITE: {
+                pixelRight = YELLOW;
+                break;
+            }
+            case YELLOW: {
+                pixelRight = GREEN;
+                break;
+            }
+            case GREEN: {
+                pixelRight = PURPLE;
+                break;
+            }
+            case PURPLE: {
+                pixelRight = BLACK;
+                break;
+            }
+            case BLACK:{
+                pixelRight = WHITE;
+                break;
+            }
+        }
+    }
+
     public void setPixelStatus(PixelStatus status){
         setPixelLeftStatus(status);
         setPixelRightStatus(status);
     }
 
     public void setPixelLeftStatus(PixelStatus status) {
+        startTime = System.currentTimeMillis();
         pixelLeftStatus = status;
 //        if (status == PixelStatus.EMPTY) {
 //            blinkinLeft.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
@@ -114,6 +160,7 @@ public class Blinkin {
     }
 
     public void setPixelRightStatus(PixelStatus status) {
+        startTime = System.currentTimeMillis();
         pixelRightStatus = status;
 //        if (status == PixelStatus.EMPTY) {
 //            blinkinRight.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
