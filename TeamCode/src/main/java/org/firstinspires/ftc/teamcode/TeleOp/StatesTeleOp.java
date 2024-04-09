@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
+import org.firstinspires.ftc.teamcode.util.Blinkin;
 
 @TeleOp(name = "States Mecanum Base", group = "TeleOp")
 public class StatesTeleOp extends OpMode {
@@ -20,6 +22,7 @@ public class StatesTeleOp extends OpMode {
     ImprovedGamepad impGamepad2;
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+    Blinkin lights;
 
     public double rotate;
 //    public double speedMod = 0.9;
@@ -44,6 +47,7 @@ public class StatesTeleOp extends OpMode {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1", telemetry);
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2", telemetry);
         robot.init(this.hardwareMap, telemetry);
+        lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
 
         currentArmTicks = robot.arm.getCurrentPosition();
 
@@ -189,10 +193,12 @@ public class StatesTeleOp extends OpMode {
             if(!outtakeRightClosed) {
                 robot.outtakeRight.setPosition(robot.outtakeRightClosedPos);
                 outtakeRightClosed = true;
+                lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             } else {
                 //robot.outtakeRight.setPosition(outtakeRightOpenPos);
                 robot.outtakeRight.setPosition(robot.outtakeRightClosedPos-.203);
                 outtakeRightClosed = false;
+                lights.setPixelRightStatus(Blinkin.PixelStatus.EMPTY);
             }
         }
 
@@ -201,10 +207,12 @@ public class StatesTeleOp extends OpMode {
             if(!outtakeLeftClosed) {
                 robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos); //update new servo positions
                 outtakeLeftClosed = true;
+                lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             } else {
                 //robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
                 robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos-.2);
                 outtakeLeftClosed = false;
+                lights.setPixelLeftStatus(Blinkin.PixelStatus.EMPTY);
             }
         }
 
@@ -275,6 +283,13 @@ public class StatesTeleOp extends OpMode {
             robot.arm.setMode(currentMode);
         }
 
+
+        if(impGamepad2.left_bumper.isInitialPress()){
+            lights.cycleLeftPixel();
+        }
+        if(impGamepad2.right_bumper.isInitialPress()){
+            lights.cycleRightPixel();
+        }
         //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
 //            if(slowMode == false) {
