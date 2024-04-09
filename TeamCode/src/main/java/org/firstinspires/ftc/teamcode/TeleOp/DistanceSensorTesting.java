@@ -7,13 +7,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.Hardware.WorldsHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 @TeleOp(name = "Distance Sensor Testing", group = "TeleOp")
 public class DistanceSensorTesting extends OpMode {
 
-    WorldsHardware robot = new WorldsHardware();
+    StatesHardware robot = new StatesHardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);

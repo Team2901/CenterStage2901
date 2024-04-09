@@ -147,8 +147,8 @@ public class StatesHardware {
         IMU.Parameters IMUParameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(IMUParameters);
 
-        String configName = ConfigUtilities.getRobotConfigurationName();
-        if (configName.equals("Worlds Robot")) {
+        String configName = ConfigUtilities.getRobotConfigurationName().toLowerCase();
+        if (configName.contains("worlds")) {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
             maxArmTicks = 4480;
             maxHeightArmTicks = 2945;
