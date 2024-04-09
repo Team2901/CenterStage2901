@@ -5,15 +5,11 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.Hardware.WorldsHardware;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
-import org.firstinspires.ftc.teamcode.TeleOp.StatesTeleOp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Disabled
 @Autonomous (name = "Testing Camera Functionality with 4 Sensors", group = "AAutonomous")
 public class CameraTestingWithSensors extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
-    WorldsHardware robot = new WorldsHardware();
+    StatesHardware robot = new StatesHardware();
 
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
