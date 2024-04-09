@@ -74,6 +74,13 @@ public class LoadTeleOp extends OpMode {
             outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
 
+        if(impGamepad1.b.isInitialPress()){
+            robot.rotationServo.setPosition(StatesHardware.rotationServoInitPos);
+        }
+        if(impGamepad1.x.isInitialPress()){
+            robot.rotationServo.setPosition(StatesHardware.rotationServoMin);
+        }
+
         telemetry.addData("outtake left pos", robot.outtakeLeft.getPosition());
         telemetry.addData("outtake right pos", robot.outtakeRight.getPosition());
         telemetry.update();

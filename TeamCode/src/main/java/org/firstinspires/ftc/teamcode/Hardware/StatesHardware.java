@@ -58,6 +58,10 @@ public class StatesHardware {
     public static int boundingLine1 = 40;
     public static int boundingLine2 = 200;
 
+    public static double rotationServoInitPos;
+
+    public static double rotationServoMin;
+
     public enum Alliance {
         RED,
         BLUE
@@ -148,6 +152,8 @@ public class StatesHardware {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
             maxArmTicks = 4480;
             maxHeightArmTicks = 2945;
+            rotationServoInitPos = .5;
+            rotationServoMin = 0;
         } else {
             arm.setDirection(DcMotorSimple.Direction.REVERSE);
         }

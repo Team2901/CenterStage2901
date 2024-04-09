@@ -78,8 +78,7 @@ public class StatesTeleOp extends OpMode {
             rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 90: -90) * turnMod;
         } else if (impGamepad1.a.isPressed() && !impGamepad1.start.isPressed()) {
             rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 45: -45)*turnMod;
-        }
-        else {
+        } else {
             rotate = 0;
         }
 
@@ -308,6 +307,4 @@ public class StatesTeleOp extends OpMode {
         telemetry.addData("forward", forward);
         telemetry.update();
     }
-
-
 }
