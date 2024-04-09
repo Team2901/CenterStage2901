@@ -116,6 +116,13 @@ public class StatesTeleOp extends OpMode {
         robot.backRight.setPower(forward + strafe - rotate);
         robot.frontRight.setPower(forward - strafe - rotate);
 
+        if(impGamepad2.dpad_left.isInitialPress()){
+            robot.alliance = StatesHardware.Alliance.BLUE;
+        }
+        if(impGamepad2.dpad_right.isInitialPress()){
+            robot.alliance = StatesHardware.Alliance.RED;
+        }
+
         if(impGamepad1.back.isInitialPress()){
             fieldOriented = !fieldOriented;
         }
@@ -280,29 +287,25 @@ public class StatesTeleOp extends OpMode {
 //            }
 //        }
 
+        telemetry.addData("Field Oriented:", fieldOriented);
+        telemetry.addData("Alliance Color:", robot.alliance);
+        telemetry.addLine();
+        telemetry.addData("outtakeLeft servo position", robot.outtakeLeft.getPosition());
+        telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
         telemetry.addData("arm position", robot.arm.getCurrentPosition());
         telemetry.addData("arm target position", currentArmTicks);
-        telemetry.addData("arm.getTargetPosition", robot.arm.getTargetPosition());
         telemetry.addData("arm power", robot.arm.getPower());
         telemetry.addData("arm angle", armAngle);
         telemetry.addData("right trigger", impGamepad1.right_trigger.getValue());
         telemetry.addData("left trigger", impGamepad1.left_trigger.getValue());
-        telemetry.addData("outtakeLeft servo position", robot.outtakeLeft.getPosition());
-        telemetry.addData("outtakeRight servo position", robot.outtakeRight.getPosition());
         telemetry.addData("rotation servo position", robot.rotationServo.getPosition());
         telemetry.addData("angle", robot.getAngle());
-        telemetry.addData("joystick raw radius", impGamepad1.left_stick.radius.getRawValue());
         telemetry.addData("joystick radius", impGamepad1.left_stick.radius.getValue());
         telemetry.addData("joystick angle", impGamepad1.left_stick.angle.getValue());
-        telemetry.addData("left stick raw x value", impGamepad1.left_stick.x.getRawValue());
-        telemetry.addData("left stick raw y value", impGamepad1.left_stick.y.getRawValue());
         telemetry.addData("left stick x value", impGamepad1.left_stick.x.getValue());
         telemetry.addData("left stick y value", impGamepad1.left_stick.y.getValue());
-        telemetry.addData("Field Oriented:", fieldOriented);
-        telemetry.addData("Alliance Color:", robot.alliance);
         telemetry.addData("distance", robot.distanceSensorLeft.getDistance(DistanceUnit.INCH));
         telemetry.addData("forward", forward);
-        telemetry.addData("frontLeft power", robot.frontLeft.getPower());
         telemetry.update();
     }
 
