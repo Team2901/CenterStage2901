@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.ConfigurationUtility;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
 
 @Config
-public class StatesHardware {
+public class CombinedHardware {
 
     public static final double TICKS_PER_MOTOR_REV = 537.7;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * 3.78;
@@ -46,9 +43,9 @@ public class StatesHardware {
 
     // all init values below are set for the states robot
     public static double outtakeLeftClosedPos = 0.315;
-    public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.2;
+    public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
     public static double outtakeRightClosedPos = 0.3;
-    public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.2;
+    public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
 
     public static int maxHeightArmTicks = 3390; //preset deliver point
     public static int maxArmTicks = 5500;
@@ -59,8 +56,10 @@ public class StatesHardware {
     public static int boundingLine2 = 200;
 
     public static double rotationServoInitPos;
-
     public static double rotationServoMin;
+
+    // idk what this is on the states robot (i think it was 1?)
+    public static double planeServoReleasePos;
 
     public enum Alliance {
         RED,
@@ -150,10 +149,17 @@ public class StatesHardware {
         String configName = ConfigUtilities.getRobotConfigurationName().toLowerCase();
         if (configName.contains("worlds")) {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
-            maxArmTicks = 4480;
-            maxHeightArmTicks = 2945;
+            maxArmTicks = 4100;
+            maxHeightArmTicks = 3100;
             rotationServoInitPos = .5;
             rotationServoMin = 0;
+            outtakeLeftClosedPos = 0.29;
+            outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
+            outtakeRightClosedPos = 0.325;
+            outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
+            planeServoReleasePos = 0.125; //when loaded, pos is <0.125
+            boundingLine1 = 130;
+            boundingLine2 = 300;
         } else {
             arm.setDirection(DcMotorSimple.Direction.REVERSE);
         }

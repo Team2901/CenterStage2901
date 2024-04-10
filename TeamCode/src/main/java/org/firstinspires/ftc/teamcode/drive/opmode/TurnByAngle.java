@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 @TeleOp(name = "TurnByDegreesTest", group = "AAATEST")
 public class TurnByAngle extends LinearOpMode {
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
 
     public boolean isStopped = false;
 

@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 import java.util.Locale;
@@ -14,10 +12,10 @@ import java.util.Locale;
 @TeleOp (name = "Servo Tester", group = "Utilities")
 public class ServoTester extends OpMode {
 
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
     ImprovedGamepad impGamepad1;
-    public double currentPosLeft = 0.5;
-    public double currentPosRight = 0.5;
+    public double currentPosLeft = CombinedHardware.outtakeLeftOpenPos;
+    public double currentPosRight = CombinedHardware.outtakeRightOpenPos;
     public double currentPosRotation = 0.5;
     public double currentPosPlane = 0.5;
 
@@ -54,41 +52,41 @@ public class ServoTester extends OpMode {
         telemetry.addData("Help: B", "planeServo increase");
 
         if(impGamepad1.dpad_up.isInitialPress()){
-            currentPosLeft += 0.05;
+            currentPosLeft += 0.025;
             if (currentPosLeft > 1) currentPosLeft = 1.0;
             robot.outtakeLeft.setPosition(currentPosLeft);
         } else if(impGamepad1.dpad_down.isInitialPress()){
-            currentPosLeft -= 0.05;
+            currentPosLeft -= 0.025;
             if (currentPosLeft < 0) currentPosLeft = 0.0;
             robot.outtakeLeft.setPosition(currentPosLeft);
         }
 
         if(impGamepad1.dpad_left.isInitialPress()){
-            currentPosRight -= 0.05;
+            currentPosRight -= 0.025;
             if (currentPosRight < 0) currentPosRight = 0.0;
             robot.outtakeRight.setPosition(currentPosRight);
         } else if(impGamepad1.dpad_right.isInitialPress()){
-            currentPosRight += 0.05;
+            currentPosRight += 0.025;
             if (currentPosRight > 1) currentPosRight = 1.0;
             robot.outtakeRight.setPosition(currentPosRight);
         }
 
         if(impGamepad1.left_bumper.isInitialPress()){
-            currentPosRotation -= 0.05;
+            currentPosRotation -= 0.025;
             if (currentPosRotation < 0) currentPosRotation = 0.0;
             robot.rotationServo.setPosition(currentPosRotation);
         } else if(impGamepad1.right_bumper.isInitialPress()){
-            currentPosRotation += 0.05;
+            currentPosRotation += 0.025;
             if (currentPosRotation > 1) currentPosRotation = 1.0;
             robot.rotationServo.setPosition(currentPosRotation);
         }
 
         if(impGamepad1.x.isInitialPress()){
-            currentPosPlane -= 0.05;
+            currentPosPlane -= 0.025;
             if (currentPosPlane < 0) currentPosPlane = 0.0;
             robot.planeServo.setPosition(currentPosPlane);
         } else if(impGamepad1.b.isInitialPress()){
-            currentPosPlane += 0.05;
+            currentPosPlane += 0.025;
             if (currentPosPlane > 1) currentPosPlane = 1.0;
             robot.planeServo.setPosition(currentPosPlane);
         }

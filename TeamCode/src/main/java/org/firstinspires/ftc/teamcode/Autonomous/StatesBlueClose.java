@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetectionBlue;
-import org.firstinspires.ftc.teamcode.TeleOp.StatesTeleOp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -18,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous (name = "States Blue Close", group = "States Autonomous")
 public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
 
     ShapeDetectionBlue pipeline = new ShapeDetectionBlue(this.telemetry);
 
@@ -36,10 +34,10 @@ public class StatesBlueClose extends LinearOpMode implements OpenCvCamera.AsyncC
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    public double outtakeLeftClosedPos = StatesHardware.outtakeLeftClosedPos;
-    public double outtakeLeftOpenPos = StatesHardware.outtakeLeftOpenPos;
-    public double outtakeRightClosedPos = StatesHardware.outtakeRightClosedPos;
-    public double outtakeRightOpenPos = StatesHardware.outtakeRightOpenPos;
+    public double outtakeLeftClosedPos = CombinedHardware.outtakeLeftClosedPos;
+    public double outtakeLeftOpenPos = CombinedHardware.outtakeLeftOpenPos;
+    public double outtakeRightClosedPos = CombinedHardware.outtakeRightClosedPos;
+    public double outtakeRightOpenPos = CombinedHardware.outtakeRightOpenPos;
 
     public int currentArmTicks = 0;
     double initArmAngle = 60.0;

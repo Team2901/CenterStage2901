@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.OpenCV;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -22,7 +22,7 @@ import java.util.List;
 @Config
 public class ShapeDetection extends OpenCvPipeline {
     private Telemetry telemetry;
-    private StatesHardware robot;
+    private CombinedHardware robot;
 
     // To be deleted - kept only for old code
     public double xMidVal = 0;
@@ -54,9 +54,9 @@ public class ShapeDetection extends OpenCvPipeline {
     private Mat zeros = new Mat();
 
     // Public configuration
-    public static int blurSize = 19;
+    public static int blurSize = 21;
     public static boolean doVisualization = true;
-    public static boolean usingCentroid = false;
+    public static boolean usingCentroid = true;
 
     public int spikeMark = 1; // TODO: Make this an Enum
 
@@ -64,7 +64,7 @@ public class ShapeDetection extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
-    public ShapeDetection(Telemetry telemetry, StatesHardware robot) {
+    public ShapeDetection(Telemetry telemetry, CombinedHardware robot) {
         this.telemetry = telemetry;
         this.robot = robot;
     }
@@ -108,8 +108,9 @@ public class ShapeDetection extends OpenCvPipeline {
         Imgproc.rectangle(croppedInputFrameRGB, blankRect, new Scalar(0, 0, 0), -1);
 
         // Find the pixels in the image that are our desired color (in HSV space)
-        if (robot == null || robot.alliance == StatesHardware.Alliance.RED) {
-            Core.inRange(croppedFrame, new Scalar(160, 100, 100), new Scalar(180, 255, 250), bwImage);
+        if (robot == null || robot.alliance == CombinedHardware.Alliance.RED) {
+            Core.inRange(croppedFrame, new Scalar(160, 90, 80), new Scalar(180, 255, 255), bwImage);
+            //red-orange color ranges from 0-25, how to incorporate??
         } else {
             Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
         }
