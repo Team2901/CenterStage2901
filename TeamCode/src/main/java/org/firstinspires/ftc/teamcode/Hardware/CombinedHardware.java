@@ -149,17 +149,18 @@ public class CombinedHardware {
         String configName = ConfigUtilities.getRobotConfigurationName().toLowerCase();
         if (configName.contains("worlds")) {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
-            maxArmTicks = 4100;
-            maxHeightArmTicks = 3100;
-            rotationServoInitPos = .5;
-            rotationServoMin = 0;
-            outtakeLeftClosedPos = 0.29;
+            maxArmTicks = 3900;
+            maxHeightArmTicks = 2800;
+            rotationServoInitPos = .125;
+            rotationServoMin = 0.125;
+            outtakeLeftClosedPos = 0.265;
             outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
-            outtakeRightClosedPos = 0.325;
+            outtakeRightClosedPos = 0.385;
             outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
-            planeServoReleasePos = 0.125; //when loaded, pos is <0.125
+            planeServoReleasePos = 0.95; //when loaded, pos is <planeServoReleasePos
             boundingLine1 = 130;
             boundingLine2 = 300;
+            initArmAngle = 70;
         } else {
             arm.setDirection(DcMotorSimple.Direction.REVERSE);
         }
@@ -172,7 +173,7 @@ public class CombinedHardware {
 
     public double recalculateAngle() {
         double calculatedAngle;
-        calculatedAngle = ((210 * arm.getCurrentPosition()) / 5360) + initArmAngle;
+        calculatedAngle = ((180 * arm.getCurrentPosition()) / 3280) + initArmAngle;
         return calculatedAngle;
     }
 
@@ -220,15 +221,15 @@ public class CombinedHardware {
             rotationServo.setPosition(0.1);
             //servo angle = arm angle + 25
             //ethan says "zone between 65 and 90 that keeps the servo at the arm angle+25 degrees (so it is as close to horizontal as possible)"
-        } else if (armAngle < 190) {
+        } else if (armAngle < 200) {
             rotationServo.setPosition(0.325);
         } else if (armAngle < 270) {
-            rotationServo.setPosition(0.75 - ((armAngle - 190) * 0.004));
+            rotationServo.setPosition(0.75 - ((armAngle - 200) * 0.004));
         }
     }
 
     public static double approachingSpeed = 0.35;
-    public static double slowingDistance = 4;
+    public static double slowingDistance = 6;
     public static double backdropOffset = 2;
 
     public double approachBackdrop() {

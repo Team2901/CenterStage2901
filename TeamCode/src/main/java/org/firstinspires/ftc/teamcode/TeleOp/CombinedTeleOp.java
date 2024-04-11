@@ -36,7 +36,7 @@ public class CombinedTeleOp extends OpMode {
 
     public double rotationServoPosition = 0.1;
 
-    boolean fieldOriented = true;
+    boolean fieldOriented = false;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -125,11 +125,13 @@ public class CombinedTeleOp extends OpMode {
         if(impGamepad1.back.isInitialPress()){
             fieldOriented = !fieldOriented;
         }
-        if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
-            if(robot.arm.getCurrentPosition() < CombinedHardware.minArmTicks + 80) {
-                currentArmTicks = robot.arm.getCurrentPosition() + 80;
-            }
-        }
+
+        //commented out because you can't drive up to a pixel or push pixels around
+//        if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
+//            if(robot.arm.getCurrentPosition() < CombinedHardware.minArmTicks + 80) {
+//                currentArmTicks = robot.arm.getCurrentPosition() + 80;
+//            }
+//        }
 
         //set arm to max height
         if(impGamepad1.dpad_up.isInitialPress()){
