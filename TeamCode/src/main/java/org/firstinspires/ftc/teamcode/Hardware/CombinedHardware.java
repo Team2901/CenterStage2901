@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -178,13 +179,17 @@ public class CombinedHardware {
     }
 
     public double turnToAngle(double turnAngle) {
+        return turnToAngle(turnAngle, null);
+    }
+
+    public double turnToAngle(double turnAngle, LinearOpMode opMode) {
 
         //robot.getAngle is between -180 and 180, starting at 0
         double turnPower = 0;
         double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
         double startAngle = getAngle();
         double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
-        if (!(turnError < .5 && turnError > -.5)) {
+        do {
             if (turnError >= 0) {
                 turnPower = turnError / 50;
                 if (turnPower > .75) {
@@ -196,18 +201,10 @@ public class CombinedHardware {
                     turnPower = -.75;
                 }
             }
-//            robot.frontLeft.setPower(-turnPower);
-//            robot.frontRight.setPower(turnPower);
-//            robot.backLeft.setPower(-turnPower);
-//            robot.backRight.setPower(turnPower);
 
             double currentAngle = getAngle();
             turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
-        }
-//        robot.frontLeft.setPower(0);
-//        robot.frontRight.setPower(0);
-//        robot.backRight.setPower(0);
-//        robot.backLeft.setPower(0);
+        } while ((opMode != null) && opMode.opModeIsActive() && !(turnError < .5 && turnError > -.5));
 
         return turnPower;
     }
