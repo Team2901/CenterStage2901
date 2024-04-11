@@ -179,17 +179,13 @@ public class CombinedHardware {
     }
 
     public double turnToAngle(double turnAngle) {
-        return turnToAngle(turnAngle, null);
-    }
-
-    public double turnToAngle(double turnAngle, LinearOpMode opMode) {
 
         //robot.getAngle is between -180 and 180, starting at 0
         double turnPower = 0;
         double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
         double startAngle = getAngle();
         double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
-        do {
+        if (!(turnError < .5 && turnError > -.5)) {
             if (turnError >= 0) {
                 turnPower = turnError / 50;
                 if (turnPower > .75) {
@@ -204,9 +200,51 @@ public class CombinedHardware {
 
             double currentAngle = getAngle();
             turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
-        } while ((opMode != null) && opMode.opModeIsActive() && !(turnError < .5 && turnError > -.5));
+        }
+//        robot.frontLeft.setPower(0);
+//        robot.frontRight.setPower(0);
+//        robot.backRight.setPower(0);
+//        robot.backLeft.setPower(0);
 
         return turnPower;
+    }
+
+    public void turnToAngleAuto(double turnAngle, LinearOpMode opMode) {
+        double turnPower = 0;
+        double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
+        double startAngle = getAngle();
+        double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
+
+        DcMotor.RunMode originalMode = frontLeft.getMode();
+        // TODO: each motor?...
+
+        setDrivePower(0.0);
+        setDriveRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while (opMode.opModeIsActive() && !(turnError < .5 && turnError > -.5)) {
+            if (turnError >= 0) {
+                turnPower = turnError / 50;
+                if (turnPower > .75) {
+                    turnPower = .75;
+                }
+            } else if (turnError < 0) {
+                turnPower = turnError / 50;
+                if (turnPower < -.75) {
+                    turnPower = -.75;
+                }
+            }
+
+            frontLeft.setPower(-turnPower);
+            frontRight.setPower(turnPower);
+            backLeft.setPower(-turnPower);
+            backRight.setPower(turnPower);
+
+            double currentAngle = getAngle();
+            turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
+        }
+
+        setDrivePower(0.0);
+        setDriveRunMode(originalMode);
     }
 
     public void adjustWrist() {
