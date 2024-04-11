@@ -95,6 +95,7 @@ public class Blinkin {
     }
 
     public void cycleLeftPixel(){
+        setPixelLeftStatus(PixelStatus.REQUESTED);
         startTime = System.currentTimeMillis();
         switch (pixelLeft) {
             case WHITE: {
@@ -121,6 +122,7 @@ public class Blinkin {
     }
 
     public void cycleRightPixel(){
+        setPixelRightStatus(PixelStatus.REQUESTED);
         startTime = System.currentTimeMillis();
         switch (pixelRight) {
             case WHITE: {
