@@ -314,7 +314,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
                     stall(2);
 
-                    moveInches(-24);
+                    moveInches(-22);
                     //turnByTicks(1100);
                     robot.turnToAngleAuto(-90, this);
                 }
@@ -386,7 +386,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 strafe(-6);
                 //turnByTicks(1100); //90 degrees
                 robot.turnToAngleAuto(-90, this);
-                moveInches(6);
+                moveInches(4);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall(2);
@@ -401,7 +401,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 //                turnByTicks(-2050); //-180 degrees (idk why this one takes a lot less ticks than the other 180's???)
 //                    turnByTicks(-75);
                 } else {
-                    strafe(30);
+                    strafe(32);
                 }
 
                 moveInches(90);
@@ -502,9 +502,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             autoState = AutoState.STOP;
 
         } else if (autoState == AutoState.BACKSTAGE) {
-            if (robot.alliance == Alliance.RED) {
+            if (robot.alliance == Alliance.RED && robot.parkLocation == ParkLocation.MIDDLE) {
                 turnByTicks(95);
-            } else if (robot.alliance == Alliance.BLUE) {
+            } else if (robot.alliance == Alliance.BLUE && robot.parkLocation == ParkLocation.MIDDLE) {
                 turnByTicks(-95);
             }
 

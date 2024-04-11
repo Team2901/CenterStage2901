@@ -158,7 +158,7 @@ public class CombinedHardware {
             outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
             outtakeRightClosedPos = 0.425;
             outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
-            planeServoReleasePos = 0.95; //when loaded, pos is <planeServoReleasePos
+            planeServoReleasePos = 0.05; //when loaded, pos is <planeServoReleasePos
             boundingLine1 = 130;
             boundingLine2 = 300;
             initArmAngle = 70;
@@ -265,7 +265,7 @@ public class CombinedHardware {
 
     public static double approachingSpeed = 0.35;
     public static double slowingDistance = 6;
-    public static double backdropOffset = 2;
+    public static double backdropOffset = 1.5;
 
     public double approachBackdrop() {
         double drivePower = 0;

@@ -60,9 +60,9 @@ public class ShapeDetection extends OpenCvPipeline {
     // Public configuration
     public static int blurSize = 21;
     public static boolean doVisualization = true;
-    public static boolean usingCentroid = true;
+    public static boolean usingCentroid = false;
 
-    public int spikeMark = 1; // TODO: Make this an Enum
+    public int spikeMark = 3; // TODO: Make this an Enum
 
     public ShapeDetection(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -240,7 +240,7 @@ public class ShapeDetection extends OpenCvPipeline {
 
         String configNameLower = ConfigUtilities.getRobotConfigurationName().toLowerCase();
         if (configNameLower.contains("worlds")) {
-            if (pixelXValAverage < robot.boundingLine1) {
+            if (pixelXValAverage < robot.boundingLine1 && pixelXValAverage > 5) {
                 spikeMark = 1;
             } else if (pixelXValAverage < robot.boundingLine2) {
                 spikeMark = 2;
