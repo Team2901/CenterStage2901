@@ -30,6 +30,8 @@ public class ShapeDetection extends OpenCvPipeline {
     public Double pixelXValAverage;
     public static final double newPixelXValWeight = 0.2;
 
+    public static final boolean INCLUDE_MORE_RED_RANGE = false;
+
     Size targetSize = new Size(320, 240);
     Size pipelineSize;
 
@@ -110,6 +112,11 @@ public class ShapeDetection extends OpenCvPipeline {
         // Find the pixels in the image that are our desired color (in HSV space)
         if (robot == null || robot.alliance == CombinedHardware.Alliance.RED) {
             Core.inRange(croppedFrame, new Scalar(160, 90, 80), new Scalar(180, 255, 255), bwImage);
+            if(INCLUDE_MORE_RED_RANGE) {
+                Mat bwImage2 = bwImage.clone();
+                Core.inRange(croppedFrame, new Scalar(0, 90, 80), new Scalar(25, 90, 80), bwImage2);
+                Core.bitwise_or(bwImage, bwImage2, bwImage);
+            }
             //red-orange color ranges from 0-25, how to incorporate??
         } else {
             Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
