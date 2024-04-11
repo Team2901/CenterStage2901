@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 
 @TeleOp(name = "LoadTeleOp", group = "TeleOp")
@@ -16,12 +16,12 @@ public class LoadTeleOp extends OpMode {
     public boolean outtakeRightClosed = false;
     public boolean outtakeLeftClosed = false;
 
-    public double outtakeLeftClosedPos = StatesHardware.outtakeLeftClosedPos;
-    public double outtakeLeftOpenPos = StatesHardware.outtakeLeftOpenPos;
-    public double outtakeRightClosedPos = StatesHardware.outtakeRightClosedPos;
-    public double outtakeRightOpenPos = StatesHardware.outtakeRightOpenPos;
+    public double outtakeLeftClosedPos = CombinedHardware.outtakeLeftClosedPos;
+    public double outtakeLeftOpenPos = CombinedHardware.outtakeLeftOpenPos;
+    public double outtakeRightClosedPos = CombinedHardware.outtakeRightClosedPos;
+    public double outtakeRightOpenPos = CombinedHardware.outtakeRightOpenPos;
 
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
     ImprovedGamepad impGamepad1;
     @Override
     public void init() {
@@ -75,10 +75,10 @@ public class LoadTeleOp extends OpMode {
         }
 
         if(impGamepad1.b.isInitialPress()){
-            robot.rotationServo.setPosition(StatesHardware.rotationServoInitPos);
+            robot.rotationServo.setPosition(CombinedHardware.rotationServoInitPos);
         }
         if(impGamepad1.x.isInitialPress()){
-            robot.rotationServo.setPosition(StatesHardware.rotationServoMin);
+            robot.rotationServo.setPosition(CombinedHardware.rotationServoMin);
         }
 
         telemetry.addData("outtake left pos", robot.outtakeLeft.getPosition());

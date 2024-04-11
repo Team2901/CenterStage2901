@@ -10,14 +10,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.util.Blinkin;
 
-@TeleOp(name = "States Mecanum Base", group = "TeleOp")
-public class StatesTeleOp extends OpMode {
+@TeleOp(name = "Worlds Mecanum TeleOp", group = "1TeleOp")
+public class CombinedTeleOp extends OpMode {
 
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
@@ -60,10 +60,10 @@ public class StatesTeleOp extends OpMode {
 
         telemetry.addData("Help", "Red (B) or Blue (X) Alliance?");
         if(impGamepad1.x.isInitialPress()){
-            robot.alliance = StatesHardware.Alliance.BLUE;
+            robot.alliance = CombinedHardware.Alliance.BLUE;
         }
         if(impGamepad1.b.isInitialPress()){
-            robot.alliance = StatesHardware.Alliance.RED;
+            robot.alliance = CombinedHardware.Alliance.RED;
         }
         telemetry.addData("Current Alliance:", robot.alliance);
     }
@@ -79,9 +79,9 @@ public class StatesTeleOp extends OpMode {
         if (Math.abs(impGamepad1.right_stick.x.getValue()) > 0) {
             rotate = impGamepad1.right_stick.x.getValue() * turnMod;
         } else if (impGamepad1.x.isPressed()) {
-            rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 90: -90) * turnMod;
+            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED? 90: -90) * turnMod;
         } else if (impGamepad1.a.isPressed() && !impGamepad1.start.isPressed()) {
-            rotate = -robot.turnToAngle(robot.alliance == StatesHardware.Alliance.RED? 45: -45)*turnMod;
+            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED? 45: -45)*turnMod;
         } else {
             rotate = 0;
         }
@@ -120,29 +120,29 @@ public class StatesTeleOp extends OpMode {
         robot.frontRight.setPower(forward - strafe - rotate);
 
         if(impGamepad2.dpad_left.isInitialPress()){
-            robot.alliance = StatesHardware.Alliance.BLUE;
+            robot.alliance = CombinedHardware.Alliance.BLUE;
         }
         if(impGamepad2.dpad_right.isInitialPress()){
-            robot.alliance = StatesHardware.Alliance.RED;
+            robot.alliance = CombinedHardware.Alliance.RED;
         }
 
         if(impGamepad1.back.isInitialPress()){
             fieldOriented = !fieldOriented;
         }
         if(Math.abs(robot.frontLeft.getPower()) > 0 || Math.abs(robot.frontRight.getPower()) > 0 || Math.abs(robot.backLeft.getPower()) > 0 || Math.abs(robot.backRight.getPower()) > 0){
-            if(robot.arm.getCurrentPosition() < StatesHardware.minArmTicks + 80) {
-                currentArmTicks = StatesHardware.minArmTicks + 80;
+            if(robot.arm.getCurrentPosition() < CombinedHardware.minArmTicks + 80) {
+                currentArmTicks = robot.arm.getCurrentPosition() + 80;
             }
         }
 
         //set arm to max height
         if(impGamepad1.dpad_up.isInitialPress()){
-            currentArmTicks = StatesHardware.maxHeightArmTicks;
+            currentArmTicks = CombinedHardware.maxHeightArmTicks;
         }
 
         //set arm to min height/ground
         if(impGamepad1.dpad_down.isInitialPress()){
-            currentArmTicks = StatesHardware.minArmTicks;
+            currentArmTicks = CombinedHardware.minArmTicks;
         }
 
         //fixing claw (outtake) positions with gamepad 1
@@ -158,11 +158,11 @@ public class StatesTeleOp extends OpMode {
         //arm up
 
         //should be commented back in once impGamepad is fixed ======================================
-        if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < StatesHardware.maxArmTicks){
+        if(impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < CombinedHardware.maxArmTicks){
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
-        } else if(impGamepad1.left_trigger.getValue() > 0 && currentArmTicks > StatesHardware.minArmTicks){
+        } else if(impGamepad1.left_trigger.getValue() > 0 && currentArmTicks > CombinedHardware.minArmTicks){
             robot.arm.setPower(-impGamepad1.left_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
@@ -173,11 +173,11 @@ public class StatesTeleOp extends OpMode {
             //robot.arm.setPower(-0.9 * armMod);
         }
 
-//        if(gamepad1.right_trigger > 0 && currentArmTicks < StatesHardware.maxArmTicks){
+//        if(gamepad1.right_trigger > 0 && currentArmTicks < CombinedHardware.maxArmTicks){
 //            robot.arm.setPower(gamepad1.right_trigger * armMod);
 //            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            currentArmTicks = robot.arm.getCurrentPosition();
-//        } else if(gamepad1.left_trigger > 0 && currentArmTicks > StatesHardware.minArmTicks){
+//        } else if(gamepad1.left_trigger > 0 && currentArmTicks > CombinedHardware.minArmTicks){
 //            robot.arm.setPower(-gamepad1.left_trigger * armMod);
 //            robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //            currentArmTicks = robot.arm.getCurrentPosition();
@@ -196,7 +196,7 @@ public class StatesTeleOp extends OpMode {
                 lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             } else {
                 //robot.outtakeRight.setPosition(outtakeRightOpenPos);
-                robot.outtakeRight.setPosition(robot.outtakeRightClosedPos-.203);
+                robot.outtakeRight.setPosition(robot.outtakeRightClosedPos-.175);
                 outtakeRightClosed = false;
                 lights.setPixelRightStatus(Blinkin.PixelStatus.EMPTY);
             }
@@ -205,12 +205,11 @@ public class StatesTeleOp extends OpMode {
         //left claw toggle
         if(impGamepad1.left_bumper.isInitialPress()){
             if(!outtakeLeftClosed) {
-                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos); //update new servo positions
+                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos);
                 outtakeLeftClosed = true;
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             } else {
-                //robot.outtakeLeft.setPosition(outtakeLeftOpenPos); //update new servo positions
-                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos-.2);
+                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos-.175);
                 outtakeLeftClosed = false;
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.EMPTY);
             }
@@ -238,7 +237,7 @@ public class StatesTeleOp extends OpMode {
 
         //drone release
         if(impGamepad2.right_trigger.getValue() > 0 || impGamepad2.left_trigger.getValue() > 0){
-            robot.planeServo.setPosition(1); //need to update servo position
+            robot.planeServo.setPosition(CombinedHardware.planeServoReleasePos);
         }
 
         //adjust outtakeRight closed position in case it skips (gamepad2)
@@ -272,7 +271,7 @@ public class StatesTeleOp extends OpMode {
 
         //gets rid of arm min ticks
         if(impGamepad2.b.isInitialPress()){
-            StatesHardware.minArmTicks = -10000;
+            CombinedHardware.minArmTicks = -10000;
         }
 
         // Reset arm encoder

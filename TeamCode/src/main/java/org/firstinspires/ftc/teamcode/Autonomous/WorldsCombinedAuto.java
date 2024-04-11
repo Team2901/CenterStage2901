@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,19 +10,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware.*;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware.*;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.Vector;
-
 @Autonomous(name = "Worlds Combined Auto", group = "AAutonomous")
 public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
     ImprovedGamepad impGamepad1;
     ImprovedGamepad impGamepad2;
 
@@ -41,8 +38,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
     public ElapsedTime wristTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime stall = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-    public double outtakeLeftOpenPos = StatesHardware.outtakeLeftOpenPos;
-    public double outtakeRightOpenPos = StatesHardware.outtakeRightOpenPos;
+    public double outtakeLeftOpenPos = CombinedHardware.outtakeLeftOpenPos;
+    public double outtakeRightOpenPos = CombinedHardware.outtakeRightOpenPos;
 
     double waitSec = 0;
 
@@ -99,6 +96,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 robot.parkLocation = ParkLocation.CORNER;
             }
             telemetry.addData("Parking Location", robot.parkLocation);
+
+            telemetry.addLine();
+            telemetry.addData("Spike Mark", pipeline.spikeMark);
 
             telemetry.update();
         }

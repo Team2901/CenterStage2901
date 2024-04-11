@@ -8,18 +8,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Hardware.StatesHardware;
+import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.concurrent.TimeUnit;
-
 @Disabled
 @Autonomous (name = "Testing Camera Functionality with 4 Sensors", group = "AAutonomous")
 public class CameraTestingWithSensors extends LinearOpMode implements OpenCvCamera.AsyncCameraOpenListener {
-    StatesHardware robot = new StatesHardware();
+    CombinedHardware robot = new CombinedHardware();
 
     ShapeDetection pipeline = new ShapeDetection(this.telemetry);
 
