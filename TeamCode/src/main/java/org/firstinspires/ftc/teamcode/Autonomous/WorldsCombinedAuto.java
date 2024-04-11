@@ -104,7 +104,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         }
 
         waitForStart();
-        moveArm(150);
+        moveArm(300);
         stall(0.1);
         robot.rotationServo.setPosition(0.1);
 
@@ -221,10 +221,10 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     turnByTicks(-850);
                 } else {
                     moveInches(22);
-                    strafe(-12);
+                    strafe(-15);
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
                     stall(2);
-                    moveInches(-21);
+                    moveInches(-19);
                     turnByTicks(1100);
                 }
 

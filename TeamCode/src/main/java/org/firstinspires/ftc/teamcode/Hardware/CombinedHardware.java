@@ -153,9 +153,9 @@ public class CombinedHardware {
             maxHeightArmTicks = 2800;
             rotationServoInitPos = .125;
             rotationServoMin = 0.125;
-            outtakeLeftClosedPos = 0.265;
+            outtakeLeftClosedPos = 0.315;
             outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
-            outtakeRightClosedPos = 0.385;
+            outtakeRightClosedPos = 0.425;
             outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
             planeServoReleasePos = 0.95; //when loaded, pos is <planeServoReleasePos
             boundingLine1 = 130;

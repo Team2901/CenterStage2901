@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
+import org.firstinspires.ftc.teamcode.Utilities.ConfigUtilities;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -236,13 +238,24 @@ public class ShapeDetection extends OpenCvPipeline {
             pixelXValAverage = (pixelXValAverage * (1 - newPixelXValWeight) + pixelXVal * newPixelXValWeight);
         }
 
-        if (pixelXValAverage > robot.boundingLine2) {
-            spikeMark = 3;
-        } else if (pixelXValAverage > robot.boundingLine1) {
-            spikeMark = 2;
+        String configNameLower = ConfigUtilities.getRobotConfigurationName().toLowerCase();
+        if (configNameLower.contains("worlds")) {
+            if (pixelXValAverage < robot.boundingLine1) {
+                spikeMark = 1;
+            } else if (pixelXValAverage < robot.boundingLine2) {
+                spikeMark = 2;
+            } else {
+                spikeMark = 3;
+            }
         } else {
-            spikeMark = 1;
+            if (pixelXValAverage > robot.boundingLine2) {
+                spikeMark = 3;
+            } else if (pixelXValAverage > robot.boundingLine1) {
+                spikeMark = 2;
+            } else {
+                spikeMark = 1;
+            }
+            telemetry.addData("Spike Mark", spikeMark);
         }
-        telemetry.addData("Spike Mark", spikeMark);
     }
 }
