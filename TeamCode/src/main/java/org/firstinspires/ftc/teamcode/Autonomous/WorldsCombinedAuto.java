@@ -330,7 +330,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     moveInches(-18);
                     //turnByTicks(1100);
                     robot.turnToAngleAuto(-90, this);
-                    strafe(4.5,0,0,0,0);
+                    strafe(4.0,0,0,0,0);
                 }
 
                 moveInches(86);
@@ -549,6 +549,8 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         telemetry.addData("Spike Mark", pipeline.spikeMark);
         telemetry.addData("STATE", autoState);
         telemetry.update();
+
+        lights.update();
     }
 
     private void moveInches(double inches) {

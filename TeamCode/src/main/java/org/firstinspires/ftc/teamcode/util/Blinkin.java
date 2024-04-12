@@ -16,7 +16,7 @@ public class Blinkin {
     private final int GREEN = 87;
     private final int PURPLE = 95;
     private final int BLACK = 100;
-    private final int PINK = 79;
+    private final int PINK = 78;
 
     private final int ALIGNED = PINK;
     private final int AUTO = PURPLE;

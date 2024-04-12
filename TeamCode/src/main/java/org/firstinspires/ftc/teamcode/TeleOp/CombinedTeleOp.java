@@ -76,6 +76,7 @@ public class CombinedTeleOp extends OpMode {
     public void loop() {
         impGamepad1.update();
         impGamepad2.update();
+        lights.update();
 
         double armAngle = robot.recalculateAngle();
 
@@ -103,7 +104,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && forward < 0.1) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && forward < 0.001) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
@@ -112,7 +113,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && forward < 0.1) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && forward < 0.001) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
@@ -154,11 +155,11 @@ public class CombinedTeleOp extends OpMode {
 
         //fixing claw (outtake) positions with gamepad 1
         if (impGamepad1.dpad_left.isInitialPress()) {
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
+            robot.outtakeLeft.setPosition(Math.min(robot.outtakeLeft.getPosition() + 0.015, CombinedHardware.maxOuttakeLeftOpenPos));
             robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
         }
         if (impGamepad1.dpad_right.isInitialPress()) {
-            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
+            robot.outtakeRight.setPosition(Math.min(robot.outtakeRight.getPosition() + 0.015,CombinedHardware.maxOuttakeRightOpenPos));
             robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
         }
 
