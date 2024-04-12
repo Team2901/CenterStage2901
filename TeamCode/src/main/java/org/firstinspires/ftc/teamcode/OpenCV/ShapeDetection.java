@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
@@ -158,6 +157,7 @@ public class ShapeDetection extends OpenCvPipeline {
                 telemetry.addData("Total Pixels", totalPixels);
 
                 addPixelXVal(averageX);
+//                usingLastFrame();
             } else {
                 telemetry.addLine("No Contours Found");
                 return inputFrameRGB;
@@ -170,7 +170,8 @@ public class ShapeDetection extends OpenCvPipeline {
             telemetry.addData("X Mid", xMidVal);
 
             // Classify the spikemark based on the x mid value
-            if(!rect.empty())addPixelXVal(xMidVal);
+            addPixelXVal(xMidVal);
+//            usingLastFrame();
         }
 
         // Do some visualization
@@ -242,12 +243,13 @@ public class ShapeDetection extends OpenCvPipeline {
         if (configNameLower.contains("worlds")) {
             if (pixelXValAverage < robot.boundingLine1 && pixelXValAverage > 5) {
                 spikeMark = 1;
-            } else if (pixelXValAverage < robot.boundingLine2) {
+            } else if (pixelXValAverage < robot.boundingLine2 && pixelXValAverage > 5) {
                 spikeMark = 2;
             } else {
                 spikeMark = 3;
             }
-        } else {
+        }
+        else {
             if (pixelXValAverage > robot.boundingLine2) {
                 spikeMark = 3;
             } else if (pixelXValAverage > robot.boundingLine1) {
@@ -257,5 +259,16 @@ public class ShapeDetection extends OpenCvPipeline {
             }
             telemetry.addData("Spike Mark", spikeMark);
         }
+    }
+
+    public void usingLastFrame(){
+        if (xMidVal < robot.boundingLine1 && xMidVal > 5) {
+            spikeMark = 1;
+        } else if (xMidVal < robot.boundingLine2) {
+            spikeMark = 2;
+        } else {
+            spikeMark = 3;
+        }
+        telemetry.addData("Spike Mark", spikeMark);
     }
 }

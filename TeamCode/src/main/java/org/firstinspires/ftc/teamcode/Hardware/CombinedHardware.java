@@ -174,7 +174,7 @@ public class CombinedHardware {
 
     public double recalculateAngle() {
         double calculatedAngle;
-        calculatedAngle = ((180 * arm.getCurrentPosition()) / 3280) + initArmAngle;
+        calculatedAngle = ((180 * arm.getCurrentPosition()) / 3450) + initArmAngle;
         return calculatedAngle;
     }
 

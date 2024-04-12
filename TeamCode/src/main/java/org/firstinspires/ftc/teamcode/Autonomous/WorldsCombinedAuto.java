@@ -383,10 +383,10 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
                 moveInches(31);
-                strafe(-6);
+                strafe(-9);
                 //turnByTicks(1100); //90 degrees
                 robot.turnToAngleAuto(-90, this);
-                moveInches(4);
+                moveInches(7);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall(2);
