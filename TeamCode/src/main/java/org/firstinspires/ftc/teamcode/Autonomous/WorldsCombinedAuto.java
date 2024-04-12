@@ -193,7 +193,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(3);
+                strafe(9);
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(30);
@@ -278,12 +278,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(3);
-                turnByTicks(-30);
+                strafe(10);
 
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
-                moveInches(27);
+                moveInches(26);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall(2);
@@ -291,12 +290,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 moveInches(-4);
 //                turnByTicks(1070); //90 degrees
                 robot.turnToAngleAuto(-90, this);
-                moveInches(-32.5);
+                moveInches(-31.5);
 
                 stall(2);
 
-                strafe(3);
-                turnByTicks(30);
+                strafe(2);
 
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
@@ -363,21 +361,21 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         } else if (autoState == AutoState.MOVE_3) {
             if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(25);
-                strafe(24);
+                strafe(26);
 //                turnByTicks(-1100); //-90 degrees
                 robot.turnToAngleAuto(90, this);
                 robot.outtakeRight.setPosition(outtakeRightOpenPos);
 
                 stall(2);
 
-                moveInches(-11);
+                moveInches(-10);
 
                 stall(2);
 
-                strafe(-14);
+                strafe(-3);
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.BLUE && robot.startLocation == StartLocation.CLOSE) {
-                moveInches(31);
+                moveInches(29);
                 strafe(-3);
 //                turnByTicks(1100); //90 degrees
                 robot.turnToAngleAuto(-90, this);
@@ -390,8 +388,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(1);
 
-                strafe(3);
-                turnByTicks(-80);
+                strafe(1);
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
                 moveInches(29);
@@ -452,14 +449,14 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 autoState = AutoState.BACKSTAGE;
             }
         } else if (autoState == AutoState.BACKDROP) {
-            robot.rotationServo.setPosition(0.495);
+            robot.rotationServo.setPosition(0.538);
 
             wristTimer.reset();
             while (wristTimer.time() < 1.5) {
                 idle();
             }
 
-            moveArm(robot.maxHeightArmTicks);
+            moveArm(3470);
 
             while (robot.arm.isBusy() && opModeIsActive()) {
                 idle();
@@ -469,24 +466,27 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
             stall(3);
 
-            moveArm(150);
+            moveArm(250);
 
             robot.rotationServo.setPosition(0.1);
 
             if (robot.parkLocation == ParkLocation.CORNER) {
                 if (robot.alliance == Alliance.RED) {
                     if (spikeMark == 1) {
-                        strafe(-38);
+                        strafe(-44);
+                        moveInches(-6);
                     } else if (spikeMark == 2) {
-                        strafe(-30);
+                        strafe(-37);
+                        moveInches(-6);
                     } else if (spikeMark == 3) {
-                        strafe(-20);
+                        strafe(-29);
+                        moveInches(-6);
                     }
                 } else if (robot.alliance == Alliance.BLUE) {
                     if (spikeMark == 1) {
                         strafe(18);
                     } else if (spikeMark == 2) {
-                        strafe(28);
+                        strafe(27);
                     } else if (spikeMark == 3) {
                         strafe(38);
                     }
