@@ -16,6 +16,12 @@ public class Blinkin {
     private final int GREEN = 87;
     private final int PURPLE = 95;
     private final int BLACK = 100;
+    private final int PINK = 79;
+
+    private final int ALIGNED = PINK;
+    private final int AUTO = PURPLE;
+    private final int TELEOP = GREEN;
+
 
 
     public enum PixelColor {
@@ -26,9 +32,12 @@ public class Blinkin {
     }
 
     public enum PixelStatus {
-        REQUESTED,
-        HELD,
-        EMPTY
+        REQUESTED,//not used
+        HELD,//not used
+        EMPTY,//not used
+        AUTO,
+        TELEOP,
+        ALIGNED,//to backdrop
     }
 
     private int pixelLeft;
@@ -191,6 +200,18 @@ public class Blinkin {
             }
             case EMPTY:{
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
+                break;
+            }
+            case AUTO:{
+                blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(AUTO));
+                break;
+            }
+            case TELEOP:{
+                blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(TELEOP));
+                break;
+            }
+            case ALIGNED:{
+                blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(ALIGNED));
                 break;
             }
         }

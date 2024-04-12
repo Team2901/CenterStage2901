@@ -23,7 +23,7 @@ public class CombinedTeleOp extends OpMode {
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     Blinkin lights;
-    public static final boolean USE_LIGHTS = false;
+    public static final boolean USE_LIGHTS = true;
 
     public double rotate;
 //    public double speedMod = 0.9;
@@ -49,9 +49,10 @@ public class CombinedTeleOp extends OpMode {
         impGamepad1 = new ImprovedGamepad(gamepad1, new ElapsedTime(), "gamepad1", telemetry);
         impGamepad2 = new ImprovedGamepad(gamepad2, new ElapsedTime(), "gamepad2", telemetry);
         robot.init(this.hardwareMap, telemetry);
-        if (USE_LIGHTS)
+        if (USE_LIGHTS) {
             lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
-
+            lights.setPixelStatus(Blinkin.PixelStatus.TELEOP);
+        }
         currentArmTicks = robot.arm.getCurrentPosition();
 
         outtakeTimer.startTime();
@@ -102,6 +103,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
+                if(USE_LIGHTS && forward < 0.1) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
@@ -110,6 +112,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
+                if(USE_LIGHTS && forward < 0.1) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
@@ -197,12 +200,12 @@ public class CombinedTeleOp extends OpMode {
             if (!outtakeRightClosed) {
                 robot.outtakeRight.setPosition(robot.outtakeRightClosedPos);
                 outtakeRightClosed = true;
-                if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
+//                if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             } else {
                 //robot.outtakeRight.setPosition(outtakeRightOpenPos);
                 robot.outtakeRight.setPosition(robot.outtakeRightClosedPos - .175);
                 outtakeRightClosed = false;
-                if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.EMPTY);
+                if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.TELEOP);
             }
         }
 
@@ -211,11 +214,11 @@ public class CombinedTeleOp extends OpMode {
             if (!outtakeLeftClosed) {
                 robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos);
                 outtakeLeftClosed = true;
-                if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
+//                if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             } else {
                 robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos - .175);
                 outtakeLeftClosed = false;
-                if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.EMPTY);
+                if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.TELEOP);
             }
         }
 
@@ -286,14 +289,14 @@ public class CombinedTeleOp extends OpMode {
             robot.arm.setMode(currentMode);
         }
 
-        if (USE_LIGHTS) {
-            if (impGamepad2.left_bumper.isInitialPress()) {
-                lights.cycleLeftPixel();
-            }
-            if (impGamepad2.right_bumper.isInitialPress()) {
-                lights.cycleRightPixel();
-            }
-        }
+//        if (USE_LIGHTS) {
+//            if (impGamepad2.left_bumper.isInitialPress()) {
+//                lights.cycleLeftPixel();
+//            }
+//            if (impGamepad2.right_bumper.isInitialPress()) {
+//                lights.cycleRightPixel();
+//            }
+//        }
         //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
 //            if(slowMode == false) {

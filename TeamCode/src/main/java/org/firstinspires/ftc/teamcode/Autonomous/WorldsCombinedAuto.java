@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware.*;
 import org.firstinspires.ftc.teamcode.OpenCV.ShapeDetection;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
+import org.firstinspires.ftc.teamcode.util.Blinkin;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,6 +27,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
     ImprovedGamepad impGamepad2;
 
     ShapeDetection pipeline = new ShapeDetection(this.telemetry, robot);
+
+    Blinkin lights;
+    public static final boolean USE_LIGHTS = true;
 
     public static final int IMGPROC_SAMPLES = 10;
 
@@ -137,6 +142,11 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         autoState = AutoState.STALL;
+
+        if (USE_LIGHTS) {
+            lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
+            lights.setPixelStatus(Blinkin.PixelStatus.AUTO);
+        }
     }
 
     long startTime = System.currentTimeMillis();
