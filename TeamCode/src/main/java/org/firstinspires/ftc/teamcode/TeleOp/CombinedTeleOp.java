@@ -166,7 +166,7 @@ public class CombinedTeleOp extends OpMode {
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
-        } else if (impGamepad1.left_trigger.getValue() > 0 && currentArmTicks > CombinedHardware.minArmTicks) {
+        } else if (impGamepad1.left_trigger.getValue() > 0) { // got rid of the minimum arm ticks limit
             robot.arm.setPower(-impGamepad1.left_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();

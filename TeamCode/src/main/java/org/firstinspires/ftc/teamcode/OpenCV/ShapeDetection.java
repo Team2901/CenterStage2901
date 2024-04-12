@@ -57,7 +57,7 @@ public class ShapeDetection extends OpenCvPipeline {
     private Mat zeros = new Mat();
 
     // Public configuration
-    public static int blurSize = 21;
+    public static int blurSize = 29;
     public static boolean doVisualization = true;
     public static boolean usingCentroid = false;
 
@@ -120,7 +120,7 @@ public class ShapeDetection extends OpenCvPipeline {
             }
             //red-orange color ranges from 0-25, how to incorporate??
         } else {
-            Core.inRange(croppedFrame, new Scalar(80, 70, 90), new Scalar(140, 255, 255), bwImage);
+            Core.inRange(croppedFrame, new Scalar(75, 70, 70), new Scalar(140, 255, 255), bwImage);
         }
 
         // Median blur this mask so that we can ignore the tape strips and any other noise in the mask
@@ -157,7 +157,6 @@ public class ShapeDetection extends OpenCvPipeline {
                 telemetry.addData("Total Pixels", totalPixels);
 
                 addPixelXVal(averageX);
-//                usingLastFrame();
             } else {
                 telemetry.addLine("No Contours Found");
                 return inputFrameRGB;
@@ -171,7 +170,6 @@ public class ShapeDetection extends OpenCvPipeline {
 
             // Classify the spikemark based on the x mid value
             addPixelXVal(xMidVal);
-//            usingLastFrame();
         }
 
         // Do some visualization
@@ -259,16 +257,5 @@ public class ShapeDetection extends OpenCvPipeline {
             }
             telemetry.addData("Spike Mark", spikeMark);
         }
-    }
-
-    public void usingLastFrame(){
-        if (xMidVal < robot.boundingLine1 && xMidVal > 5) {
-            spikeMark = 1;
-        } else if (xMidVal < robot.boundingLine2) {
-            spikeMark = 2;
-        } else {
-            spikeMark = 3;
-        }
-        telemetry.addData("Spike Mark", spikeMark);
     }
 }
