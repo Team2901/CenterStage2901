@@ -52,13 +52,13 @@ public class LoadTeleOp extends OpMode {
             }
         }
 
-        if(impGamepad1.y.isInitialPress()){
-            robot.outtakeRight.setPosition(robot.outtakeRightClosedPos + 0.025);
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        } else if(impGamepad1.a.isInitialPress()){
-            robot.outtakeRight.setPosition(robot.outtakeRightClosedPos - 0.025);
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        }
+//        if(impGamepad1.y.isInitialPress()){
+//            robot.outtakeRight.setPosition(robot.outtakeRightClosedPos + 0.025);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        } else if(impGamepad1.a.isInitialPress()){
+//            robot.outtakeRight.setPosition(robot.outtakeRightClosedPos - 0.025);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        }
 
         //adjust outtakeLeft closed position in case it skips (gamepad2)
         if(impGamepad1.dpad_down.isInitialPress()){

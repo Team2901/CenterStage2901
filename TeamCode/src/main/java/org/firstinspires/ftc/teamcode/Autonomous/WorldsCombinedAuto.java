@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Hardware.CombinedHardware.outtakeLeftClosedPos;
+import static org.firstinspires.ftc.teamcode.Hardware.CombinedHardware.outtakeRightClosedPos;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -147,6 +150,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
             lights.setPixelStatus(Blinkin.PixelStatus.AUTO);
         }
+
+        robot.outtakeLeft.setPosition(outtakeLeftClosedPos);
+        robot.outtakeRight.setPosition(outtakeRightClosedPos);
     }
 
     long startTime = System.currentTimeMillis();
@@ -241,7 +247,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     moveInches(-15);
                     //turnByTicks(1100);
                     robot.turnToAngleAuto(-90, this); //-90 turns clockwise
-                    strafe(5,0,0,0,0);
+                    strafe(4.5,0,0,0,0);
                 }
 
                 moveInches(91);
@@ -266,7 +272,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     stall(1);
                     robot.turnToAngleAuto(90, this);
                 } else {
-                    strafe(-35.5);
+                    strafe(-33.5);
                 }
 
                 moveInches(90);
@@ -320,9 +326,9 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     stall(1);
 //                    turnByTicks(-850);
                     robot.turnToAngleAuto(-92, this);
-                    strafe(2,0,0,0,0);
+                    strafe(1,0,0,0,0);
                 } else {
-                    moveInches(25);
+                    moveInches(26);
 
                     robot.outtakeRight.setPosition(outtakeRightOpenPos);
                     stall(2);
@@ -418,7 +424,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     stall(1);
                     robot.turnToAngleAuto(-90, this);
                 } else {
-                    strafe(36);
+                    strafe(34.5);
                 }
 
                 moveInches(90);
@@ -449,7 +455,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                     moveInches(-16);
 //                    turnByTicks(-850);
                     robot.turnToAngleAuto(90, this);
-                    strafe(-3,0,0,0,0);
+                    strafe(-2.8,0,0,0,0);
                 }
 
                 moveInches(91);
