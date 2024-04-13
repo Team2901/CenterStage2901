@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Config
@@ -59,7 +60,7 @@ public class ShapeDetection extends OpenCvPipeline {
     // Public configuration
     public static int blurSize = 29;
     public static boolean doVisualization = true;
-    public static boolean usingCentroid = false;
+    public static boolean usingCentroid = true;
 
     public int spikeMark = 3; // TODO: Make this an Enum
 
@@ -127,6 +128,9 @@ public class ShapeDetection extends OpenCvPipeline {
         Imgproc.medianBlur(bwImage, blurImg, blurSize);
 
         // Get the bounding rectangle from the mask after median blur
+        List<MatOfPoint> contours = new ArrayList<>();
+        Double averageX = null;
+        Double averageY = null;
         Rect rect = Imgproc.boundingRect(blurImg);
 
         if (usingCentroid) {
@@ -136,31 +140,39 @@ public class ShapeDetection extends OpenCvPipeline {
             Mat dilated = new Mat();
             Imgproc.dilate(eroded, dilated, strElement);
 
-            List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(dilated, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-            Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
+            telemetry.addData("Contours Found", contours.size());
 
             // Centroid of contours
+            Double totalPixels = null;
+            Double sumX = null;
+            Double sumY = null;
             if (contours.size() > 0) {
+                contours.sort(new Comparator<MatOfPoint>() {
+                    @Override
+                    public int compare(MatOfPoint o1, MatOfPoint o2) {
+                        Moments moments1 = Imgproc.moments(o1);
+                        Moments moments2 = Imgproc.moments(o2);
+                        return -Double.compare(moments1.m00, moments2.m00);
+                    }
+                });
                 Moments moments = Imgproc.moments(contours.get(0));
-                double totalPixels = moments.m00;
-                double sumX = moments.m10;
-                double sumY = moments.m01;
-                double averageX = sumX / totalPixels;
-                double averageY = sumY / totalPixels;
-                Imgproc.circle(markup, new Point(averageX, averageY), 2, new Scalar(0, 50, 70), 2);
-
-                telemetry.addData("Average X", averageX);
-                telemetry.addData("Average Y", averageY);
-                telemetry.addData("Sum X", sumX);
-                telemetry.addData("Sum Y", sumY);
-                telemetry.addData("Total Pixels", totalPixels);
+                totalPixels = moments.m00;
+                sumX = moments.m10;
+                sumY = moments.m01;
+                averageX = sumX / totalPixels;
+                averageY = sumY / totalPixels;
 
                 addPixelXVal(averageX);
             } else {
-                telemetry.addLine("No Contours Found");
-                return inputFrameRGB;
+                addPixelXVal(targetSize.width);
             }
+            telemetry.addData("Average X", averageX);
+            telemetry.addData("Average Y", averageY);
+            telemetry.addData("Sum X", sumX);
+            telemetry.addData("Sum Y", sumY);
+            telemetry.addData("Total Pixels (Area)", totalPixels);
+
         } else {
             // Determine the middle of the bounding rect, in x dimension
             telemetry.addData("x", rect.x);
@@ -177,7 +189,16 @@ public class ShapeDetection extends OpenCvPipeline {
         if (doVisualization) {
             // Make an image that will be marked up with lines and such
             croppedInputFrameRGB.copyTo(markup);
+
+            if (usingCentroid) {
+                Imgproc.drawContours(markup, contours, -1, new Scalar(0, 255, 255));
+                if (averageX != null && averageY != null) {
+                    Imgproc.circle(markup, new Point(averageX, averageY), 2, new Scalar(0, 50, 70), 2);
+                }
+            }
+            else {
             Imgproc.rectangle(markup, rect, new Scalar(0, 255, 160), 2);
+            }
 
             // Draw the threshold lines. These should be between the tape lines separating the spikes.
             Imgproc.line(markup, new Point(robot.boundingLine1, 0), new Point(robot.boundingLine1, 240), new Scalar(0, 0, 0));
@@ -236,6 +257,7 @@ public class ShapeDetection extends OpenCvPipeline {
         } else {
             pixelXValAverage = (pixelXValAverage * (1 - newPixelXValWeight) + pixelXVal * newPixelXValWeight);
         }
+        telemetry.addData("pixelXValAverage", pixelXValAverage);
 
         String configNameLower = ConfigUtilities.getRobotConfigurationName().toLowerCase();
         if (configNameLower.contains("worlds")) {
@@ -255,7 +277,7 @@ public class ShapeDetection extends OpenCvPipeline {
             } else {
                 spikeMark = 1;
             }
-            telemetry.addData("Spike Mark", spikeMark);
         }
+        telemetry.addData("Spike Mark", spikeMark);
     }
 }
