@@ -60,7 +60,13 @@ public class ShapeDetection extends OpenCvPipeline {
     // Public configuration
     public static int blurSize = 29;
     public static boolean doVisualization = true;
+    private final Mat visualizationMaskImg = new Mat();
     public static boolean usingCentroid = true;
+    public static boolean usingErosion = true;
+    public static int erosionWidth = 7;
+    public static int erosionHeight = 7;
+    private final Mat eroded = new Mat();
+    private final Mat dilated = new Mat();
 
     public int spikeMark = 3; // TODO: Make this an Enum
 
@@ -126,21 +132,20 @@ public class ShapeDetection extends OpenCvPipeline {
 
         // Median blur this mask so that we can ignore the tape strips and any other noise in the mask
         Imgproc.medianBlur(bwImage, blurImg, blurSize);
+        if (usingErosion) {
+            Mat strElement = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE, new Size(erosionWidth,erosionHeight));
+            Imgproc.erode(blurImg, eroded, strElement);
+            Imgproc.dilate(eroded, dilated, strElement);
+        }
 
         // Get the bounding rectangle from the mask after median blur
         List<MatOfPoint> contours = new ArrayList<>();
         Double averageX = null;
         Double averageY = null;
-        Rect rect = Imgproc.boundingRect(blurImg);
+        Rect rect = Imgproc.boundingRect(usingErosion ? dilated : blurImg);
 
         if (usingCentroid) {
-            Mat eroded = new Mat();
-            Mat strElement = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_ELLIPSE, new Size(7, 7));
-            Imgproc.erode(blurImg, eroded, strElement);
-            Mat dilated = new Mat();
-            Imgproc.dilate(eroded, dilated, strElement);
-
-            Imgproc.findContours(dilated, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(usingErosion ? dilated : blurImg, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             telemetry.addData("Contours Found", contours.size());
 
             // Centroid of contours
@@ -210,8 +215,8 @@ public class ShapeDetection extends OpenCvPipeline {
 
             // Make an image showing what the blur does to the color mask
             // Note: This has to be after findContours (as-is, without gray2rgb into another mat...)
-            Imgproc.cvtColor(blurImg, blurImg, Imgproc.COLOR_GRAY2RGB);
-            Core.bitwise_and(blurImg, croppedInputFrameRGB, onlyFoundColorBlur);
+            Imgproc.cvtColor(usingErosion ? dilated : blurImg, visualizationMaskImg, Imgproc.COLOR_GRAY2RGB);
+            Core.bitwise_and(visualizationMaskImg, croppedInputFrameRGB, onlyFoundColorBlur);
 
             // Finally, make the output frame for visualization by combining multiple images
             // Add labels
