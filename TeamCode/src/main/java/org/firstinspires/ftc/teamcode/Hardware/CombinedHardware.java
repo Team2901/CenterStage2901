@@ -43,10 +43,13 @@ public class CombinedHardware {
     public IMU imu;
 
     // all init values below are set for the states robot
-    public static double outtakeLeftClosedPos = 0.315;
-    public static double outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
-    public static double outtakeRightClosedPos = 0.3;
-    public static double outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
+    public static double outtakeLeftClosedPos = 0.21;
+    public static double outtakeLeftOpenPos = 0.03;
+    public static final double outtakeRightClosedPos = 0.21;
+    public static final double outtakeRightOpenPos = 0.03;
+
+//    public static final double maxOuttakeLeftOpenPos = 0.315 - 0.175;
+//    public static final double maxOuttakeRightOpenPos = 0.3 - 0.175;
 
     public static int maxHeightArmTicks = 3390; //preset deliver point
     public static int maxArmTicks = 5500;
@@ -155,10 +158,10 @@ public class CombinedHardware {
             minArmTicks = 215;
             rotationServoInitPos = .125;
             rotationServoMin = 0.125;
-            outtakeLeftClosedPos = 0.315;
-            outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
-            outtakeRightClosedPos = 0.425;
-            outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
+//            outtakeLeftClosedPos = 0.315;
+//            outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
+//            outtakeRightClosedPos = 0.425;
+//            outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
             planeServoReleasePos = 0.05; //when loaded, pos is <planeServoReleasePos
             boundingLine1 = 130;
             boundingLine2 = 300;
@@ -222,18 +225,19 @@ public class CombinedHardware {
         setDrivePower(0.0);
         setDriveRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (opMode.opModeIsActive() && !(turnError < .5 && turnError > -.5)) {
-            if (turnError >= 0) {
-                turnPower = turnError / 50;
-                if (turnPower > .75) {
-                    turnPower = .75;
-                }
-            } else if (turnError < 0) {
-                turnPower = turnError / 50;
-                if (turnPower < -.75) {
-                    turnPower = -.75;
-                }
-            }
+        while (opMode.opModeIsActive() && /*!(turnError < .5 && turnError > -.5)*/ Math.abs(turnError) > 0.5) {
+//            if (turnError >= 0) {
+//                turnPower = turnError / 50;
+//                if (turnPower > .75) {
+//                    turnPower = .75;
+//                }
+//            } else if (turnError < 0) {
+//                turnPower = turnError / 50;
+//                if (turnPower < -.75) {
+//                    turnPower = -.75;
+//                }
+//            }
+            turnPower = Math.max(Math.min(turnError/50,0.75),-0.75);
 
             frontLeft.setPower(-turnPower);
             frontRight.setPower(turnPower);

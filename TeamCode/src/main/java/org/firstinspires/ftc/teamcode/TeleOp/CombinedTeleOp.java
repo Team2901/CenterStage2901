@@ -104,7 +104,8 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && forward < 0.001) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && robot.distanceSensorLeft.getDistance(DistanceUnit.INCH) < 1.9) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
@@ -113,7 +114,8 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && forward < 0.001) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && robot.distanceSensorLeft.getDistance(DistanceUnit.INCH) < 1.9) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                telemetry.addData("forward power", forward);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle);
@@ -154,14 +156,14 @@ public class CombinedTeleOp extends OpMode {
         }
 
         //fixing claw (outtake) positions with gamepad 1
-        if (impGamepad1.dpad_left.isInitialPress()) {
-            robot.outtakeLeft.setPosition(Math.min(robot.outtakeLeft.getPosition() + 0.015, CombinedHardware.maxOuttakeLeftOpenPos));
-            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
-        }
-        if (impGamepad1.dpad_right.isInitialPress()) {
-            robot.outtakeRight.setPosition(Math.min(robot.outtakeRight.getPosition() + 0.015,CombinedHardware.maxOuttakeRightOpenPos));
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        }
+//        if (impGamepad1.dpad_left.isInitialPress()) {
+//            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
+//            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+//        }
+//        if (impGamepad1.dpad_right.isInitialPress()) {
+//            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        }
 
         //arm up
 
@@ -204,7 +206,7 @@ public class CombinedTeleOp extends OpMode {
 //                if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             } else {
                 //robot.outtakeRight.setPosition(outtakeRightOpenPos);
-                robot.outtakeRight.setPosition(robot.outtakeRightClosedPos - .175);
+                robot.outtakeRight.setPosition(robot.outtakeRightOpenPos);
                 outtakeRightClosed = false;
                 if (USE_LIGHTS) lights.setPixelRightStatus(Blinkin.PixelStatus.TELEOP);
             }
@@ -217,7 +219,7 @@ public class CombinedTeleOp extends OpMode {
                 outtakeLeftClosed = true;
 //                if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             } else {
-                robot.outtakeLeft.setPosition(robot.outtakeLeftClosedPos - .175);
+                robot.outtakeLeft.setPosition(robot.outtakeLeftOpenPos);
                 outtakeLeftClosed = false;
                 if (USE_LIGHTS) lights.setPixelLeftStatus(Blinkin.PixelStatus.TELEOP);
             }
@@ -249,22 +251,22 @@ public class CombinedTeleOp extends OpMode {
         }
 
         //adjust outtakeRight closed position in case it skips (gamepad2)
-        if (impGamepad2.y.isInitialPress()) {
-            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        } else if (impGamepad2.a.isInitialPress()) {
-            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() - 0.015);
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        }
-
-        //adjust outtakeLeft closed position in case it skips (gamepad2)
-        if (impGamepad2.dpad_down.isInitialPress()) {
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
-            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
-        } else if (impGamepad2.dpad_up.isInitialPress()) {
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
-            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
-        }
+//        if (impGamepad2.y.isInitialPress()) {
+//            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        } else if (impGamepad2.a.isInitialPress()) {
+//            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() - 0.015);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        }
+//
+//        //adjust outtakeLeft closed position in case it skips (gamepad2)
+//        if (impGamepad2.dpad_down.isInitialPress()) {
+//            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() - 0.015);
+//            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+//        } else if (impGamepad2.dpad_up.isInitialPress()) {
+//            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
+//            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+//        }
 
         //min at 0.1 and max at 0.8 (wrist)
 
