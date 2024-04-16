@@ -112,7 +112,7 @@ public class ImprovedGamepadTester extends OpMode {
             }
         }
 
-        float hue = improvedGamepad1.left_stick.angle.getValue().floatValue();
+        float hue = (improvedGamepad1.left_stick.angle.getValue().floatValue() + 360 ) % 360 ;
         int color = ColorUtils.HSLToColor(new float[]{hue, 1, 1});
         gamepad1.setLedColor(Color.red(color), Color.green(color), Color.blue(color), LED_DURATION_CONTINUOUS);
 
