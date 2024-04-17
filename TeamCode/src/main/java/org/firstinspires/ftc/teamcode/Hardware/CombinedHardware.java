@@ -43,10 +43,10 @@ public class CombinedHardware {
     public IMU imu;
 
     // all init values below are set for the states robot
-    public static double outtakeLeftClosedPos = 0.21;
+    public static double outtakeLeftClosedPos = 0.225;
     public static double outtakeLeftOpenPos = 0.03;
-    public static final double outtakeRightClosedPos = 0.215;
-    public static final double outtakeRightOpenPos = 0.03;
+    public static double outtakeRightClosedPos = 0.230;
+    public static double outtakeRightOpenPos = 0.03;
 
 //    public static final double maxOuttakeLeftOpenPos = 0.315 - 0.175;
 //    public static final double maxOuttakeRightOpenPos = 0.3 - 0.175;
@@ -165,7 +165,7 @@ public class CombinedHardware {
 //            outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
 //            outtakeRightClosedPos = 0.425;
 //            outtakeRightOpenPos = outtakeRightClosedPos - 0.175;
-            planeServoReleasePos = 0.05; //when loaded, pos is <planeServoReleasePos
+            planeServoReleasePos = 0.1; //when loaded, pos is > planeServoReleasePos
             boundingLine1 = 130;
             boundingLine2 = 300;
             initArmAngle = 70;
