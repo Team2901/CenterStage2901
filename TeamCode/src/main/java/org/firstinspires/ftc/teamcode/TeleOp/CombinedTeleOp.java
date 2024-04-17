@@ -326,6 +326,13 @@ public class CombinedTeleOp extends OpMode {
                     lights.setPixelRight(Blinkin.PixelColor.WHITE);
                 }
             }
+            if(robot.colorSensorLeft.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelLeftStatus() == Blinkin.PixelStatus.REQUESTED){
+                lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
+            }
+            if(robot.colorSensorRight.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelRightStatus() == Blinkin.PixelStatus.REQUESTED){
+                lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
+            }
+
             int elapsedTime = (int) ((startTime - System.currentTimeMillis())/ 1000);
             if(elapsedTime >= 87 && elapsedTime <= 90){
                 lights.update(7);

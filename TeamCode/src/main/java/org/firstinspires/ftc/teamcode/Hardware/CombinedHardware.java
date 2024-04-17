@@ -65,6 +65,8 @@ public class CombinedHardware {
     // idk what this is on the states robot (i think it was 1?)
     public static double planeServoReleasePos;
 
+    public static double colorSensorPixelDistance = 1;
+
     public enum Alliance {
         RED,
         BLUE
