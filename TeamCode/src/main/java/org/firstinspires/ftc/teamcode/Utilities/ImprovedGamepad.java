@@ -22,10 +22,16 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class ImprovedGamepad {
+
+
     private static String Tag = "ImprovedGamepad";
-    public static double StickDeadZone = 0.01;
+    public final static double DEFAULT_STICK_DEAD_ZONE = 0.01;
+
+    public static double StickDeadZone = DEFAULT_STICK_DEAD_ZONE;
     private Double lastKnownStickDeadZone = null;
-    public static double TriggerDeadZone = 0.01;
+    public final static double DEFAULT_TRIGGER_DEAD_ZONE = 0.01;
+
+    public static double TriggerDeadZone = DEFAULT_TRIGGER_DEAD_ZONE;
     private Double lastKnownTriggerDeadZone = null;
 
     private final Gamepad hardwareGamepad;
@@ -97,6 +103,14 @@ public class ImprovedGamepad {
 
         Thread t = new Thread(watchdog);
         t.start();
+    }
+
+    public static void setStickDeadZone(double stickDeadZone) {
+        StickDeadZone = stickDeadZone;
+    }
+
+    public static void setTriggerDeadZone(double triggerDeadZone) {
+        TriggerDeadZone = triggerDeadZone;
     }
 
     public void update() {
