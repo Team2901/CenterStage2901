@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import android.graphics.Color;
+
+import androidx.annotation.ColorInt;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -13,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.CombinedHardware;
 import org.firstinspires.ftc.teamcode.Utilities.ImprovedGamepad;
 import org.firstinspires.ftc.teamcode.util.Blinkin;
+import org.opencv.core.Scalar;
 
 @TeleOp(name = "Worlds Mecanum TeleOp", group = "1TeleOp")
 public class CombinedTeleOp extends OpMode {
@@ -326,18 +332,48 @@ public class CombinedTeleOp extends OpMode {
                     lights.setPixelRight(Blinkin.PixelColor.WHITE);
                 }
             }
-            if(robot.colorSensorLeft.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelLeftStatus() == Blinkin.PixelStatus.REQUESTED){
+            NormalizedRGBA leftColorN = robot.colorSensorLeft.getNormalizedColors();
+            NormalizedRGBA rightColorN = robot.colorSensorLeft.getNormalizedColors();
+
+            boolean leftPixelDetected = true;
+            boolean rightPixelDetected = true;
+
+            float[] hsv = new float[3];
+
+            Color.RGBToHSV((int) (leftColorN.red*255), (int) (leftColorN.green*255), (int) (leftColorN.blue*255), hsv);
+            telemetry.addData("hue", hsv[0]);
+            telemetry.addData("sat",hsv[1]);
+            telemetry.addData("val",hsv[2]);
+
+//            Color.RGBToHSV((int) (rightColorN.red*255), (int) (rightColorN.green*255), (int) (rightColorN.blue*255), hsv);
+
+
+//            boolean leftPixelDetected = false;
+//            if(leftColor.red > 0.2 && leftColor.green > 0.2 && leftColor.blue > 0.2){
+//                leftPixelDetected = true;
+//            }
+//
+//            boolean rightPixelDetected = false;
+//            if(rightColor.red > 0.2 && rightColor.green > 0.2 && rightColor.blue > 0.2){
+//                rightPixelDetected = true;
+//            }
+
+//            telemetry.addData("left color sensor",leftColor);
+//            telemetry.addData("right color sensor",rightColor);
+
+            if(robot.colorSensorLeft.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelLeftStatus() == Blinkin.PixelStatus.REQUESTED && leftPixelDetected){
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             }
-            if(robot.colorSensorRight.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelRightStatus() == Blinkin.PixelStatus.REQUESTED){
+            if(robot.colorSensorRight.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelRightStatus() == Blinkin.PixelStatus.REQUESTED && rightPixelDetected){
                 lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             }
 
             int elapsedTime = (int) ((startTime - System.currentTimeMillis())/ 1000);
             if(elapsedTime >= 87 && elapsedTime <= 90){
                 lights.update(7);
+            }else {
+                lights.update();
             }
-            lights.update();
         }
         //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
