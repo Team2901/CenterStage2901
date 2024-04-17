@@ -175,13 +175,11 @@ public class CombinedTeleOp extends OpMode {
 //        }
 
         //arm up
-
-        //should be commented back in once impGamepad is fixed ======================================
         if (impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < CombinedHardware.maxArmTicks) {
             robot.arm.setPower(impGamepad1.right_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
-        } else if (impGamepad1.left_trigger.getValue() > 0) { // got rid of the minimum arm ticks limit
+        } else if (impGamepad1.left_trigger.getValue() > 0 && currentArmTicks > CombinedHardware.minArmTicks) { // got rid of the minimum arm ticks limit
             robot.arm.setPower(-impGamepad1.left_trigger.getValue() * armMod);
             robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             currentArmTicks = robot.arm.getCurrentPosition();
@@ -304,31 +302,31 @@ public class CombinedTeleOp extends OpMode {
         if (USE_LIGHTS) {
             if (impGamepad1.left_stick.x.getValue() > 0) {
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.REQUESTED);
-                if (impGamepad1.a.isInitialPress()) {
+                if (impGamepad2.a.isInitialPress()) {
                     lights.setPixelLeft(Blinkin.PixelColor.GREEN);
                 }
-                if (impGamepad1.y.isInitialPress()) {
+                if (impGamepad2.y.isInitialPress()) {
                     lights.setPixelLeft(Blinkin.PixelColor.YELLOW);
                 }
-                if (impGamepad1.dpad_down.isInitialPress()) {
+                if (impGamepad2.dpad_down.isInitialPress()) {
                     lights.setPixelLeft(Blinkin.PixelColor.PURPLE);
                 }
-                if (impGamepad1.dpad_up.isInitialPress()) {
+                if (impGamepad2.dpad_up.isInitialPress()) {
                     lights.setPixelLeft(Blinkin.PixelColor.WHITE);
                 }
             }
             else {
                 lights.setPixelRightStatus(Blinkin.PixelStatus.REQUESTED);
-                if (impGamepad1.a.isInitialPress()) {
+                if (impGamepad2.a.isInitialPress()) {
                     lights.setPixelRight(Blinkin.PixelColor.GREEN);
                 }
-                if (impGamepad1.y.isInitialPress()) {
+                if (impGamepad2.y.isInitialPress()) {
                     lights.setPixelRight(Blinkin.PixelColor.YELLOW);
                 }
-                if (impGamepad1.dpad_down.isInitialPress()) {
+                if (impGamepad2.dpad_down.isInitialPress()) {
                     lights.setPixelRight(Blinkin.PixelColor.PURPLE);
                 }
-                if (impGamepad1.dpad_up.isInitialPress()) {
+                if (impGamepad2.dpad_up.isInitialPress()) {
                     lights.setPixelRight(Blinkin.PixelColor.WHITE);
                 }
             }

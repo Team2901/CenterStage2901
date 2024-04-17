@@ -45,7 +45,7 @@ public class CombinedHardware {
     // all init values below are set for the states robot
     public static double outtakeLeftClosedPos = 0.21;
     public static double outtakeLeftOpenPos = 0.03;
-    public static final double outtakeRightClosedPos = 0.21;
+    public static final double outtakeRightClosedPos = 0.215;
     public static final double outtakeRightOpenPos = 0.03;
 
 //    public static final double maxOuttakeLeftOpenPos = 0.315 - 0.175;
@@ -157,9 +157,10 @@ public class CombinedHardware {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
             maxArmTicks = 3900;
             maxHeightArmTicks = 2800;
-            minArmTicks = 215;
+            minArmTicks = 230;
             rotationServoInitPos = .125;
             rotationServoMin = 0.125;
+            //set constants for worlds at the top
 //            outtakeLeftClosedPos = 0.315;
 //            outtakeLeftOpenPos = outtakeLeftClosedPos - 0.175;
 //            outtakeRightClosedPos = 0.425;
@@ -257,7 +258,7 @@ public class CombinedHardware {
     public void adjustWrist() {
         double armAngle = recalculateAngle();
         if (armAngle < 75) {
-            rotationServo.setPosition(0.125);
+            rotationServo.setPosition(0.135); //increased by 0.01 1:44
             //when arm angle increases, servo angle decreases
         } else if (armAngle < 93) { //90 degrees, but a little bit of error in the math so have to adjust manually
             rotationServo.setPosition(0.1);
