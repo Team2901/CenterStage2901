@@ -39,8 +39,8 @@ public class Blinkin {
         ALIGNED,//to backdrop
     }
 
-    private int pixelLeft;
-    private int pixelRight;
+    private int pixelLeft = BLACK;
+    private int pixelRight = BLACK;
 
     private PixelStatus pixelLeftStatus;
     private PixelStatus pixelRightStatus;
@@ -102,59 +102,59 @@ public class Blinkin {
         }
     }
 
-    public void cycleLeftPixel() {
-        setPixelLeftStatus(PixelStatus.REQUESTED);
-        startTime = System.currentTimeMillis();
-        switch (pixelLeft) {
-            case WHITE: {
-                pixelLeft = YELLOW;
-                break;
-            }
-            case YELLOW: {
-                pixelLeft = GREEN;
-                break;
-            }
-            case GREEN: {
-                pixelLeft = PURPLE;
-                break;
-            }
-            case PURPLE: {
-                pixelLeft = BLACK;
-                break;
-            }
-            case BLACK: {
-                pixelLeft = WHITE;
-                break;
-            }
-        }
-    }
-
-    public void cycleRightPixel() {
-        setPixelRightStatus(PixelStatus.REQUESTED);
-        startTime = System.currentTimeMillis();
-        switch (pixelRight) {
-            case WHITE: {
-                pixelRight = YELLOW;
-                break;
-            }
-            case YELLOW: {
-                pixelRight = GREEN;
-                break;
-            }
-            case GREEN: {
-                pixelRight = PURPLE;
-                break;
-            }
-            case PURPLE: {
-                pixelRight = BLACK;
-                break;
-            }
-            case BLACK: {
-                pixelRight = WHITE;
-                break;
-            }
-        }
-    }
+//    public void cycleLeftPixel() {
+//        setPixelLeftStatus(PixelStatus.REQUESTED);
+//        startTime = System.currentTimeMillis();
+//        switch (pixelLeft) {
+//            case WHITE: {
+//                pixelLeft = YELLOW;
+//                break;
+//            }
+//            case YELLOW: {
+//                pixelLeft = GREEN;
+//                break;
+//            }
+//            case GREEN: {
+//                pixelLeft = PURPLE;
+//                break;
+//            }
+//            case PURPLE: {
+//                pixelLeft = BLACK;
+//                break;
+//            }
+//            case BLACK: {
+//                pixelLeft = WHITE;
+//                break;
+//            }
+//        }
+//    }
+//
+//    public void cycleRightPixel() {
+//        setPixelRightStatus(PixelStatus.REQUESTED);
+//        startTime = System.currentTimeMillis();
+//        switch (pixelRight) {
+//            case WHITE: {
+//                pixelRight = YELLOW;
+//                break;
+//            }
+//            case YELLOW: {
+//                pixelRight = GREEN;
+//                break;
+//            }
+//            case GREEN: {
+//                pixelRight = PURPLE;
+//                break;
+//            }
+//            case PURPLE: {
+//                pixelRight = BLACK;
+//                break;
+//            }
+//            case BLACK: {
+//                pixelRight = WHITE;
+//                break;
+//            }
+//        }
+//    }
 
     public void setPixelStatus(PixelStatus status) {
         setPixelLeftStatus(status);

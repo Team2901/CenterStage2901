@@ -60,7 +60,9 @@ public class CombinedTeleOp extends OpMode {
         robot.init(this.hardwareMap, telemetry);
         if (USE_LIGHTS) {
             lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
-            lights.setPixelStatus(Blinkin.PixelStatus.TELEOP);
+//            lights.setPixelStatus(Blinkin.PixelStatus.TELEOP);
+            lights.setPixelLeftStatus(Blinkin.PixelStatus.TELEOP);
+            lights.setPixelRightStatus(Blinkin.PixelStatus.TELEOP);
         }
         currentArmTicks = robot.arm.getCurrentPosition();
 
@@ -366,7 +368,8 @@ public class CombinedTeleOp extends OpMode {
                 lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             }
 
-            int elapsedTime = (int) ((startTime - System.currentTimeMillis())/ 1000);
+            int elapsedTime = (int) ((System.currentTimeMillis() - startTime)/ 1000);
+            telemetry.addData("elapsedTime",elapsedTime);
             if(elapsedTime >= 87 && elapsedTime <= 90){
                 lights.update(7);
             }else {
