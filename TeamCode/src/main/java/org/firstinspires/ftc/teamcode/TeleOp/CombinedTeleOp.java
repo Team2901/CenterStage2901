@@ -301,6 +301,10 @@ public class CombinedTeleOp extends OpMode {
             robot.arm.setMode(currentMode);
         }
 
+        if(impGamepad2.dpad_right.isInitialPress()){
+            CombinedHardware.minArmTicks = robot.arm.getCurrentPosition();
+        }
+
         if (USE_LIGHTS) {
             if (impGamepad2.left_stick.x.getValue() < 0) {
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.REQUESTED);
