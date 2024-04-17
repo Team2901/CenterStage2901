@@ -23,6 +23,9 @@ public class CombinedTeleOp extends OpMode {
     ElapsedTime outtakeTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
     Blinkin lights;
+
+    long startTime;
+
     public static final boolean USE_LIGHTS = true;
 
     public double rotate;
@@ -55,6 +58,7 @@ public class CombinedTeleOp extends OpMode {
         }
         currentArmTicks = robot.arm.getCurrentPosition();
 
+        startTime = System.currentTimeMillis();
         outtakeTimer.startTime();
     }
 
@@ -76,7 +80,6 @@ public class CombinedTeleOp extends OpMode {
     public void loop() {
         impGamepad1.update();
         impGamepad2.update();
-        lights.update();
 
         double armAngle = robot.recalculateAngle();
 
@@ -292,14 +295,43 @@ public class CombinedTeleOp extends OpMode {
             robot.arm.setMode(currentMode);
         }
 
-//        if (USE_LIGHTS) {
-//            if (impGamepad2.left_bumper.isInitialPress()) {
-//                lights.cycleLeftPixel();
-//            }
-//            if (impGamepad2.right_bumper.isInitialPress()) {
-//                lights.cycleRightPixel();
-//            }
-//        }
+        if (USE_LIGHTS) {
+            if (impGamepad1.left_stick.x.getValue() > 0) {
+                lights.setPixelLeftStatus(Blinkin.PixelStatus.REQUESTED);
+                if (impGamepad1.a.isInitialPress()) {
+                    lights.setPixelLeft(Blinkin.PixelColor.GREEN);
+                }
+                if (impGamepad1.y.isInitialPress()) {
+                    lights.setPixelLeft(Blinkin.PixelColor.YELLOW);
+                }
+                if (impGamepad1.dpad_down.isInitialPress()) {
+                    lights.setPixelLeft(Blinkin.PixelColor.PURPLE);
+                }
+                if (impGamepad1.dpad_up.isInitialPress()) {
+                    lights.setPixelLeft(Blinkin.PixelColor.WHITE);
+                }
+            }
+            else {
+                lights.setPixelRightStatus(Blinkin.PixelStatus.REQUESTED);
+                if (impGamepad1.a.isInitialPress()) {
+                    lights.setPixelRight(Blinkin.PixelColor.GREEN);
+                }
+                if (impGamepad1.y.isInitialPress()) {
+                    lights.setPixelRight(Blinkin.PixelColor.YELLOW);
+                }
+                if (impGamepad1.dpad_down.isInitialPress()) {
+                    lights.setPixelRight(Blinkin.PixelColor.PURPLE);
+                }
+                if (impGamepad1.dpad_up.isInitialPress()) {
+                    lights.setPixelRight(Blinkin.PixelColor.WHITE);
+                }
+            }
+            int elapsedTime = (int) ((startTime - System.currentTimeMillis())/ 1000);
+            if(elapsedTime >= 87 && elapsedTime <= 90){
+                lights.update(7);
+            }
+            lights.update();
+        }
         //slow mode for precision - if needed, have to use a different button (dpad right is used for outtakeRight fixes)
 //        if(impGamepad1.dpad_right.isInitialPress()){
 //            if(slowMode == false) {

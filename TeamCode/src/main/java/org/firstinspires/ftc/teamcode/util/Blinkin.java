@@ -23,7 +23,6 @@ public class Blinkin {
     private final int TELEOP = GREEN;
 
 
-
     public enum PixelColor {
         WHITE,
         YELLOW,
@@ -103,7 +102,7 @@ public class Blinkin {
         }
     }
 
-    public void cycleLeftPixel(){
+    public void cycleLeftPixel() {
         setPixelLeftStatus(PixelStatus.REQUESTED);
         startTime = System.currentTimeMillis();
         switch (pixelLeft) {
@@ -123,14 +122,14 @@ public class Blinkin {
                 pixelLeft = BLACK;
                 break;
             }
-            case BLACK:{
+            case BLACK: {
                 pixelLeft = WHITE;
                 break;
             }
         }
     }
 
-    public void cycleRightPixel(){
+    public void cycleRightPixel() {
         setPixelRightStatus(PixelStatus.REQUESTED);
         startTime = System.currentTimeMillis();
         switch (pixelRight) {
@@ -150,14 +149,14 @@ public class Blinkin {
                 pixelRight = BLACK;
                 break;
             }
-            case BLACK:{
+            case BLACK: {
                 pixelRight = WHITE;
                 break;
             }
         }
     }
 
-    public void setPixelStatus(PixelStatus status){
+    public void setPixelStatus(PixelStatus status) {
         setPixelLeftStatus(status);
         setPixelRightStatus(status);
     }
@@ -180,37 +179,37 @@ public class Blinkin {
 
     long elapsedTime;
 
-    private void colorSide(boolean left){
-        RevBlinkinLedDriver blinkinModule = left?blinkinLeft:blinkinRight;
-        PixelStatus moduleStatus = left?pixelLeftStatus:pixelRightStatus;
-        int moduleColor = left?pixelLeft:pixelRight;
+    private void colorSide(boolean left) {
+        RevBlinkinLedDriver blinkinModule = left ? blinkinLeft : blinkinRight;
+        PixelStatus moduleStatus = left ? pixelLeftStatus : pixelRightStatus;
+        int moduleColor = left ? pixelLeft : pixelRight;
 
-        switch (moduleStatus){
-            case REQUESTED:{
-                if(elapsedTime < blinkPeriod){
+        switch (moduleStatus) {
+            case HELD: {
+                if (elapsedTime < blinkPeriod) {
                     blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(moduleColor));
-                }else{
+                } else {
                     blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                 }
                 break;
             }
-            case HELD:{
+            case REQUESTED: {
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(moduleColor));
                 break;
             }
-            case EMPTY:{
+            case EMPTY: {
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
                 break;
             }
-            case AUTO:{
+            case AUTO: {
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(AUTO));
                 break;
             }
-            case TELEOP:{
+            case TELEOP: {
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(TELEOP));
                 break;
             }
-            case ALIGNED:{
+            case ALIGNED: {
                 blinkinModule.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(ALIGNED));
                 break;
             }
@@ -218,9 +217,13 @@ public class Blinkin {
     }
 
     public void update() {
-        elapsedTime =( System.currentTimeMillis() - startTime) %(blinkPeriod * 2L);
+        elapsedTime = (System.currentTimeMillis() - startTime) % (blinkPeriod * 2L);
 
         colorSide(true);
         colorSide(false);
+    }
+
+    public void update(int color) {
+        blinkinLeft.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(color));
     }
 }
