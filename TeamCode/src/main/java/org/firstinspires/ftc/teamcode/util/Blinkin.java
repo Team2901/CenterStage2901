@@ -15,7 +15,7 @@ public class Blinkin {
     private final int YELLOW = 85;
     private final int GREEN = 87;
     private final int PURPLE = 95;
-    private final int BLACK = 100;
+    private final int BLACK = 99;
     private final int PINK = 78;
 
     private final int ALIGNED = PINK;
@@ -164,6 +164,9 @@ public class Blinkin {
     public void setPixelLeftStatus(PixelStatus status) {
         startTime = System.currentTimeMillis();
         pixelLeftStatus = status;
+//        if(status == PixelStatus.REQUESTED){
+//            pixelLeft = BLACK;
+//        }
 //        if (status == PixelStatus.EMPTY) {
 //            blinkinLeft.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
 //        }
@@ -172,6 +175,9 @@ public class Blinkin {
     public void setPixelRightStatus(PixelStatus status) {
         startTime = System.currentTimeMillis();
         pixelRightStatus = status;
+//        if(status == PixelStatus.REQUESTED){
+//            pixelRight = BLACK;
+//        }
 //        if (status == PixelStatus.EMPTY) {
 //            blinkinRight.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(EMPTY_PATTERN));
 //        }

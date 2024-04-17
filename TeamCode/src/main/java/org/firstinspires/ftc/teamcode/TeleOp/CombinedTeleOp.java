@@ -302,7 +302,7 @@ public class CombinedTeleOp extends OpMode {
         }
 
         if (USE_LIGHTS) {
-            if (impGamepad1.left_stick.x.getValue() > 0) {
+            if (impGamepad2.left_stick.x.getValue() < 0) {
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.REQUESTED);
                 if (impGamepad2.a.isInitialPress()) {
                     lights.setPixelLeft(Blinkin.PixelColor.GREEN);
@@ -317,7 +317,7 @@ public class CombinedTeleOp extends OpMode {
                     lights.setPixelLeft(Blinkin.PixelColor.WHITE);
                 }
             }
-            else {
+            else if(impGamepad2.left_stick.x.getValue() > 0) {
                 lights.setPixelRightStatus(Blinkin.PixelStatus.REQUESTED);
                 if (impGamepad2.a.isInitialPress()) {
                     lights.setPixelRight(Blinkin.PixelColor.GREEN);
