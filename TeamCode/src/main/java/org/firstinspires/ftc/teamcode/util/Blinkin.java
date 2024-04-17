@@ -225,6 +225,7 @@ public class Blinkin {
 
     public void update(int color) {
         blinkinLeft.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(color));
+        blinkinRight.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(color));
     }
 
     public PixelStatus getPixelLeftStatus() {

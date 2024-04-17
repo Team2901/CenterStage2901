@@ -683,7 +683,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
     public void stall(double seconds) {
         stall.reset();
-        while (stall.time() < seconds) {
+        while (opModeIsActive() && stall.time() < seconds) {
             idle();
         }
     }
