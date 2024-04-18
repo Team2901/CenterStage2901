@@ -112,12 +112,13 @@ public class CombinedTeleOp extends OpMode {
         double forward;
         double strafe;
 
+        double distanceFromBackDrop =  robot.distanceSensorLeft.getDistance(DistanceUnit.INCH);
+
         if (fieldOriented) {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && robot.distanceSensorLeft.getDistance(DistanceUnit.INCH) < 1.9) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
-
+                if(USE_LIGHTS && distanceFromBackDrop < 2.5)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
@@ -126,7 +127,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && robot.distanceSensorLeft.getDistance(DistanceUnit.INCH) < 1.9) lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && distanceFromBackDrop < 2.5)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
                 telemetry.addData("forward power", forward);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
@@ -347,6 +348,8 @@ public class CombinedTeleOp extends OpMode {
             boolean leftPixelDetected = true;
             boolean rightPixelDetected = true;
 
+            NormalizedRGBA normalizedLeft = cSL.getNormalizedColors();
+
             float[] hsv = new float[3];
 
             Color.RGBToHSV(cSL.red(),cSL.green(),cSL.blue(), hsv);
@@ -356,6 +359,16 @@ public class CombinedTeleOp extends OpMode {
             telemetry.addData("r", cSL.red());
             telemetry.addData("g",cSL.green());
             telemetry.addData("b",cSL.blue());
+
+            telemetry.addData("norm",normalizedLeft);
+
+            Color.RGBToHSV((int)(normalizedLeft.red*255),(int)(normalizedLeft.green*255),(int)(normalizedLeft.blue*255), hsv);
+            telemetry.addData("hue", hsv[0]);
+            telemetry.addData("sat",hsv[1]);
+            telemetry.addData("val",hsv[2]);
+            telemetry.addData("r", normalizedLeft.red);
+            telemetry.addData("g",normalizedLeft.green);
+            telemetry.addData("b",normalizedLeft.blue);
 
 //            Color.RGBToHSV((int) (rightColorN.red*255), (int) (rightColorN.green*255), (int) (rightColorN.blue*255), hsv);
 
