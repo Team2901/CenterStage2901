@@ -118,7 +118,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && distanceFromBackDrop < 2.5)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && distanceFromBackDrop < 2.1)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle - robotAngle);
                 strafe = impGamepad1.left_stick.radius.getValue() * -Math.sin(controllerAngle - robotAngle);
@@ -127,7 +127,7 @@ public class CombinedTeleOp extends OpMode {
             if (impGamepad1.y.isPressed()) {
                 forward = -robot.approachBackdrop();
                 strafe = 0;
-                if(USE_LIGHTS && distanceFromBackDrop < 2.5)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
+                if(USE_LIGHTS && distanceFromBackDrop < 2.1)lights.setPixelStatus(Blinkin.PixelStatus.ALIGNED);
                 telemetry.addData("forward power", forward);
             } else {
                 forward = impGamepad1.left_stick.radius.getValue() * Math.cos(controllerAngle);
