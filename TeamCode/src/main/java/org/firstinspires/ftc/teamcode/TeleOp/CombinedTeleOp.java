@@ -168,15 +168,15 @@ public class CombinedTeleOp extends OpMode {
             currentArmTicks = CombinedHardware.minArmTicks;
         }
 
-        //fixing claw (outtake) positions with gamepad 1
-        if (impGamepad1.dpad_left.isInitialPress()) {
-            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
-            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
-        }
-        if (impGamepad1.dpad_right.isInitialPress()) {
-            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
-            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
-        }
+        //fixing claw (outtake) positions with gamepad 1 COMMENTED OUT 4.18 FOR DREW :)
+//        if (impGamepad1.dpad_left.isInitialPress()) {
+//            robot.outtakeLeft.setPosition(robot.outtakeLeft.getPosition() + 0.015);
+//            robot.outtakeLeftClosedPos = robot.outtakeLeft.getPosition();
+//        }
+//        if (impGamepad1.dpad_right.isInitialPress()) {
+//            robot.outtakeRight.setPosition(robot.outtakeRight.getPosition() + 0.015);
+//            robot.outtakeRightClosedPos = robot.outtakeRight.getPosition();
+//        }
 
         //arm up
         if (impGamepad1.right_trigger.getValue() > 0 && currentArmTicks < CombinedHardware.maxArmTicks) {

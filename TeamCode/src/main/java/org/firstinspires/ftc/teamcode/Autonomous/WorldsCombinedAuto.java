@@ -144,7 +144,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
         robot.imu.resetYaw();
         robot.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        autoState = AutoState.STALL;
+        autoState = AutoState.CAMERA_WAIT;
 
         if (USE_LIGHTS) {
             lights = new Blinkin(hardwareMap.get(RevBlinkinLedDriver.class, "blinkinL"), hardwareMap.get(RevBlinkinLedDriver.class, "blinkinR"));
@@ -164,10 +164,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
             count++;
         }
 
-        if (autoState == AutoState.STALL) {
-            stall(waitSec);
-            autoState = AutoState.CAMERA_WAIT;
-        } else if (autoState == AutoState.CAMERA_WAIT) {
+        if (autoState == AutoState.CAMERA_WAIT) {
 //            if (cameraTimer.time(TimeUnit.SECONDS) < 5) {
 //                telemetry.addData("Time", cameraTimer.time(TimeUnit.SECONDS));
 //                telemetry.addData("X Mid", pipeline.xMidVal);
@@ -181,19 +178,23 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 telemetry.addData("Image processing time", (System.currentTimeMillis() - startTime) / 1000.0);
                 telemetry.addData("X Mid", pipeline.xMidVal);
                 telemetry.addData("Spike Mark", pipeline.spikeMark);
-                autoState = AutoState.CAMERA_DETECTION;
+
+                spikeMark = pipeline.spikeMark;
+
+                autoState = AutoState.STALL;
                 camera.closeCameraDevice();
             }
-        } else if (autoState == AutoState.CAMERA_DETECTION) {
-            if (pipeline.spikeMark == 1) {
+        } else if (autoState == AutoState.STALL) {
+            stall(waitSec);
+            autoState = AutoState.CAMERA_DETECTION;
+        }else if (autoState == AutoState.CAMERA_DETECTION) {
+            if (spikeMark == 1) {
                 autoState = AutoState.MOVE_1;
-            } else if (pipeline.spikeMark == 2) {
+            } else if (spikeMark == 2) {
                 autoState = AutoState.MOVE_2;
-            } else if (pipeline.spikeMark == 3) {
+            } else if (spikeMark == 3) {
                 autoState = AutoState.MOVE_3;
             }
-
-            spikeMark = pipeline.spikeMark;
         } else if (autoState == AutoState.MOVE_1) {
             if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.CLOSE) {
                 moveInches(28);
@@ -207,7 +208,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-32);
 
-                stall(2);
+                stall(0.5);
 
                 strafe(9);
                 autoState = AutoState.BACKDROP;
@@ -222,7 +223,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-11);
 
-                stall(2);
+                stall(0.5);
 
                 strafe(19); // decreased from 21 after testing once 4/17
                 autoState = AutoState.BACKDROP;
@@ -292,7 +293,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 robot.turnToAngleAuto(90, this);
                 moveInches(-32);
 
-                stall(2);
+                stall(0.5);
 
                 strafe(10);
 
@@ -308,7 +309,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
                 robot.turnToAngleAuto(-90, this);
                 moveInches(-31.5);
 
-                stall(2);
+                stall(0.5);
 
 //                strafe(1.5); // commented out 4/17 after first match
 
@@ -386,7 +387,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-10);
 
-                stall(2);
+                stall(0.5);
 
                 strafe(-3);
                 autoState = AutoState.BACKDROP;
@@ -402,7 +403,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 moveInches(-32.5);
 
-                stall(1);
+                stall(0.5);
 
                 strafe(1);
                 autoState = AutoState.BACKDROP;
@@ -480,7 +481,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
             robot.outtakeLeft.setPosition(outtakeLeftOpenPos);
 
-            stall(3);
+            stall(1.5);
 
             moveArm(250);
 
