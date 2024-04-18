@@ -20,7 +20,7 @@ public class Blinkin {
 
     private final int ALIGNED = PINK;
     private final int AUTO = PURPLE;
-    private final int TELEOP = GREEN;
+    private final int TELEOP = WHITE;
 
 
     public enum PixelColor {
