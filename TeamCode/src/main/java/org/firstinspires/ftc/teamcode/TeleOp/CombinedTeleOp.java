@@ -340,35 +340,44 @@ public class CombinedTeleOp extends OpMode {
             }
 
             ColorRangeSensor cSL = robot.colorSensorLeft;
-            ColorRangeSensor cSR = robot.colorSensorLeft;
+            ColorRangeSensor cSR = robot.colorSensorRight;
 
 //            NormalizedRGBA leftColorN = cSL.getNormalizedColors();
 //            NormalizedRGBA rightColorN = cSR.getNormalizedColors();
 
-            boolean leftPixelDetected = true;
-            boolean rightPixelDetected = true;
+            boolean leftColorDetected = false;
+            boolean rightColorDetected = false;
 
-            NormalizedRGBA normalizedLeft = cSL.getNormalizedColors();
+            int leftAverage = (cSL.red() + cSL.green() + cSL.blue())/3;
+            int rightAverage = (cSR.red() + cSR.green() + cSR.blue())/3;
+            if(leftAverage > 255)leftColorDetected = true;
+            if(rightAverage > 255)rightColorDetected = true;
 
-            float[] hsv = new float[3];
+//            NormalizedRGBA normalizedLeft = cSL.getNormalizedColors();
 
-            Color.RGBToHSV(cSL.red(),cSL.green(),cSL.blue(), hsv);
-            telemetry.addData("hue", hsv[0]);
-            telemetry.addData("sat",hsv[1]);
-            telemetry.addData("val",hsv[2]);
-            telemetry.addData("r", cSL.red());
-            telemetry.addData("g",cSL.green());
-            telemetry.addData("b",cSL.blue());
+//            float[] hsv = new float[3];
 
-            telemetry.addData("norm",normalizedLeft);
+//            Color.RGBToHSV(cSL.red(),cSL.green(),cSL.blue(), hsv);
+//            telemetry.addData("hue", hsv[0]);
+//            telemetry.addData("sat",hsv[1]);
+//            telemetry.addData("val",hsv[2]);
+//            telemetry.addData("r", cSL.red());
+//            telemetry.addData("g",cSL.green());
+//            telemetry.addData("b",cSL.blue());
+//            telemetry.addData("right","");
+//            telemetry.addData("r", cSR.red());
+//            telemetry.addData("g",cSR.green());
+//            telemetry.addData("b",cSR.blue());
+//
+//            telemetry.addData("norm",normalizedLeft);
 
-            Color.RGBToHSV((int)(normalizedLeft.red*255),(int)(normalizedLeft.green*255),(int)(normalizedLeft.blue*255), hsv);
-            telemetry.addData("hue", hsv[0]);
-            telemetry.addData("sat",hsv[1]);
-            telemetry.addData("val",hsv[2]);
-            telemetry.addData("r", normalizedLeft.red);
-            telemetry.addData("g",normalizedLeft.green);
-            telemetry.addData("b",normalizedLeft.blue);
+//            Color.RGBToHSV((int)(normalizedLeft.red*255),(int)(normalizedLeft.green*255),(int)(normalizedLeft.blue*255), hsv);
+//            telemetry.addData("hue", hsv[0]);
+//            telemetry.addData("sat",hsv[1]);
+//            telemetry.addData("val",hsv[2]);
+//            telemetry.addData("r", normalizedLeft.red);
+//            telemetry.addData("g",normalizedLeft.green);
+//            telemetry.addData("b",normalizedLeft.blue);
 
 //            Color.RGBToHSV((int) (rightColorN.red*255), (int) (rightColorN.green*255), (int) (rightColorN.blue*255), hsv);
 
@@ -386,17 +395,18 @@ public class CombinedTeleOp extends OpMode {
 //            telemetry.addData("left color sensor",leftColor);
 //            telemetry.addData("right color sensor",rightColor);
 
-            if(robot.colorSensorLeft.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelLeftStatus() == Blinkin.PixelStatus.REQUESTED && leftPixelDetected){
+            if(robot.colorSensorLeft.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelLeftStatus() == Blinkin.PixelStatus.REQUESTED && leftColorDetected){
                 lights.setPixelLeftStatus(Blinkin.PixelStatus.HELD);
             }
-            if(robot.colorSensorRight.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelRightStatus() == Blinkin.PixelStatus.REQUESTED && rightPixelDetected){
+            if(robot.colorSensorRight.getDistance(DistanceUnit.INCH) < CombinedHardware.colorSensorPixelDistance && lights.getPixelRightStatus() == Blinkin.PixelStatus.REQUESTED && rightColorDetected){
                 lights.setPixelRightStatus(Blinkin.PixelStatus.HELD);
             }
 
             int elapsedTime = (int) ((System.currentTimeMillis() - startTime)/ 1000);
             telemetry.addData("elapsedTime",elapsedTime);
             telemetry.addData("distancecolor",robot.colorSensorLeft.getDistance(DistanceUnit.INCH));
-            if(elapsedTime >= 87 && elapsedTime <= 90){
+            telemetry.addData("distancecolorR",robot.colorSensorRight.getDistance(DistanceUnit.INCH));
+            if(elapsedTime >= 92 && elapsedTime <= 95){
                 lights.update(7);
             }else {
                 lights.update();

@@ -51,7 +51,7 @@ public class CombinedHardware {
 //    public static final double maxOuttakeLeftOpenPos = 0.315 - 0.175;
 //    public static final double maxOuttakeRightOpenPos = 0.3 - 0.175;
 
-    public static int maxHeightArmTicks = 3390; //preset deliver point
+    public static int maxHeightArmTicks = 3800; //preset deliver point
     public static int maxArmTicks = 5500;
     public static int minArmTicks = 15;
     public int initArmAngle = 60;
@@ -65,7 +65,7 @@ public class CombinedHardware {
     // idk what this is on the states robot (i think it was 1?)
     public static double planeServoReleasePos;
 
-    public static double colorSensorPixelDistance = 1;
+    public static double colorSensorPixelDistance = 0.35;
 
     public enum Alliance {
         RED,
@@ -156,7 +156,7 @@ public class CombinedHardware {
         if (configName.contains("worlds")) {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
             maxArmTicks = 3900;
-            maxHeightArmTicks = 2800;
+            maxHeightArmTicks = 3100;
             minArmTicks = 220;
             rotationServoInitPos = .125;
             rotationServoMin = 0.125;
@@ -258,7 +258,7 @@ public class CombinedHardware {
     public void adjustWrist() {
         double armAngle = recalculateAngle();
         if (armAngle < 75) {
-            rotationServo.setPosition(0.135); //increased by 0.01 1:44
+            rotationServo.setPosition(0.075); //increased by 0.01 1:44
             //when arm angle increases, servo angle decreases
         } else if (armAngle < 93) { //90 degrees, but a little bit of error in the math so have to adjust manually
             rotationServo.setPosition(0.1);
