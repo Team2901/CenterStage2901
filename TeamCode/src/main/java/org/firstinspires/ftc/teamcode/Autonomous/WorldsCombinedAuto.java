@@ -224,7 +224,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(20.5); //4/17
+                strafe(19); // decreased from 21 after testing once 4/17
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {
                 if (robot.parkLocation == ParkLocation.MIDDLE) {
@@ -310,7 +310,7 @@ public class WorldsCombinedAuto extends LinearOpMode implements OpenCvCamera.Asy
 
                 stall(2);
 
-                strafe(1.5); //4/17 first match
+//                strafe(1.5); // commented out 4/17 after first match
 
                 autoState = AutoState.BACKDROP;
             } else if (robot.alliance == Alliance.RED && robot.startLocation == StartLocation.FAR) {

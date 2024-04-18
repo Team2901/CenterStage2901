@@ -157,7 +157,7 @@ public class CombinedHardware {
             arm.setDirection(DcMotorSimple.Direction.FORWARD);
             maxArmTicks = 3900;
             maxHeightArmTicks = 2800;
-            minArmTicks = 230;
+            minArmTicks = 220;
             rotationServoInitPos = .125;
             rotationServoMin = 0.125;
             //set constants for worlds at the top
