@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -336,18 +337,25 @@ public class CombinedTeleOp extends OpMode {
                     lights.setPixelRight(Blinkin.PixelColor.WHITE);
                 }
             }
-            NormalizedRGBA leftColorN = robot.colorSensorLeft.getNormalizedColors();
-            NormalizedRGBA rightColorN = robot.colorSensorLeft.getNormalizedColors();
+
+            ColorRangeSensor cSL = robot.colorSensorLeft;
+            ColorRangeSensor cSR = robot.colorSensorLeft;
+
+//            NormalizedRGBA leftColorN = cSL.getNormalizedColors();
+//            NormalizedRGBA rightColorN = cSR.getNormalizedColors();
 
             boolean leftPixelDetected = true;
             boolean rightPixelDetected = true;
 
             float[] hsv = new float[3];
 
-            Color.RGBToHSV((int) (leftColorN.red*255), (int) (leftColorN.green*255), (int) (leftColorN.blue*255), hsv);
+            Color.RGBToHSV(cSL.red(),cSL.green(),cSL.blue(), hsv);
             telemetry.addData("hue", hsv[0]);
             telemetry.addData("sat",hsv[1]);
             telemetry.addData("val",hsv[2]);
+            telemetry.addData("r", cSL.red());
+            telemetry.addData("g",cSL.green());
+            telemetry.addData("b",cSL.blue());
 
 //            Color.RGBToHSV((int) (rightColorN.red*255), (int) (rightColorN.green*255), (int) (rightColorN.blue*255), hsv);
 
@@ -374,6 +382,7 @@ public class CombinedTeleOp extends OpMode {
 
             int elapsedTime = (int) ((System.currentTimeMillis() - startTime)/ 1000);
             telemetry.addData("elapsedTime",elapsedTime);
+            telemetry.addData("distancecolor",robot.colorSensorLeft.getDistance(DistanceUnit.INCH));
             if(elapsedTime >= 87 && elapsedTime <= 90){
                 lights.update(7);
             }else {

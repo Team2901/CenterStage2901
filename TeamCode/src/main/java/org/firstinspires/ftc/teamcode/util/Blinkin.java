@@ -11,7 +11,7 @@ public class Blinkin {
     //must be > 1000ms for epilepsy
     private final int blinkPeriod = 1100;
 
-    private final int WHITE = 97;
+    private final int WHITE = 90;
     private final int YELLOW = 85;
     private final int GREEN = 87;
     private final int PURPLE = 95;
