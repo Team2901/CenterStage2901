@@ -192,31 +192,18 @@ public class CombinedHardware {
         double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
         double startAngle = getAngle();
         double turnError = AngleUnit.normalizeDegrees(targetAngle - startAngle);
-        if (!(turnError < .5 && turnError > -.5)) {
-            if (turnError >= 0) {
-                turnPower = turnError / 50;
-                if (turnPower > .75) {
-                    turnPower = .75;
-                }
-            } else if (turnError < 0) {
-                turnPower = turnError / 50;
-                if (turnPower < -.75) {
-                    turnPower = -.75;
-                }
-            }
-
-            double currentAngle = getAngle();
-            turnError = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
-        }
-//        robot.frontLeft.setPower(0);
-//        robot.frontRight.setPower(0);
-//        robot.backRight.setPower(0);
-//        robot.backLeft.setPower(0);
+        if (Math.abs(turnError) > 0.5) turnPower = Math.max(Math.min(turnError / 50, 0.75), -0.75);
 
         return turnPower;
     }
 
-    public void turnToAngleAuto(double turnAngle, LinearOpMode opMode) {
+    public double snapToAngle(double turnAngle) {
+        double targetAngle = Math.round(getAngle()/turnAngle) * turnAngle;
+        return turnToAngle(targetAngle);
+    }
+
+
+        public void turnToAngleAuto(double turnAngle, LinearOpMode opMode) {
         double turnPower = 0;
         double targetAngle = AngleUnit.normalizeDegrees(turnAngle);
         double startAngle = getAngle();
@@ -240,7 +227,7 @@ public class CombinedHardware {
 //                    turnPower = -.75;
 //                }
 //            }
-            turnPower = Math.max(Math.min(turnError/50,0.75),-0.75);
+            turnPower = Math.max(Math.min(turnError / 50, 0.75), -0.75);
 
             frontLeft.setPower(-turnPower);
             frontRight.setPower(turnPower);
