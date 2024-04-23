@@ -96,9 +96,11 @@ public class CombinedTeleOp extends OpMode {
         if (Math.abs(impGamepad1.right_stick.x.getValue()) > 0) {
             rotate = impGamepad1.right_stick.x.getValue() * turnMod;
         } else if (impGamepad1.x.isPressed()) {
-            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED ? 90 : -90) * turnMod;
+//            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED ? 90 : -90) * turnMod;
+            rotate = -robot.snapToAngle(90) * turnMod;
         } else if (impGamepad1.a.isPressed() && !impGamepad1.start.isPressed()) {
-            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED ? 45 : -45) * turnMod;
+//            rotate = -robot.turnToAngle(robot.alliance == CombinedHardware.Alliance.RED ? 45 : -45) * turnMod;
+            rotate = -robot.snapToAngle(45) * turnMod;
         } else {
             rotate = 0;
         }
